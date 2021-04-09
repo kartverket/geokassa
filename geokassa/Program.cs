@@ -32,19 +32,8 @@ namespace geokassa
                 .UseParseErrorReporting()
                 .CancelOnProcessTermination()
                 .Build();
-            
-            /*
-               var _ = new CommandLineBuilder(rootCommand)
-              .UseExceptionHandler()
-              .UseParseErrorReporting()
-              .Build();            
 
-              var _ = new CommandLineBuilder(rootCommand)
-                .UseExceptionHandler()
-                .Build();
-            */
-
-            rootCommand.InvokeAsync(args).Wait();           
+            rootCommand.InvokeAsync(args).Wait();
         } 
     }  
 }

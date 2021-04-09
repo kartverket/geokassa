@@ -211,3 +211,5 @@ geokassatest/bin/Release/netcoreapp2.1/geokassa.pdb
 gridfiles/obj/Debug/netcoreapp2.1/gridfiles.assets.cache
 gridfiles/obj/Release/netcoreapp2.1/gridfiles.assets.cache
 geokassatest/obj/Release/netcoreapp2.1/geokassatests.dll
+geokassa/obj/Debug/netcoreapp2.1/.NETCoreApp,Version=v2.1.AssemblyAttributes.cs
+geokassa/obj/Debug/netcoreapp2.1/geokassa.genruntimeconfig.cache
