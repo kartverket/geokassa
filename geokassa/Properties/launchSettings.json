@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "geokassa": {
+      "commandName": "Project",
+      "commandLineArgs": "geokassa lsc2geotiff Test_source_geogr.csv Test_target_geogr.csv geokassa.tif --type 0 --dim 2 --gridname no_kv_NKGETRF14_EPSG7922_2000 --email skakar@kartverket.no --area \"Norway - onshore\" --desc \"Geocentric translation from NKG:ETRF14 to EPSG:7922.\" --epsg2d EPSG:9069 --epsgsource NKG:ETRF14 --epsgtarget EPSG:7922 --lle 9.0 --lln 59.0 --de 0.1 --dn 0.1 --rows 40 --cols 40 --tilesize 16 --c0 0.0008 --cl 150000 --sn 0.025",
+      "workingDirectory": "C:\\Users\\Administrator\\source\\repos\\transanalyse\\NKG_Accuracy\\Mod_Helmert"
+    }
+  }
+}
