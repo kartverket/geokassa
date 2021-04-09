@@ -209,3 +209,5 @@ geokassatest/bin/Debug/netcoreapp2.1/geokassa.dll
 geokassatest/bin/Debug/netcoreapp2.1/geokassa.pdb
 geokassatest/bin/Release/netcoreapp2.1/geokassa.pdb
 gridfiles/obj/Debug/netcoreapp2.1/gridfiles.assets.cache
+gridfiles/obj/Release/netcoreapp2.1/gridfiles.assets.cache
+geokassatest/obj/Release/netcoreapp2.1/geokassatests.dll
