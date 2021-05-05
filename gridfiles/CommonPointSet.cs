@@ -402,11 +402,12 @@ namespace gridfiles
                 {
                     if (runLs) // Least Squares Method:
                         X = (A.Transpose() * A).Inverse() * A.Transpose() * L;
-                    // Without noise parameter:
-                    // X = (A.Transpose() * CovNn(k, c).Inverse() * A).Inverse() * (A.Transpose() * CovNn(k, c).Inverse() * L);
-                    else // Least Squares Collocation:                                         
-                        X = (A.Transpose() * CovNn_D_Inv(k, c, sn) * A).Inverse() * (A.Transpose() * CovNn_D_Inv(k, c, sn) * L);                                    
-                     
+                    else // Least Squares Collocation:
+                         // Without noise parameter:
+                         // TODO: Might be wrong
+                        X = (A.Transpose() * CovNn(k, c).Inverse() * A).Inverse() * (A.Transpose() * CovNn(k, c).Inverse() * L);
+                    //  X = (A.Transpose() * CovNn_D_Inv(k, c, sn) * A).Inverse() * (A.Transpose() * CovNn_D_Inv(k, c, sn) * L);                                    
+
                     Rx += X[0, 0] / _factor;
                     Ry += X[1, 0] / _factor;
                     Rz += X[2, 0] / _factor;
