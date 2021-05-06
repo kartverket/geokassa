@@ -22,7 +22,6 @@ namespace gridfiles
         private GriFile _griZ;
         private GridParam _gridParam;
 
-        private double _agl = 0d; 
         private double _factor = 1000000d;
 
         private List<CommonPointXYZ> _list;
@@ -644,7 +643,7 @@ namespace gridfiles
 
                     var p = new PointXYZ();
 
-                    p.PhiDeg = lat; p.LambdaDeg = lon; p.H = _agl;
+                    p.PhiDeg = lat; p.LambdaDeg = lon; p.H = Agl;
 
                     var pos = PredictedPosition(k, c, sn, p.X, p.Y, p.Z);
                     
