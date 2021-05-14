@@ -595,43 +595,7 @@ namespace gridfiles
 
             if (HelmertIsComputed)
                 PrintResiduals();
-
-            // NOTE: Tests geocentric<>geodetic transformation
-            bool trueOrFalse = false;
-            if (trueOrFalse)
-            {
-                var p = new CommonPointXYZ();
-
-                p.X1 = 3172870.7154;
-                p.Y1 = 604208.28140;
-                p.Z1 = 5481574.23150;
-                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
-
-                p.Phi1Deg = 59.6603328269847;
-                p.Lambda1Deg = 10.7817180373767;
-                p.H1 = 133.463056743145;
-                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
-
-                var lat1 = p.Phi1Deg;
-                var lon1 = p.Lambda1Deg;
-                var height1 = p.H1;
-                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {lat1} Lon: {lon1} H: {height1}");
-
-                var x = p.X1;
-                var y = p.Y1;
-                var z = p.Z1;
-                Console.WriteLine($"X: {x} Y: {y} Z: {z} Lat: {lat1} Lon: {lon1} H: {height1}");
-
-                p.H1 -= 100d;
-                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
-
-                p.Phi1Deg -= 1d;
-                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
-
-                p.Lambda1Deg-= 1d;
-                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
-            }
-
+            
             var count = 0;
           
             for (var i = NRows - 1; i >= 0; i--)
@@ -808,6 +772,46 @@ namespace gridfiles
             {   
                 throw ex;
             }
+        }
+
+        // NOTE: Tests geocentric<>geodetic transformation
+        private bool TestTransformationsCommonPointXYZ()
+        {
+            bool trueOrFalse = false;
+            if (trueOrFalse)
+            {
+                var p = new CommonPointXYZ();
+
+                p.X1 = 3172870.7154;
+                p.Y1 = 604208.28140;
+                p.Z1 = 5481574.23150;
+                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
+
+                p.Phi1Deg = 59.6603328269847;
+                p.Lambda1Deg = 10.7817180373767;
+                p.H1 = 133.463056743145;
+                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
+
+                var lat1 = p.Phi1Deg;
+                var lon1 = p.Lambda1Deg;
+                var height1 = p.H1;
+                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {lat1} Lon: {lon1} H: {height1}");
+
+                var x = p.X1;
+                var y = p.Y1;
+                var z = p.Z1;
+                Console.WriteLine($"X: {x} Y: {y} Z: {z} Lat: {lat1} Lon: {lon1} H: {height1}");
+
+                p.H1 -= 100d;
+                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
+
+                p.Phi1Deg -= 1d;
+                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
+
+                p.Lambda1Deg -= 1d;
+                Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
+            }
+            return trueOrFalse;
         }
     }
 }
