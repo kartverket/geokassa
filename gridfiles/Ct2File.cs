@@ -20,7 +20,6 @@ namespace gridfiles
         private CptFile _cptFile = new CptFile();
         private GridParam _gridParam;
         private List<float> _data = new List<float>();
-        private List<CommonPointXYZ> _list;
 
         private const double Ro = Math.PI / 180;
         private char[] _id = new char[80];
@@ -58,13 +57,7 @@ namespace gridfiles
             get => _cptFile;
             set => _cptFile = value;
         }
-
-        public List<CommonPointXYZ> PointList
-        {
-            get => _list = _list ?? new List<CommonPointXYZ>();
-            set => _list = value;
-        }
-
+        
         public List<CommonPoint> CommonPointList
         {
             get => _cptFile.CommonPointList;

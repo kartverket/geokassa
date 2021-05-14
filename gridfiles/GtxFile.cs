@@ -21,8 +21,7 @@ namespace gridfiles
         private Matrix<double> _signalNoise = null;
         private GridParam _gridParam;
         private GriFile _griFile = new GriFile();
-        private CptFile _cptFile = new CptFile();
-        private List<CommonPointXYZ> _list;
+        private CptFile _cptFile = new CptFile();      
 
         public GtxFile()
         {
@@ -53,13 +52,7 @@ namespace gridfiles
             get => _cptFile;
             set => _cptFile = value;
         }
-
-        public List<CommonPointXYZ> PointList
-        {
-            get => _list = _list ?? new List<CommonPointXYZ>();
-            set => _list = value;
-        }
-
+        
         public GriFile GriHeight
         {
             get => _griFile;
