@@ -12,6 +12,10 @@
     <Copyright>Kartverket</Copyright>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.639" />
     <PackageReference Include="Delaunator" Version="1.0.7" />

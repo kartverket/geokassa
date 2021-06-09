@@ -381,12 +381,13 @@ namespace geokassa
             AddOption(new Option("--area", "Area of use") { Argument = new Argument<string>("area") });
             AddOption(new Option("--email", "Product manager") { Argument = new Argument<string>("email") });
             AddOption(new Option("--dim", "Dimension") { Argument = new Argument<int>("dim") });
-            // TODO: Are the EPSG codes correct? Make unit or factory tests.
+
+            // TODO: Are the EPSG codes correct? Make unit or factory tests.           
             AddOption(new Option("--epsg2d", "Source EPSG interpolation CRS ('autority:XXXX')") { Argument = new Argument<string>("epsg2d"), IsRequired = true });
             AddOption(new Option("--epsgsource", "Source EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgsource"), IsRequired = true });
             AddOption(new Option("--epsgtarget", "Target EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgtarget"), IsRequired = true });
             AddOption(new Option("--tilesize", "Tile size (multiple of 16)") { Argument = new Argument<int>("tilesize"), IsRequired = true });
- 
+         
             Handler = CommandHandler.Create((Ct2Gtx2GeoTiffParams pars) =>
             {
                 return HandleCommand(pars);
@@ -405,12 +406,12 @@ namespace geokassa
                 tiff.Area_of_use = par.Area ?? "";
                 tiff.Email = par.Email ?? "";
                 tiff.TileSize = par.TileSize;
-                tiff.Dimensions = (par.Dim == 0) ?
-                    ((par.Ct2 != null ? 2 : 0) + (par.Gtx != null ? 1 : 0))
-                    : par.Dim;
+                tiff.Dimensions = (par.Dim == 0) ? 
+                    ((par.Ct2 != null ? 2 : 0) + (par.Gtx != null ? 1 : 0)) :
+                    par.Dim;    
                 tiff.Epsg2d.CodeString = par.Epsg2d;
                 tiff.EpsgSource.CodeString = par.EpsgSource;
-                tiff.EpsgTarget.CodeString = par.EpsgTarget;                
+                tiff.EpsgTarget.CodeString = par.EpsgTarget;
                 tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
             
                 if (par.Ct2 != null && !tiff.Ct2.ReadCt2(par.Ct2.FullName))
@@ -420,7 +421,7 @@ namespace geokassa
                 }
                 if (par.Gtx != null && !tiff.Gtx.ReadGtx(par.Gtx.FullName))
                 {
-                    Console.WriteLine($"Cound not read the gtx file {par.Gtx.Name}.");                
+                    Console.WriteLine($"Cound not read the gtx file {par.Gtx.Name}.");
                     return -1;
                 }
                 if (!tiff.GenerateGridFile(par.Output.FullName))

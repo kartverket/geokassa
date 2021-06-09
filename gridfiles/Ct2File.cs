@@ -1,5 +1,6 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -534,9 +535,14 @@ namespace gridfiles
 
                     // 24 empty bytes
                     var emptybytes = br.ReadBytes(24);
-
                     var noOfBytes = br.BaseStream.Position;
                     var index = 0;
+
+                    var eastList = new List<List<float>>();
+                    var northList = new List<List<float>>();
+
+                    var eastRow = new List<float>();
+                    var northRow = new List<float>();
 
                     while (br.BaseStream.Position < fs.Length)
                     {
@@ -544,14 +550,40 @@ namespace gridfiles
                         var northValue = br.ReadSingle();
 
                         if (index == NColumns)
+                        {
+                            eastList.Add(eastRow);
+                            northList.Add(northRow);
+
+                            eastRow = new List<float>();
+                            northRow = new List<float>();
+
                             index = 0;
+                        }
+                        index++;
+
+                        eastRow.Add(eastValue);
+                        northRow.Add(northValue);
 
                         // TODO: Sign at easting value?
-                        _griEast.Data.Insert(index, eastValue);
-                        _griNorth.Data.Insert(index++, northValue);
+                        //_griEast.Data.Insert(index, eastValue);
+                        //_griNorth.Data.Insert(index++, northValue);
 
                         noOfBytes += 8;
                     }
+                    eastList.Add(eastRow);
+                    northList.Add(northRow);
+
+                    eastList.Reverse();
+                    northList.Reverse();
+
+                    foreach (var row in eastList)
+                         foreach (var col in row)
+                            _griEast.Data.Add(col);
+
+                    foreach (var row in northList)
+                        foreach (var col in row)
+                            _griNorth.Data.Add(col);
+
                     br.Close();
                 }
                 fs.Close();

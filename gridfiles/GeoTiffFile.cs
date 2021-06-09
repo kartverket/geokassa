@@ -14,9 +14,9 @@ namespace gridfiles
         public enum TiffOutputType
         {
             HORIZONTAL_OFFSET = 0,
-            VERTICAL_OFFSET_GEOGRAPHIC_TO_VERTICAL = 1,           
+            VERTICAL_OFFSET_GEOGRAPHIC_TO_VERTICAL = 1,
             VERTICAL_OFFSET_VERTICAL_TO_VERTICAL = 2,
-            GEOCENTRIC_TRANSLATION = 3,        
+            GEOCENTRIC_TRANSLATION = 3,
             VELOCITY = 4,
             DEFORMATION_MODEL = 5
         }

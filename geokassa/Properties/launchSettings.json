@@ -1,9 +1,9 @@
 {
   "profiles": {
     "geokassa": {
-        "commandName": "Project",
-        "commandLineArgs": "geokassa lsc2geotiff ETRF14_e2000_nkg17_all.csv 7922_e2000_nkg17_correct.csv no_kv_NKGETRF14_EPSG7922_2000.tif --type 3 --gridname no_kv_NKGETRF14_EPSG7922_2000 --email skakar@kartverket.no --area \"Norway - onshore\" --desc \"Geocentric translation from NKG:ETRF14 to EPSG:7922.\" --epsg2d EPSG:9069 --epsgsource NKG:ETRF14 --epsgtarget EPSG:7922 --lle 4.0 --lln 57.0 --de 0.04 --dn 0.02 --agl 400.0 --rows 740 --cols 720 --tilesize 256 --c0 0.001 --cl 120000 --sn 0.020",
-        "workingDirectory": "C:\\Users\\Administrator\\source\\repos\\transanalyse\\NKG_Accuracy\\Mod_Helmert"
+      "commandName": "Project",
+      "commandLineArgs": "geokassa ct2gtx2geotiff no_kv_ETRS89_ED50.tif --ct2 EUREF89_ED50.ct2 --gridname no_kv_ETRS89_ED50 --dim 2 --type 0 --tilesize 256 --epsg2d EPSG:4258 --epsgsource EPSG:4258 --epsgtarget EPSG:4230 --desc \"ETRS89 (EPSG:4258) to ED50 (EPSG:4230). Converted from EUREF89_ED50.ct2.\" --email skakar@kartverket.no --area \"Norway - onshore.\"",
+      "workingDirectory": "C:\\Prosjekter\\SkTrans\\EurefNgo\\EUREF89_NGO48_20081014\\"
     }
   }
 }
