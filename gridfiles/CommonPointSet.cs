@@ -13,7 +13,7 @@ namespace gridfiles
         private Matrix<double> _covNnInv = null;
         private Matrix<double> _covNn_D_Inv = null;
         private Matrix<double> _covNn_D_InvSn = null;
-        private Matrix<double> _a = null;      
+        private Matrix<double> _a = null;
         private Matrix<double> _v = null;
         private Matrix<double> _signalNoise = Matrix<double>.Build.Dense(1, 1);
 

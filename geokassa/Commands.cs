@@ -437,6 +437,6 @@ namespace geokassa
                 return -1;
                 throw ex;
             }
-        }            
+        }
     }
 }
