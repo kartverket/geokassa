@@ -99,13 +99,13 @@ namespace geokassa
             AddOption(new Option("--cl", "Correlastion length - LSC (m)") { Argument = new Argument<double>("cl"), IsRequired = true });
             AddOption(new Option("--sn", "Covariance noise - LSC (m)") { Argument = new Argument<double>("sn"), IsRequired = true });
 
-            Handler = CommandHandler.Create((Lsc2GeoTiffParams pars) =>
+            Handler = CommandHandler.Create((Lsc2GeoTiffCommandParams pars) =>
             {
                 return HandleCommand(pars);
             });
         }
 
-        private int HandleCommand(Lsc2GeoTiffParams par)
+        private int HandleCommand(Lsc2GeoTiffCommandParams par)
         {
             try
             {
@@ -181,13 +181,13 @@ namespace geokassa
             AddOption(new Option("--geoid", "Geoid- or separationmodel") { Argument = new Argument<bool>("geoid") });
             AddOption(new Option("--tilesize", "Tile size (multiple of 16)") { Argument = new Argument<int>("tilesize"), IsRequired = true });
 
-            Handler = CommandHandler.Create((Bin2GeoTiffParams pars) =>
+            Handler = CommandHandler.Create((Bin2GeoTiffCommandParams pars) =>
             {
                 return HandleCommand(pars);
             });
         }
 
-        private int HandleCommand(Bin2GeoTiffParams par)
+        private int HandleCommand(Bin2GeoTiffCommandParams par)
         {
             try
             {
@@ -248,13 +248,13 @@ namespace geokassa
             AddOption(new Option("--geoid", "Geoid- or separationmodel") { Argument = new Argument<bool>("geoid") });
             AddOption(new Option("--tilesize", "Tile size (multiple of 16)") { Argument = new Argument<int>("tilesize"), IsRequired = true });
 
-            Handler = CommandHandler.Create((Gri2GeoTiffParams pars) =>
+            Handler = CommandHandler.Create((Gri2GeoTiffCommandParams pars) =>
             {
                 return HandleCommand(pars);
             });
         }
 
-        private int HandleCommand(Gri2GeoTiffParams par)
+        private int HandleCommand(Gri2GeoTiffCommandParams par)
         {
             try
             {
@@ -320,13 +320,13 @@ namespace geokassa
             AddOption(new Option("--epsgtarget", "Target EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgtarget"), IsRequired = true });
             AddOption(new Option("--tilesize", "Tile size (multiple of 16)") { Argument = new Argument<int>("tilesize"), IsRequired = true });
 
-            Handler = CommandHandler.Create((Gtx2GeoTiffParams pars) =>
+            Handler = CommandHandler.Create((Gtx2GeoTiffCommandParams pars) =>
             {
                 return HandleCommand(pars);
             });
         }
         
-        private int HandleCommand(Gtx2GeoTiffParams parameters)
+        private int HandleCommand(Gtx2GeoTiffCommandParams parameters)
         {
             try
             {
@@ -388,13 +388,13 @@ namespace geokassa
             AddOption(new Option("--epsgtarget", "Target EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgtarget"), IsRequired = true });
             AddOption(new Option("--tilesize", "Tile size (multiple of 16)") { Argument = new Argument<int>("tilesize"), IsRequired = true });
          
-            Handler = CommandHandler.Create((Ct2Gtx2GeoTiffParams pars) =>
+            Handler = CommandHandler.Create((Ct2Gtx2GeoTiffCommandParams pars) =>
             {
                 return HandleCommand(pars);
             });
         }
 
-        private int HandleCommand(Ct2Gtx2GeoTiffParams par)
+        private int HandleCommand(Ct2Gtx2GeoTiffCommandParams par)
         {
             try
             {
@@ -429,6 +429,68 @@ namespace geokassa
                     Console.WriteLine($"Feil i generering av tiff-fil {par.Output.Name}.");
                     return -1;
                 }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+                return -1;
+                throw ex;
+            }
+        }
+    }
+
+    public class Csvs2Ct2 : Command
+    {
+        public Csvs2Ct2(string name, string description = null) : base(name, description)
+        {
+            Name = name;
+            Description = description;
+
+            AddArgument(new Argument<FileInfo>("fromsys", "Input csv From system") { ArgumentType = typeof(FileInfo) });
+            AddArgument(new Argument<FileInfo>("tosys", "Input csv To system") { ArgumentType = typeof(FileInfo) });
+            AddArgument(new Argument<FileInfo>("output", "Output Ct2 file") { ArgumentType = typeof(FileInfo) });
+
+            AddOption(new Option("--flat", "False latitude") { Argument = new Argument<double>("flat") });
+            AddOption(new Option("--flon", "False longitude") { Argument = new Argument<double>("flon") });
+        }
+        
+        private int HandleCommand(Csvs2Ct2CommandParams par)
+        {
+            try
+            {
+                var tiff = new GeoTiffFile();
+                /*
+                tiff.OutputFileName = par.Output.FullName;
+                tiff.Grid_name = par.GridName;
+                tiff.ImageDescription = par.Desc ?? "";
+                tiff.Area_of_use = par.Area ?? "";
+                tiff.Email = par.Email ?? "";
+                tiff.TileSize = par.TileSize;
+                tiff.Dimensions = (par.Dim == 0) ?
+                    ((par.Ct2 != null ? 2 : 0) + (par.Gtx != null ? 1 : 0)) :
+                    par.Dim;
+                tiff.Epsg2d.CodeString = par.Epsg2d;
+                tiff.EpsgSource.CodeString = par.EpsgSource;
+                tiff.EpsgTarget.CodeString = par.EpsgTarget;
+                tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
+
+                if (par.Ct2 != null && !tiff.Ct2.ReadCt2(par.Ct2.FullName))
+                {
+                    Console.WriteLine($"Cound not read the ct2 file {par.Ct2.Name}.");
+                    return -1;
+                }
+                if (par.Gtx != null && !tiff.Gtx.ReadGtx(par.Gtx.FullName))
+                {
+                    Console.WriteLine($"Cound not read the gtx file {par.Gtx.Name}.");
+                    return -1;
+                }
+                if (!tiff.GenerateGridFile(par.Output.FullName))
+                {
+                    Console.WriteLine($"Feil i generering av tiff-fil {par.Output.Name}.");
+                    return -1;
+                }
+                */
                 return 0;
             }
             catch (Exception ex)

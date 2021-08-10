@@ -2,8 +2,8 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "geokassa ct2gtx2geotiff no_kv_ETRS89_ED50.tif --ct2 EUREF89_ED50.ct2 --gridname no_kv_ETRS89_ED50 --dim 2 --type 0 --tilesize 256 --epsg2d EPSG:4258 --epsgsource EPSG:4258 --epsgtarget EPSG:4230 --desc \"ETRS89 (EPSG:4258) to ED50 (EPSG:4230). Converted from EUREF89_ED50.ct2.\" --email skakar@kartverket.no --area \"Norway - onshore.\"",
-      "workingDirectory": "C:\\Prosjekter\\SkTrans\\EurefNgo\\EUREF89_NGO48_20081014\\"
+      "commandLineArgs": "geokassa csvs2ct2 EUREF89_epsg1182.fri ED50_epsg1182.fri EUREF89_ED50_test.ct2 --flat 0.0 --flon 0.0",
+      "workingDirectory": "C:\\Prosjekter\\ED50\\"
     }
   }
 }

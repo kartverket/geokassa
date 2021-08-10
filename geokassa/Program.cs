@@ -17,7 +17,8 @@ namespace geokassa
                 new Bin2GeoTiffCommand("bin2geotiff", "Converts bin file to GeoTiff"),
                 new Gri2GeoTiffCommand("gri2geotiff", "Converts gri file(s) to GeoTiff"),
                 new Gtx2GeoTiffCommand("gtx2geotiff", "Converts gtx file to GeoTiff"),
-                new Ct2Gtx2GeoTiffCommand("ct2gtx2geotiff", "Converts gtx or ct2 files to GeoTiff")
+                new Ct2Gtx2GeoTiffCommand("ct2gtx2geotiff", "Converts gtx or ct2 files to GeoTiff"),
+                new Csvs2Ct2("csvs2ct2", "Converts horisontal shift between two csv's into Ct2")
             };
 
             var _ = new CommandLineBuilder(rootCommand)
