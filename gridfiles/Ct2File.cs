@@ -65,6 +65,9 @@ namespace gridfiles
             set => _cptFile.CommonPointList = value;
         }
 
+        public List<Tuple<string, double, double>> System1PointList { get; set; } = new List<Tuple<string, double, double>>();
+        public List<Tuple<string, double, double>> System2PointList { get; set; } = new List<Tuple<string, double, double>>();
+
         public GriFile GriNorth
         {
             get => _griNorth;
@@ -591,6 +594,127 @@ namespace gridfiles
             return true;
         }
 
+        public bool ReadSystem1PointList(string filNamn)
+        {
+            System1PointList.Clear();
+
+            if (!ReadPointList(filNamn, System1PointList))
+                return false;
+
+            return true;
+        }
+
+        public bool ReadSystem2PointList(string filNamn)
+        {
+            System2PointList.Clear();
+
+            if (!ReadPointList(filNamn, System2PointList))
+                return false;
+
+            return true;
+        }
+
+        private bool ReadPointList(string fileName, List<Tuple<string, double, double>> systemPointList)
+        {
+            try
+            {
+                using (var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+                    {
+                        string line;
+
+                        while ((line = streamReader.ReadLine()) != null)
+                        {
+                            string[] linearray = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                            if (linearray.Count() != 3)
+                                continue;
+
+                            var x = 0d; var y = 0d;
+
+                            if (!double.TryParse(linearray[2], out x))
+                                continue;
+
+                            if (!double.TryParse(linearray[1], out y))
+                                continue;
+
+                            systemPointList.Add(Tuple.Create(linearray[0], x, y));
+                        }
+                        streamReader.Close();
+                    }
+                    fileStream.Close();
+                }
+                return true;
+            }
+            catch
+            {
+                systemPointList.Clear();
+                return false;
+            }
+        }
+
+        public bool ComputeParameters()
+        {
+            var systemPointList = System1PointList;
+
+            LowerLeftLatitude = systemPointList.Min(x => x.Item3);
+            LowerLeftLongitude = systemPointList.Min(x => x.Item2);
+
+            var upperRightLatitude = systemPointList.Max(x => x.Item3);
+            var upperRightLongitude = systemPointList.Max(x => x.Item2);
+
+            // North:
+            NRows = systemPointList.GroupBy(x => x.Item3).Count();
+
+            if (NRows < 2)
+                return false;
+
+            // East:
+            NColumns = systemPointList.GroupBy(x => x.Item2).Count();
+
+            if (NColumns < 2)
+                return false;
+
+            DeltaLatitude = (upperRightLatitude - LowerLeftLatitude) / (NRows - 1);
+            DeltaLongitude = (upperRightLongitude - LowerLeftLongitude) / (NColumns - 1);
+
+            return true;
+        }
+
+        public bool ComputeGridData()
+        {
+            var joinPointList = System1PointList.GroupJoin(System2PointList, x => x.Item1, y => y.Item1, (x, y) => new { sys1 = x, sys2 = y });
+
+            foreach (var element in joinPointList)
+            {
+                var pointName1 = element.sys1.Item1;
+                var lon1 = element.sys1.Item2 + FalseLon;
+                var lat1 = element.sys1.Item3 + FalseLat;
+                var lon2 = 0d;
+                var lat2 = 0d;
+
+                if (!element.sys2.Any())
+                {
+                    //_griEast.Data.Add(-88.8888f);
+                    //_griNorth.Data.Add(-88.8888f);
+
+                    _griEast.Data.Add(float.NaN);
+                    _griNorth.Data.Add(float.NaN);
+                }
+                else
+                {
+                    var pointName2 = element.sys2.FirstOrDefault().Item1;
+                    lon2 = element.sys2.FirstOrDefault().Item2 + FalseLon;
+                    lat2 = element.sys2.FirstOrDefault().Item3 + FalseLat;
+
+                    _griEast.Data.Add((float)(-Ro * (lon2 - lon1)));
+                    _griNorth.Data.Add((float)(Ro * (lat2 - lat1)));
+                }
+            }
+            return true;
+        }
+        
         public bool ReadGriFiles()
         {
             if (_griNorth == null || _griEast == null)

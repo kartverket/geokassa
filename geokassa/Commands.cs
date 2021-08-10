@@ -448,49 +448,52 @@ namespace geokassa
             Description = description;
 
             AddArgument(new Argument<FileInfo>("fromsys", "Input csv From system") { ArgumentType = typeof(FileInfo) });
-            AddArgument(new Argument<FileInfo>("tosys", "Input csv To system") { ArgumentType = typeof(FileInfo) });
+            AddArgument(new Argument<FileInfo>("tosys", "Input csv To system") { ArgumentType = typeof(FileInfo) } );
             AddArgument(new Argument<FileInfo>("output", "Output Ct2 file") { ArgumentType = typeof(FileInfo) });
 
             AddOption(new Option("--flat", "False latitude") { Argument = new Argument<double>("flat") });
             AddOption(new Option("--flon", "False longitude") { Argument = new Argument<double>("flon") });
+
+            Handler = CommandHandler.Create((Csvs2Ct2CommandParams pars) =>
+            {
+                return HandleCommand(pars);
+            });
         }
         
         private int HandleCommand(Csvs2Ct2CommandParams par)
         {
             try
             {
-                var tiff = new GeoTiffFile();
-                /*
-                tiff.OutputFileName = par.Output.FullName;
-                tiff.Grid_name = par.GridName;
-                tiff.ImageDescription = par.Desc ?? "";
-                tiff.Area_of_use = par.Area ?? "";
-                tiff.Email = par.Email ?? "";
-                tiff.TileSize = par.TileSize;
-                tiff.Dimensions = (par.Dim == 0) ?
-                    ((par.Ct2 != null ? 2 : 0) + (par.Gtx != null ? 1 : 0)) :
-                    par.Dim;
-                tiff.Epsg2d.CodeString = par.Epsg2d;
-                tiff.EpsgSource.CodeString = par.EpsgSource;
-                tiff.EpsgTarget.CodeString = par.EpsgTarget;
-                tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
+                var ct2 = new Ct2File();
 
-                if (par.Ct2 != null && !tiff.Ct2.ReadCt2(par.Ct2.FullName))
+                ct2.FalseLat = par.FLat;
+                ct2.FalseLon = par.FLon;
+
+                if (par.FromSys != null && !ct2.ReadSystem1PointList(par.FromSys.FullName) )
                 {
-                    Console.WriteLine($"Cound not read the ct2 file {par.Ct2.Name}.");
+                    Console.WriteLine($"Cound not read the csv file {par.FromSys.Name}.");
                     return -1;
                 }
-                if (par.Gtx != null && !tiff.Gtx.ReadGtx(par.Gtx.FullName))
+                if (par.ToSys != null && !ct2.ReadSystem2PointList(par.ToSys.FullName))
                 {
-                    Console.WriteLine($"Cound not read the gtx file {par.Gtx.Name}.");
+                    Console.WriteLine($"Cound not read the csv file {par.ToSys.Name}.");
                     return -1;
                 }
-                if (!tiff.GenerateGridFile(par.Output.FullName))
+                if (!ct2.ComputeParameters())
                 {
-                    Console.WriteLine($"Feil i generering av tiff-fil {par.Output.Name}.");
+                    Console.WriteLine($"Cound not compute parameters.");
                     return -1;
                 }
-                */
+                if (!ct2.ComputeGridData())
+                {
+                    Console.WriteLine($"Cound not compute grid data.");
+                    return -1;
+                }
+                if (!ct2.GenerateGridFile(par.Output.FullName))
+                {
+                    Console.WriteLine($"Cound not write the ct2 file {par.Output.Name}.");
+                    return -1;
+                }              
                 return 0;
             }
             catch (Exception ex)

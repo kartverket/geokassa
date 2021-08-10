@@ -2,8 +2,8 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "geokassa csvs2ct2 EUREF89_epsg1182.fri ED50_epsg1182.fri EUREF89_ED50_test.ct2 --flat 0.0 --flon 0.0",
-      "workingDirectory": "C:\\Prosjekter\\ED50\\"
+      "commandLineArgs": "geokassa csvs2ct2 --flat 3.5 --flon 4.3   EUREF89_epsg1182.fri   ED50_epsg1182.fri   EUREF89_ED50_test.ct2",
+      "workingDirectory": "C:\\Prosjekter\\ED50"
     }
   }
 }

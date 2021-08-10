@@ -77,12 +77,12 @@ namespace gridfiles
         public int Dim { get; set; }
     }
 
-    public class Csvs2Ct2CommandParams : CommandParams        
+    public class Csvs2Ct2CommandParams
     {
-        public FileInfo CsvFromSys { get; set; }
-        public FileInfo CsvToSys { get; set; }
-        public FileInfo Ct2 { get; set; }
-        public double FalseLatitude { get; set; }
-        public double FalseLongitude { get; set; }
+        public double FLat { get; set; }
+        public double FLon { get; set; }
+        public FileInfo FromSys { get; set; }
+        public FileInfo ToSys { get; set; }
+        public FileInfo Output { get; set; }
     }
 }

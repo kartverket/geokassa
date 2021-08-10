@@ -583,5 +583,5 @@ namespace gridfiles
         public string EpsgSource { get; set; }
         public string EpsgTarget { get; set; }
         public string Version { get; set; }
-    }   
+    }
 }
