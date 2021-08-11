@@ -8,6 +8,25 @@ namespace gridfiles
 {
     public class GridFile
     {
+        public enum GridType
+        {
+            ct2 = 0,
+            gtx = 1,
+            tiff = 2
+        }
+        /*
+         * public enum TiffOutputTypeshort
+        {
+            hoffset = TiffOutputType.HORIZONTAL_OFFSET,
+            geoid = TiffOutputType.VERTICAL_OFFSET_GEOGRAPHIC_TO_VERTICAL,
+            vsep = TiffOutputType.VERTICAL_OFFSET_VERTICAL_TO_VERTICAL,
+            goffset = TiffOutputType.GEOCENTRIC_TRANSLATION,
+            vel = TiffOutputType.VELOCITY,
+            deform = TiffOutputType.DEFORMATION_MODEL
+        }
+
+         */
+        
         private List<CommonPointXYZ> _list;
 
         public string OutputFileName { get; set; } = "";
@@ -83,6 +102,7 @@ namespace gridfiles
         }
     }
 
+ 
     public static class DoubleEx
     {
         public static double GetPrecision(this double value, int fractionRound)

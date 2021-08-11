@@ -504,4 +504,19 @@ namespace geokassa
             }
         }
     }
+
+    public class MergeGrids : Command
+    {
+        public MergeGrids(string name, string description = null) : base(name, description)
+        {
+            Name = name;
+            Description = description;
+
+            AddArgument(new Argument<FileInfo>("grid1", "Primary grid") { ArgumentType = typeof(FileInfo) });
+            AddArgument(new Argument<FileInfo>("grid2", "Secondary grid") { ArgumentType = typeof(FileInfo) });
+
+            AddOption(new Option<GridFile.GridType>("--type", "GridType") { Argument = new Argument<GridFile.GridType>("type"), IsRequired = true });
+            
+        }
+    }
 }

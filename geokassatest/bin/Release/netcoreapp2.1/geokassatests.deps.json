@@ -9,7 +9,7 @@
       "geokassatests/1.1.0": {
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "15.9.0",
-          "geokassa": "1.1.0",
+          "geokassa": "1.2.0",
           "gridfiles": "1.1.0",
           "xunit": "2.4.0",
           "xunit.runner.visualstudio": "2.4.0"
@@ -1028,7 +1028,7 @@
           "Microsoft.NET.Test.Sdk": "15.9.0"
         }
       },
-      "geokassa/1.1.0": {
+      "geokassa/1.2.0": {
         "dependencies": {
           "System.CommandLine": "2.0.0-beta1.20574.7",
           "gridfiles": "1.1.0"
@@ -1609,7 +1609,7 @@
       "path": "xunit.runner.visualstudio/2.4.0",
       "hashPath": "xunit.runner.visualstudio.2.4.0.nupkg.sha512"
     },
-    "geokassa/1.1.0": {
+    "geokassa/1.2.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
