@@ -89,6 +89,7 @@ namespace gridfiles
 
     public class MergeGridsCommandParams
     {
+        public string Desc { get; set; } = "";
         public GridFile.GridType Type { get; set; }
         public FileInfo Grid1 { get; set; }
         public FileInfo Grid2 { get; set; }

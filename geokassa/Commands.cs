@@ -517,7 +517,8 @@ namespace geokassa
             AddArgument(new Argument<FileInfo>("grid1", "Primary grid") { ArgumentType = typeof(FileInfo) });
             AddArgument(new Argument<FileInfo>("grid2", "Secondary grid") { ArgumentType = typeof(FileInfo) });
             AddArgument(new Argument<FileInfo>("gridtarget", "Target grid") { ArgumentType = typeof(FileInfo) });
-            
+
+            AddOption(new Option("--desc", "Description") { Argument = new Argument<string>("desc") });
             AddOption(new Option<GridFile.GridType>("--type", "GridType") { Argument = new Argument<GridFile.GridType>("type"), IsRequired = true });
 
             Handler = CommandHandler.Create((MergeGridsCommandParams pars) =>
@@ -556,7 +557,7 @@ namespace geokassa
                             Console.WriteLine($"Cound not merge the grids.");
                             return -1;
                         }
-                        // mergedFile.OutputFileName = par.GridTarget.FullName;
+                        mergedFile.Description = par.Desc;
                         mergedFile.GenerateGridFile(par.GridTarget.FullName);
 
                         return 0;
