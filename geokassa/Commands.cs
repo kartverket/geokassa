@@ -451,6 +451,7 @@ namespace geokassa
             AddArgument(new Argument<FileInfo>("tosys", "Input csv To system") { ArgumentType = typeof(FileInfo) } );
             AddArgument(new Argument<FileInfo>("output", "Output Ct2 file") { ArgumentType = typeof(FileInfo) });
 
+            AddOption(new Option("--desc", "Description") { Argument = new Argument<string>("desc") });
             AddOption(new Option("--flat", "False latitude") { Argument = new Argument<double>("flat") });
             AddOption(new Option("--flon", "False longitude") { Argument = new Argument<double>("flon") });
 
@@ -468,6 +469,7 @@ namespace geokassa
 
                 ct2.FalseLat = par.FLat;
                 ct2.FalseLon = par.FLon;
+                ct2.Description = par.Desc;
 
                 if (par.FromSys != null && !ct2.ReadSystem1PointList(par.FromSys.FullName) )
                 {
