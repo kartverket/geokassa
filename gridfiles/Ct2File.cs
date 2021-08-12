@@ -656,8 +656,8 @@ namespace gridfiles
 
         public bool ComputeParameters()
         {
-            var systemPointList = System1PointList;
-
+            var systemPointList = System1PointList.Count() > System2PointList.Count() ? System1PointList : System2PointList;
+            
             LowerLeftLatitude = systemPointList.Min(x => x.Item3);
             LowerLeftLongitude = systemPointList.Min(x => x.Item2);
 
