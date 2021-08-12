@@ -85,4 +85,12 @@ namespace gridfiles
         public FileInfo ToSys { get; set; }
         public FileInfo Output { get; set; }
     }
+
+    public class MergeGridsCommandParams
+    {
+        public GridFile.GridType Type { get; set; }
+        public FileInfo Grid1 { get; set; }
+        public FileInfo Grid2 { get; set; }
+        public FileInfo GridTarget { get; set; }
+    }
 }

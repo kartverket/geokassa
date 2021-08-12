@@ -14,19 +14,7 @@ namespace gridfiles
             gtx = 1,
             tiff = 2
         }
-        /*
-         * public enum TiffOutputTypeshort
-        {
-            hoffset = TiffOutputType.HORIZONTAL_OFFSET,
-            geoid = TiffOutputType.VERTICAL_OFFSET_GEOGRAPHIC_TO_VERTICAL,
-            vsep = TiffOutputType.VERTICAL_OFFSET_VERTICAL_TO_VERTICAL,
-            goffset = TiffOutputType.GEOCENTRIC_TRANSLATION,
-            vel = TiffOutputType.VELOCITY,
-            deform = TiffOutputType.DEFORMATION_MODEL
-        }
-
-         */
-        
+   
         private List<CommonPointXYZ> _list;
 
         public string OutputFileName { get; set; } = "";
@@ -95,10 +83,6 @@ namespace gridfiles
                 Console.WriteLine($"X: {p.X1} Y: {p.Y1} Z: {p.Z1} Lat: {p.Phi1Deg} Lon: {p.Lambda1Deg} H: {p.H1 }");
             }
             return trueOrFalse;
-        }
-
-        public void SpeedTestSimdjson()
-        {
         }
     }
 

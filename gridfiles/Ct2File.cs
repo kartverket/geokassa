@@ -1,10 +1,10 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace gridfiles
 {
@@ -567,18 +567,18 @@ namespace gridfiles
                         eastRow.Add(eastValue);
                         northRow.Add(northValue);
 
-                        // TODO: Sign at easting value?
-                        //_griEast.Data.Insert(index, eastValue);
-                        //_griNorth.Data.Insert(index++, northValue);
-
                         noOfBytes += 8;
                     }
                     eastList.Add(eastRow);
                     northList.Add(northRow);
 
-                    eastList.Reverse();
-                    northList.Reverse();
-
+                    // TODO: Fails reading for merging
+                    if (false)
+                    {
+                        eastList.Reverse();
+                        northList.Reverse();
+                    }
+                    
                     foreach (var row in eastList)
                          foreach (var col in row)
                             _griEast.Data.Add(col);
@@ -696,9 +696,6 @@ namespace gridfiles
 
                 if (!element.sys2.Any())
                 {
-                    //_griEast.Data.Add(-88.8888f);
-                    //_griNorth.Data.Add(-88.8888f);
-
                     _griEast.Data.Add(float.NaN);
                     _griNorth.Data.Add(float.NaN);
                 }
@@ -850,6 +847,67 @@ namespace gridfiles
         public void CleanNullPoints()
         {
             PointList.RemoveAll(x => x.HasNullValues);
+        }
+    }
+
+    // TODO: Move to new file
+    public class MergedCt2File : Ct2File
+    {
+        public MergedCt2File(Ct2File grid1, Ct2File grid2)
+        {
+            Grid1 = grid1;
+            Grid2 = grid2;
+
+            this.NColumns = Grid1.NColumns;
+            this.NRows = Grid1.NRows;
+            this.LowerLeftLatitude = Grid1.LowerLeftLatitude;
+            this.LowerLeftLongitude = Grid1.LowerLeftLongitude;
+            this.DeltaLatitude = Grid1.DeltaLatitude;
+            this.DeltaLongitude = Grid1.DeltaLongitude;
+        }
+
+        public Ct2File Grid1 { get; set; } = new Ct2File();
+        public Ct2File Grid2 { get; set; } = new Ct2File();
+
+        public bool MergeGrids()
+        {
+            var index = 0;
+
+            if (Grid1.GriEast.IsEmpty || Grid1.GriNorth.IsEmpty || Grid2.GriEast.IsEmpty || Grid2.GriNorth.IsEmpty)
+                return false;        
+
+            foreach (var data1 in Grid1.GriEast.Data)
+            {
+                var data2 = Grid2.GriEast.Data.ElementAt(index++);
+
+                if (!float.IsNaN(data1) && !float.IsNaN(data2))
+                    GriEast.Data.Add(data2);
+                else if (!float.IsNaN(data1))
+                    GriEast.Data.Add(data1);               
+                else
+                    GriEast.Data.Add(data2);
+            }
+
+            index = 0;
+
+            foreach (var data1 in Grid1.GriNorth.Data)
+            {
+                var data2 = Grid2.GriNorth.Data.ElementAt(index++);
+
+                if (!float.IsNaN(data1) && !float.IsNaN(data2))
+                    GriNorth.Data.Add(data2);
+                else if (!float.IsNaN(data1))
+                    GriNorth.Data.Add(data1);
+                else
+                    GriNorth.Data.Add(data2);
+            }
+
+            // TODO: Remove code
+            var count = GriEast.Data.Count(x => float.IsNaN(x));
+            var count1 = Grid1.GriEast.Data.Count(x => float.IsNaN(x));
+            var count2 = Grid2.GriEast.Data.Count(x => float.IsNaN(x));
+
+            return true;
         }
     }
 }

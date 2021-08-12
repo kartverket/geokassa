@@ -2,7 +2,7 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "geokassa merge --type ct2 ED50_epsg1182.fri ED50_epsg1182.fri",
+      "commandLineArgs": "geokassa merge --type ct2 EUREF89_ED50_land.ct2 EUREF89_ED50_sea.ct2 merge.ct2",
       "workingDirectory": "C:\\Prosjekter\\ED50"
     }
   }

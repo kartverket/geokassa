@@ -68,6 +68,8 @@ namespace gridfiles
             set => _gridParam.NColumns = value;
         }
 
+        public bool IsEmpty => !Data.Any();
+
         internal List<float> Data { get; set; } = new List<float>();
         
         public bool ReadGridFile()
