@@ -414,7 +414,7 @@ namespace geokassa
                 tiff.EpsgTarget.CodeString = par.EpsgTarget;
                 tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
             
-                if (par.Ct2 != null && !tiff.Ct2.ReadCt2(par.Ct2.FullName))
+                if (par.Ct2 != null && !tiff.Ct2.ReadCt2(par.Ct2.FullName, true))
                 {
                     Console.WriteLine($"Cound not read the ct2 file {par.Ct2.Name}.");
                     return -1;

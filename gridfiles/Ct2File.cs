@@ -504,7 +504,7 @@ namespace gridfiles
             return true;
         }
 
-        public bool ReadCt2(string ct2Filename)
+        public bool ReadCt2(string ct2Filename, bool reverse = false)
         {
             _griEast.Data.Clear();
             _griNorth.Data.Clear();
@@ -573,7 +573,7 @@ namespace gridfiles
                     northList.Add(northRow);
 
                     // TODO: Fails reading for merging
-                    if (false)
+                    if (reverse)
                     {
                         eastList.Reverse();
                         northList.Reverse();

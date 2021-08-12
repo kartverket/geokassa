@@ -8,10 +8,10 @@ namespace gridfiles
     public class CommandParams
     {
         public FileInfo Output { get; set; }
-        public string GridName { get; set; }
-        public string Area { get; set; }
-        public string Desc { get; set; }
-        public string Email { get; set; }
+        public string GridName { get; set; } = "";
+        public string Area { get; set; } = "";
+        public string Desc { get; set; } = "";
+        public string Email { get; set; } = "";
         public int TileSize { get; set; }
         public GeoTiffFile.TiffOutputTypeshort Type { get; set; }
     }
