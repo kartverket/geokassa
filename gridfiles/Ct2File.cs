@@ -682,9 +682,11 @@ namespace gridfiles
             return true;
         }
 
-        public bool ComputeGridData()
+        public bool ComputeGridData(GridFile.Direction dir)
         {
-            var joinPointList = System1PointList.GroupJoin(System2PointList, x => x.Item1, y => y.Item1, (x, y) => new { sys1 = x, sys2 = y });
+            var outer = System1PointList.Count() > System2PointList.Count() ? System1PointList : System2PointList;
+            var inner = System1PointList.Count() > System2PointList.Count() ? System2PointList : System1PointList;
+            var joinPointList = outer.GroupJoin(inner, x => x.Item1, y => y.Item1, (x, y) => new { sys1 = x, sys2 = y });
 
             foreach (var element in joinPointList)
             {
@@ -705,8 +707,16 @@ namespace gridfiles
                     lon2 = element.sys2.FirstOrDefault().Item2 + FalseLon;
                     lat2 = element.sys2.FirstOrDefault().Item3 + FalseLat;
 
-                    _griEast.Data.Add((float)(-Ro * (lon2 - lon1)));
-                    _griNorth.Data.Add((float)(Ro * (lat2 - lat1)));
+                    if (dir == Direction.fwd)
+                    {
+                        _griEast.Data.Add((float)(-Ro * (lon2 - lon1)));
+                        _griNorth.Data.Add((float)(Ro * (lat2 - lat1)));
+                    }
+                    else
+                    {
+                        _griEast.Data.Add((float)(Ro * (lon2 - lon1)));
+                        _griNorth.Data.Add((float)(-Ro * (lat2 - lat1)));
+                    }
                 }
             }
             return true;

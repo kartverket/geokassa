@@ -81,7 +81,8 @@ namespace gridfiles
     {
         public double FLat { get; set; }
         public double FLon { get; set; }
-        public string Desc { get; set; }
+        public string Desc { get; set; } = "";
+        public GridFile.Direction Dir { get; set; } = GridFile.Direction.fwd;
         public FileInfo FromSys { get; set; }
         public FileInfo ToSys { get; set; }
         public FileInfo Output { get; set; }
