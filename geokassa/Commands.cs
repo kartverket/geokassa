@@ -454,6 +454,7 @@ namespace geokassa
             AddOption(new Option("--desc", "Description") { Argument = new Argument<string>("desc") });
             AddOption(new Option("--flat", "False latitude") { Argument = new Argument<double>("flat") });
             AddOption(new Option("--flon", "False longitude") { Argument = new Argument<double>("flon") });
+            AddOption(new Option<GridFile.Direction>("--dir", "Direction of transformation") { Argument = new Argument<GridFile.Direction>("dir") });
 
             Handler = CommandHandler.Create((Csvs2Ct2CommandParams pars) =>
             {
@@ -486,7 +487,7 @@ namespace geokassa
                     Console.WriteLine($"Cound not compute parameters.");
                     return -1;
                 }
-                if (!ct2.ComputeGridData())
+                if (!ct2.ComputeGridData(par.Dir))
                 {
                     Console.WriteLine($"Cound not compute grid data.");
                     return -1;

@@ -14,6 +14,12 @@ namespace gridfiles
             gtx = 1,
             tiff = 2
         }
+
+        public enum Direction
+        {
+            fwd = 0,
+            inv = 1
+        }
    
         private List<CommonPointXYZ> _list;
 

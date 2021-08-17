@@ -4,7 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using GeoJSON.Net;
+using GeoJSON.Net.CoordinateReferenceSystem;
+using GeoJSON.Net.Converters;
+using GeoJSON.Net.Geometry;
+using GeoJSON.Net.Feature;
 using MathNet.Numerics.LinearAlgebra;
+using Newtonsoft.Json;
 
 namespace gridfiles
 {
@@ -20,8 +26,6 @@ namespace gridfiles
         private GriFile _griEast;
         private CptFile _cptFile = new CptFile();
         private GridParam _gridParam;
-        private List<float> _data = new List<float>();
-
         private const double Ro = Math.PI / 180;
         private char[] _id = new char[80];
 
@@ -65,7 +69,10 @@ namespace gridfiles
             set => _cptFile.CommonPointList = value;
         }
 
+        public List<float> GridData { get; set; } = new List<float>();
+
         public List<Tuple<string, double, double>> System1PointList { get; set; } = new List<Tuple<string, double, double>>();
+
         public List<Tuple<string, double, double>> System2PointList { get; set; } = new List<Tuple<string, double, double>>();
 
         public GriFile GriNorth
@@ -146,12 +153,6 @@ namespace gridfiles
                 _id = value.ToCharArray();
                 Array.Resize(ref _id, 80);
             }
-        }
-
-        public List<float> GridData
-        {
-            get { return _data; }
-            set { _data = value; }
         }
 
         internal int NumberOfPoints => PointList.Count();
@@ -656,8 +657,8 @@ namespace gridfiles
 
         public bool ComputeParameters()
         {
-            var systemPointList = System1PointList;
-
+            var systemPointList = System1PointList.Count() > System2PointList.Count() ? System1PointList : System2PointList;
+            
             LowerLeftLatitude = systemPointList.Min(x => x.Item3);
             LowerLeftLongitude = systemPointList.Min(x => x.Item2);
 
@@ -682,9 +683,11 @@ namespace gridfiles
             return true;
         }
 
-        public bool ComputeGridData()
+        public bool ComputeGridData(GridFile.Direction dir)
         {
-            var joinPointList = System1PointList.GroupJoin(System2PointList, x => x.Item1, y => y.Item1, (x, y) => new { sys1 = x, sys2 = y });
+            var outer = System1PointList.Count() > System2PointList.Count() ? System1PointList : System2PointList;
+            var inner = System1PointList.Count() > System2PointList.Count() ? System2PointList : System1PointList;
+            var joinPointList = outer.GroupJoin(inner, x => x.Item1, y => y.Item1, (x, y) => new { sys1 = x, sys2 = y });
 
             foreach (var element in joinPointList)
             {
@@ -705,8 +708,16 @@ namespace gridfiles
                     lon2 = element.sys2.FirstOrDefault().Item2 + FalseLon;
                     lat2 = element.sys2.FirstOrDefault().Item3 + FalseLat;
 
-                    _griEast.Data.Add((float)(-Ro * (lon2 - lon1)));
-                    _griNorth.Data.Add((float)(Ro * (lat2 - lat1)));
+                    if (dir == Direction.fwd)
+                    {
+                        _griEast.Data.Add((float)(-Ro * (lon2 - lon1)));
+                        _griNorth.Data.Add((float)(Ro * (lat2 - lat1)));
+                    }
+                    else
+                    {
+                        _griEast.Data.Add((float)(Ro * (lon2 - lon1)));
+                        _griNorth.Data.Add((float)(-Ro * (lat2 - lat1)));
+                    }
                 }
             }
             return true;
@@ -847,6 +858,32 @@ namespace gridfiles
         public void CleanNullPoints()
         {
             PointList.RemoveAll(x => x.HasNullValues);
+        }
+
+        public void TestGeoJson(string geoJsonFile)
+        {
+            if (File.Exists(geoJsonFile))
+            {
+                return;
+            }
+
+            using (var sr = new StreamReader(geoJsonFile))
+            {
+                // Read the stream as a string, and write the string to the console.
+                string s = sr.ReadToEnd();
+
+                
+
+             //   var point = JsonConvert.DeserializeObject<Point>(s);
+
+                sr.Close();
+            }
+           
+
+            Position position = new Position(51.899523, -2.124156);
+            Point point = new Point(position);
+
+            string json = JsonConvert.SerializeObject(point);
         }
     }
 

@@ -37,5 +37,5 @@ namespace geokassa
 
             rootCommand.InvokeAsync(args).Wait();
         } 
-    }  
+    }
 }
