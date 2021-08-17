@@ -5,12 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using GeoJSON.Net;
-using GeoJSON.Net.CoordinateReferenceSystem;
-using GeoJSON.Net.Converters;
-using GeoJSON.Net.Geometry;
-using GeoJSON.Net.Feature;
 using MathNet.Numerics.LinearAlgebra;
-using Newtonsoft.Json;
+using NetTopologySuite.Geometries;
 
 namespace gridfiles
 {
@@ -26,6 +22,7 @@ namespace gridfiles
         private GriFile _griEast;
         private CptFile _cptFile = new CptFile();
         private GridParam _gridParam;
+        private List<Polygon> _polygonList = new List<Polygon>();
         private const double Ro = Math.PI / 180;
         private char[] _id = new char[80];
 
@@ -697,6 +694,13 @@ namespace gridfiles
                 var lon2 = 0d;
                 var lat2 = 0d;
 
+                if (IsInSidePolygons(new NetTopologySuite.Geometries.Point(lon1, lat1)))
+                {
+                    _griEast.Data.Add(float.NaN);
+                    _griNorth.Data.Add(float.NaN);
+
+                    continue;
+                }
                 if (!element.sys2.Any())
                 {
                     _griEast.Data.Add(float.NaN);
@@ -860,30 +864,87 @@ namespace gridfiles
             PointList.RemoveAll(x => x.HasNullValues);
         }
 
-        public void TestGeoJson(string geoJsonFile)
+        public void ReadGeoJsonAreas(string geoJsonFile)
         {
-            if (File.Exists(geoJsonFile))
-            {
+            if (!File.Exists(geoJsonFile))
                 return;
-            }
 
             using (var sr = new StreamReader(geoJsonFile))
             {
-                // Read the stream as a string, and write the string to the console.
                 string s = sr.ReadToEnd();
 
-                
+                var reader = new NetTopologySuite.IO.GeoJsonReader();
+                var featureCollection = reader.Read<GeoJSON.Net.Feature.FeatureCollection>(s);
 
-             //   var point = JsonConvert.DeserializeObject<Point>(s);
+                foreach (var feature in featureCollection.Features)
+                {
+                    List<NetTopologySuite.Geometries.Coordinate> coordinates;
 
-                sr.Close();
+                    switch (feature.Geometry.Type)
+                    {
+                        case GeoJSONObjectType.Point:
+                            break;
+                        case GeoJSONObjectType.MultiPoint:                          
+                            break;
+                        case GeoJSONObjectType.Polygon:
+                            var polygon = feature.Geometry as GeoJSON.Net.Geometry.Polygon;
+                           
+                            foreach (var poly in polygon.Coordinates)
+                            {
+                                coordinates = new List<NetTopologySuite.Geometries.Coordinate>();
+                                if (poly.IsLinearRing())
+                                {
+                                    foreach (var coordinate in poly.Coordinates)
+                                    {
+                                        var location = coordinate as GeoJSON.Net.Geometry.Position;
+
+                                        if (location == null)
+                                            continue;
+
+                                        coordinates.Add(new NetTopologySuite.Geometries.Coordinate(location.Longitude, location.Latitude));
+                                    }
+                                }
+                                _polygonList.Add(new Polygon(new LinearRing(coordinates.ToArray())));                               
+                            }
+                            break;
+                        case GeoJSONObjectType.MultiPolygon:
+                            var multiPolygon = feature.Geometry as GeoJSON.Net.Geometry.MultiPolygon;
+                            foreach (var mpoly in multiPolygon.Coordinates)
+                            {
+                                coordinates = new List<NetTopologySuite.Geometries.Coordinate>();
+                                foreach (var poly in mpoly.Coordinates)
+                                {
+                                    if (poly.IsLinearRing())
+                                    {
+                                        foreach (var coordinate in poly.Coordinates)
+                                        {
+                                            var location = coordinate as GeoJSON.Net.Geometry.Position;
+
+                                            if (location == null)
+                                                continue;
+
+                                            coordinates.Add(new NetTopologySuite.Geometries.Coordinate(location.Longitude, location.Latitude));
+                                        }
+                                    }
+                                    _polygonList.Add(new Polygon(new LinearRing(coordinates.ToArray())));
+                                }
+                            }
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+                sr.Close();             
             }
+        }
+
+        public bool IsInSidePolygons(NetTopologySuite.Geometries.Point point)
+        {
+            foreach (var poly in _polygonList)        
+                if (poly.Covers(point))
+                    return true;
            
-
-            Position position = new Position(51.899523, -2.124156);
-            Point point = new Point(position);
-
-            string json = JsonConvert.SerializeObject(point);
+            return false;
         }
     }
 

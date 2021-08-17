@@ -86,6 +86,7 @@ namespace gridfiles
         public FileInfo FromSys { get; set; }
         public FileInfo ToSys { get; set; }
         public FileInfo Output { get; set; }
+        public FileInfo GJs { get; set; }
     }
 
     public class MergeGridsCommandParams

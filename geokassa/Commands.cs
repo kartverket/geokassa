@@ -455,6 +455,7 @@ namespace geokassa
             AddOption(new Option("--flat", "False latitude") { Argument = new Argument<double>("flat") });
             AddOption(new Option("--flon", "False longitude") { Argument = new Argument<double>("flon") });
             AddOption(new Option<GridFile.Direction>("--dir", "Direction of transformation") { Argument = new Argument<GridFile.Direction>("dir") });
+            AddOption(new Option("--gjs", "Input geojson file") { Argument = new Argument<FileInfo>("gjs") });
 
             Handler = CommandHandler.Create((Csvs2Ct2CommandParams pars) =>
             {
@@ -471,6 +472,9 @@ namespace geokassa
                 ct2.FalseLat = par.FLat;
                 ct2.FalseLon = par.FLon;
                 ct2.Description = par.Desc;
+
+                if (par.GJs != null)
+                    ct2.ReadGeoJsonAreas(par.GJs.FullName);
 
                 if (par.FromSys != null && !ct2.ReadSystem1PointList(par.FromSys.FullName) )
                 {
