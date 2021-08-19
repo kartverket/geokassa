@@ -473,9 +473,11 @@ namespace geokassa
                 ct2.FalseLon = par.FLon;
                 ct2.Description = par.Desc;
 
-                if (par.GJs != null)
-                    ct2.ReadGeoJsonAreas(par.GJs.FullName);
-
+                if (par.GJs != null && !ct2.ReadGeoJsonAreas(par.GJs.FullName))
+                {
+                    Console.WriteLine($"Cound not parse the geojson file {par.GJs.Name}.");
+                    return -1;
+                }
                 if (par.FromSys != null && !ct2.ReadSystem1PointList(par.FromSys.FullName) )
                 {
                     Console.WriteLine($"Cound not read the csv file {par.FromSys.Name}.");

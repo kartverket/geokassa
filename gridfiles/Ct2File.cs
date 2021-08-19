@@ -696,8 +696,11 @@ namespace gridfiles
 
                 if (IsInSidePolygons(new NetTopologySuite.Geometries.Point(lon1, lat1)))
                 {
-                    _griEast.Data.Add(float.NaN);
-                    _griNorth.Data.Add(float.NaN);
+                    _griEast.Data.Add(0f);
+                    _griNorth.Data.Add(0f);
+
+                   // _griEast.Data.Add(float.NaN);
+                   // _griNorth.Data.Add(float.NaN);
 
                     continue;
                 }
@@ -864,10 +867,10 @@ namespace gridfiles
             PointList.RemoveAll(x => x.HasNullValues);
         }
 
-        public void ReadGeoJsonAreas(string geoJsonFile)
+        public bool ReadGeoJsonAreas(string geoJsonFile)
         {
             if (!File.Exists(geoJsonFile))
-                return;
+                return false;
 
             using (var sr = new StreamReader(geoJsonFile))
             {
@@ -936,6 +939,7 @@ namespace gridfiles
                 }
                 sr.Close();             
             }
+            return true;
         }
 
         public bool IsInSidePolygons(NetTopologySuite.Geometries.Point point)
