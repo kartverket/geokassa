@@ -461,7 +461,7 @@ namespace gridfiles
                                     col = 0;
                             }                       
  
-                            if (data == 9999f)
+                            if (data == 9999f || data == 9999.999f)
                                 data = -88.8888f;
  
                             col++;

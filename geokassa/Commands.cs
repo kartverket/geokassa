@@ -193,9 +193,9 @@ namespace geokassa
             {
                 var tiff = new GeoTiffFile();
 
-                tiff.Grid_name = par.GridName ?? "";
-                tiff.ImageDescription = par.Desc ?? "";
-                tiff.Area_of_use = par.Area ?? "";
+                tiff.Grid_name = par.GridName;
+                tiff.ImageDescription = par.Desc;
+                tiff.Area_of_use = par.Area;
                 tiff.Email = par.Email;
                 tiff.TileSize = par.TileSize;
                 tiff.Epsg2d.CodeString = par.Epsg2d;

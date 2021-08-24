@@ -84,8 +84,7 @@ namespace gridfiles
             set => _cps = value;
         }
 
-        public TiffOutputType TiffOutput { get; set; }
-       
+        public TiffOutputType TiffOutput { get; set; }       
 
         public int Dimensions { get; set; } = 1;
 
