@@ -90,13 +90,13 @@ namespace geokassatest
             var result = cps.Helmert(0.1d, 100000d, 0.05d);
 
             Assert.True(result);
-            Assert.Equal(-0.041207201818965096d, cps.Rx.ToArcSec(), 8);
-            Assert.Equal(-0.0036962766589199079, cps.Ry.ToArcSec(), 8);
-            Assert.Equal(0.0054642511968749623, cps.Rz.ToArcSec(), 8);
-            Assert.Equal(0.576253823189717d, cps.Tx, 4);
-            Assert.Equal(-1.5546849330570782, cps.Ty, 4);
-            Assert.Equal(-0.37411346051971311d, cps.Tz, 4);
-            Assert.Equal(0.0072842152309959829d, cps.S.ToPpm(), 8);
+            Assert.Equal(-0.041216971276516953, cps.Rx.ToArcSec(), 8);
+            Assert.Equal(-0.0037183533303600906, cps.Ry.ToArcSec(), 8);
+            Assert.Equal(0.00550760219295924, cps.Rz.ToArcSec(), 8);
+            Assert.Equal(0.57681536981246218, cps.Tx, 4);
+            Assert.Equal(-1.5556197770016149, cps.Ty, 4);
+            Assert.Equal(-0.37464289347149926, cps.Tz, 4);
+            Assert.Equal(0.0073245487453021951, cps.S.ToPpm(), 8);
         }
 
         [Fact]
