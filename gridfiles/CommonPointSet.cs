@@ -233,20 +233,41 @@ namespace gridfiles
             }
         }
         
-        public double Rms
-        {
-            get
-            {
-                if (V == null)
-                    return 0d;
+        public double Rms => HelmertIsComputed ? Math.Sqrt((V.Transpose() * V).At(0, 0) / (NumberOfPoints * 3)):0d;
+             
+        public double MinX => HelmertIsComputed ? V.Enumerate().Where((x, i) => i % 3 == 0).Min() : 0d;
 
-                return Math.Sqrt((V.Transpose() * V).At(0, 0)/ (NumberOfPoints * 3));
-            }
-        }
+        public double MinY => HelmertIsComputed ? V.Enumerate().Where((x, i) => i % 3 == 1).Min() : 0d;
+
+        public double MinZ => HelmertIsComputed ? V.Enumerate().Where((x, i) => i % 3 == 2).Min() : 0d;
+
+        public double MaxX => HelmertIsComputed ? V.Enumerate().Where((x, i) => i % 3 == 0).Max() : 0d;
+
+        public double MaxY => HelmertIsComputed ? V.Enumerate().Where((x, i) => i % 3 == 1).Max() : 0d;
+
+        public double MaxZ => HelmertIsComputed ? V.Enumerate().Where((x, i) => i % 3 == 2).Max() : 0d;
+
+        public double MeanX => HelmertIsComputed ? V.Enumerate().Where((x, i) => i % 3 == 0).Sum() / NumberOfPoints : 0d;
+
+        public double MeanY => HelmertIsComputed ? V.Enumerate().Where((x, i) => i % 3 == 1).Sum() / NumberOfPoints : 0d;
+         
+        public double MeanZ => HelmertIsComputed ? V.Enumerate().Where((x, i) => i % 3 == 2).Sum() / NumberOfPoints : 0d;
+
+        public double AverageX => HelmertIsComputed ? Math.Sqrt(V.Enumerate().Where((x, i) => i % 3 == 0).Sum(y => (y - MeanX) * (y - MeanX)) / (NumberOfPoints - 1)) : 0d;
+
+        public double AverageY => HelmertIsComputed ? Math.Sqrt(V.Enumerate().Where((x, i) => i % 3 == 1).Sum(y => (y - MeanY) * (y - MeanY)) / (NumberOfPoints - 1)) : 0d;
+
+        public double AverageZ => HelmertIsComputed ? Math.Sqrt(V.Enumerate().Where((x, i) => i % 3 == 2).Sum(y => (y - MeanZ) * (y - MeanZ)) / (NumberOfPoints - 1)) : 0d;
+
+        public double RmsX => HelmertIsComputed ? Math.Sqrt(V.Enumerate().Where((x, i) => i % 3 == 0).Sum(y => y * y) / NumberOfPoints) : 0d;
+
+        public double RmsY => HelmertIsComputed ? Math.Sqrt(V.Enumerate().Where((x, i) => i % 3 == 1).Sum(y => y * y) / NumberOfPoints) : 0d;
+
+        public double RmsZ => HelmertIsComputed ? Math.Sqrt(V.Enumerate().Where((x, i) => i % 3 == 2).Sum(y => y * y) / NumberOfPoints) : 0d;
 
         internal int NumberOfPoints => PointList.Count(x=> !x.HasNullValues);
 
-        internal bool HelmertIsComputed => Rx != 0d || Ry != 0d || Rz != 0d || Tx != 0d || Ty != 0d || Tz != 0d || S != 1d;
+        internal bool HelmertIsComputed => (NumberOfPoints > 0 && V != null && V.RowCount >= 3 && V.ColumnCount == 1) && (Rx != 0d || Ry != 0d || Rz != 0d || Tx != 0d || Ty != 0d || Tz != 0d || S != 1d);
 
         internal string HelmertResult
         {
@@ -425,7 +446,10 @@ namespace gridfiles
 
         internal void PrintResiduals()
         {
-            var fileName = "Helmert_results.txt";
+            if (!HelmertIsComputed)
+                return;
+
+            var fileName = "Helmert_results" + DateTime.Now.ToShortDateString()  + ".txt";
 
             using (StreamWriter writer = new StreamWriter(fileName))
             {
@@ -438,8 +462,20 @@ namespace gridfiles
                 writer.WriteLine($"Ry: {Ry,20:F15} rad,{Ry.ToArcSec(),15:F9} arcsec");
                 writer.WriteLine($"Rz: {Rz,20:F15} rad,{Rz.ToArcSec(),15:F9} arcsec");
                 writer.WriteLine($"S.: {S,20:F15},{S.ToPpm(),20:F9} ppm");
+
                 writer.WriteLine();
-                writer.WriteLine($"Rms: {Rms,20:F6} meter");
+                writer.WriteLine($"RMS: {Rms,20:F6} meter");
+
+                writer.WriteLine();
+                writer.WriteLine("------------------------------------");
+                writer.WriteLine("               X(mm)   Y(mm)   Z(mm)");
+                writer.WriteLine("------------------------------------");
+                writer.WriteLine($"St.dev:     {AverageX*1000,8:F2}{AverageY * 1000,8:F2}{AverageZ * 1000,8:F2}");
+                writer.WriteLine($"Max. value: {MaxX * 1000,8:F2}{MaxY * 1000,8:F2}{MaxZ * 1000,8:F2}");
+                writer.WriteLine($"Min. value: {MinX * 1000,8:F2}{MinY * 1000,8:F2}{MinZ * 1000,8:F2}");
+                writer.WriteLine($"Mean resi.: {MeanX * 1000,8:F2}{MeanY * 1000,8:F2}{MeanZ * 1000,8:F2}");
+                writer.WriteLine($"RMS:        {RmsX * 1000,8:F2}{RmsY * 1000,8:F2}{RmsZ * 1000,8:F2}");
+
                 writer.WriteLine();
                 writer.WriteLine("       From points                                  To points                                    Residuals");
                 writer.WriteLine("----------------------------------------------------------------------------------------------------------------------------");
@@ -449,9 +485,6 @@ namespace gridfiles
                 foreach (var point in PointList.Where(x => !x.HasNullValues))
                 {
                     var index = PointList.IndexOf(point);
-
-                    if (V == null)
-                        break;
 
                     double vx = V[index * 3 + 0, 0];
                     double vy = V[index * 3 + 1, 0];
