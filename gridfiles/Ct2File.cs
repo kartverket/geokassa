@@ -152,7 +152,7 @@ namespace gridfiles
             }
         }
 
-        internal int NumberOfPoints => PointList.Count();
+        internal int NumberOfPoints => PointList.Count(x => !x.HasNullValues);
 
         internal bool HelmertIsComputed => Apar != 1d || Bpar != 0d || Tx != 0d || Ty != 0d;
         
@@ -165,10 +165,10 @@ namespace gridfiles
         {
             get
             {
-                if (PointList.Count() == 0)
+                if (ValidPointList.Count() == 0)
                     return 0d;
 
-                return PointList.Sum(x => x.Phi1Deg) / PointList.Count();
+                return ValidPointList.Sum(x => x.Phi1Deg) / NumberOfPoints;
             }
         }
 
@@ -180,9 +180,9 @@ namespace gridfiles
                 {
                     _a = Matrix<double>.Build.Dense(2 * NumberOfPoints, 4);
 
-                    foreach (var p in PointList)
+                    foreach (var p in ValidPointList)
                     {
-                        var index = PointList.IndexOf(p);
+                        var index = ValidPointList.IndexOf(p);
 
                         _a[index * 2 + 0, 0] = p.Lambda1Deg * CosLat(MeanLat);
                         _a[index * 2 + 0, 1] = p.Phi1Deg;
@@ -213,9 +213,9 @@ namespace gridfiles
                 t[0, 0] = Tx;
                 t[1, 0] = Ty;
 
-                foreach (var point in PointList.Where(x => !x.HasNullValues))
+                foreach (var point in ValidPointList.Where(x => !x.HasNullValues))
                 {
-                    var index = PointList.IndexOf(point);
+                    var index = ValidPointList.IndexOf(point);
 
                     var p1 = Matrix<double>.Build.Dense(2, 1);
                     p1[0, 0] = point.Lambda1Deg * CosLat(MeanLat);
@@ -373,14 +373,14 @@ namespace gridfiles
 
             _covNn = Matrix<double>.Build.Dense(2 * NumberOfPoints, 2 * NumberOfPoints);
             
-            foreach (var p1 in PointList)
+            foreach (var p1 in ValidPointList)
             {
-                var index1 = PointList.IndexOf(p1);
-                foreach (var p2 in PointList)
+                var index1 = ValidPointList.IndexOf(p1);
+                foreach (var p2 in ValidPointList)
                 {
                     var d = p1.GetDistance(p2);
                     var v = k * Math.Exp(-(Math.PI / 2) * (d / c));
-                    var index2 = PointList.IndexOf(p2);
+                    var index2 = ValidPointList.IndexOf(p2);
 
                     _covNn[index1 * 2 + 0, index2 * 2 + 0] = v;
                     _covNn[index1 * 2 + 1, index2 * 2 + 1] = v;
@@ -405,11 +405,11 @@ namespace gridfiles
             // if (PointList.Min(x => x.GetDistance(lat, lon)) > 50000d)
             //    return covMN;
 
-            foreach (var p in PointList)
+            foreach (var p in ValidPointList)
             {
                 var d = p.GetDistance(tempPoint);
                 var v = k * Math.Exp(-(Math.PI / 2) * (d / c));
-                var index = PointList.IndexOf(p);
+                var index = ValidPointList.IndexOf(p);
 
                 covMN[index * 2 + 0, 0] = v;
                 covMN[index * 2 + 1, 1] = v;

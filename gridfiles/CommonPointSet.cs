@@ -161,9 +161,9 @@ namespace gridfiles
 
                 _a = Matrix<double>.Build.Dense(3 * NumberOfPoints, 7);
 
-                foreach (var point in PointList.Where(x => !x.HasNullValues))
+                foreach (var point in ValidPointList)
                 {
-                    var index = PointList.IndexOf(point);
+                    var index = ValidPointList.IndexOf(point);
 
                     double x = (point.X1 - X0) / _factor;
                     double y = (point.Y1 - Y0) / _factor;
@@ -198,9 +198,9 @@ namespace gridfiles
                 t0[1, 0] = Y0;
                 t0[2, 0] = Z0;
 
-                foreach (var point in PointList.Where(x => !x.HasNullValues))
+                foreach (var point in ValidPointList.Where(x => !x.HasNullValues))
                 {
-                    var index = PointList.IndexOf(point);
+                    var index = ValidPointList.IndexOf(point);
 
                     var p1 = Matrix<double>.Build.Dense(3, 1);
                     p1[0, 0] = point.X1 - X0;
@@ -307,13 +307,13 @@ namespace gridfiles
 
             _covNn = Matrix<double>.Build.Dense(3 * NumberOfPoints, 3 * NumberOfPoints);
 
-            foreach (var p1 in PointList)
+            foreach (var p1 in ValidPointList)
             {
-                var index1 = PointList.IndexOf(p1);
+                var index1 = ValidPointList.IndexOf(p1);
 
-                foreach (var p2 in PointList)
+                foreach (var p2 in ValidPointList)
                 {
-                    var index2 = PointList.IndexOf(p2);
+                    var index2 = ValidPointList.IndexOf(p2);
                     var d = p1.GetDistance(p2);
                     var v = k * Math.Exp(-(Math.PI / 2) * (d / c));
 
@@ -339,18 +339,16 @@ namespace gridfiles
             var covMN = Matrix<double>.Build.Dense(3 * NumberOfPoints, 3);
             var filter = false;
 
-            if (filter)
-            {
+            if (filter)            
                 if (PointList.Min(p => p.GetDistance(x, y, z)) > 100000d)
-                return covMN;
-            }         
+                    return covMN;                     
 
-            foreach (var p in PointList)
+            foreach (var p in ValidPointList)
             {
                 var d = p.GetDistance(x, y, z);
                 var v = k * Math.Exp(-(Math.PI / 2) * (d / c));
 
-                var index = PointList.IndexOf(p);
+                var index = ValidPointList.IndexOf(p);
 
                 covMN[index * 3 + 0, 0] = v;
                 covMN[index * 3 + 1, 1] = v;
@@ -405,16 +403,15 @@ namespace gridfiles
         /// https://www.researchgate.net/publication/227127968_Least-squares_collocation_with_covariance-matching_constraints
         /// https://www.lantmateriet.se/contentassets/ff12c6e07463427691d8bd432fc08ef6/steffen-etal-egu2019.pdf
         ///</Summary>
-        public bool Helmert(double k, double c, double sn)
+        public bool Helmert(double k, double c, double sn, bool runAsLs = false)
         {
             try
             {
                 var iterations = 0;
-                var runLs = false;
 
                 do
                 {
-                    if (runLs) // Least Squares Method:
+                    if (runAsLs) // Least Squares Method:
                         X = (A.Transpose() * A).Inverse() * A.Transpose() * L;
                     else // Least Squares Collocation:
                          // Without noise parameter, Sn:
@@ -444,12 +441,12 @@ namespace gridfiles
             }
         }
 
-        internal void PrintResiduals()
+        public void PrintResiduals()
         {
             if (!HelmertIsComputed)
                 return;
 
-            var fileName = "Helmert_results" + DateTime.Now.ToShortDateString()  + ".txt";
+            var fileName = "Helmert_results_" + DateTime.Now.ToShortDateString()  + ".txt";
 
             using (StreamWriter writer = new StreamWriter(fileName))
             {
@@ -458,22 +455,20 @@ namespace gridfiles
                 writer.WriteLine($"Tx: {Tx,20:F7} meter");
                 writer.WriteLine($"Ty: {Ty,20:F7} meter");
                 writer.WriteLine($"Tz: {Tz,20:F7} meter");
-                writer.WriteLine($"Rx: {Rx,20:F15} rad,{Rx.ToArcSec(),15:F9} arcsec");
-                writer.WriteLine($"Ry: {Ry,20:F15} rad,{Ry.ToArcSec(),15:F9} arcsec");
-                writer.WriteLine($"Rz: {Rz,20:F15} rad,{Rz.ToArcSec(),15:F9} arcsec");
-                writer.WriteLine($"S.: {S,20:F15},{S.ToPpm(),20:F9} ppm");
-
-                writer.WriteLine();
-                writer.WriteLine($"RMS: {Rms,20:F6} meter");
+                writer.WriteLine($"Rx: {Rx,20:F15} rad {Rx.ToArcSec(),15:F9} arcsec");
+                writer.WriteLine($"Ry: {Ry,20:F15} rad {Ry.ToArcSec(),15:F9} arcsec");
+                writer.WriteLine($"Rz: {Rz,20:F15} rad {Rz.ToArcSec(),15:F9} arcsec");
+                writer.WriteLine($"S.: {S,20:F15} {S.ToPpm(),20:F9} ppm");
+                writer.WriteLine($"RMS: {Rms,19:F6} meter");
 
                 writer.WriteLine();
                 writer.WriteLine("------------------------------------");
                 writer.WriteLine("               X(mm)   Y(mm)   Z(mm)");
                 writer.WriteLine("------------------------------------");
-                writer.WriteLine($"St.dev:     {AverageX*1000,8:F2}{AverageY * 1000,8:F2}{AverageZ * 1000,8:F2}");
-                writer.WriteLine($"Max. value: {MaxX * 1000,8:F2}{MaxY * 1000,8:F2}{MaxZ * 1000,8:F2}");
-                writer.WriteLine($"Min. value: {MinX * 1000,8:F2}{MinY * 1000,8:F2}{MinZ * 1000,8:F2}");
-                writer.WriteLine($"Mean resi.: {MeanX * 1000,8:F2}{MeanY * 1000,8:F2}{MeanZ * 1000,8:F2}");
+                writer.WriteLine($"St.dev:     {AverageX * 1000,8:F2}{AverageY * 1000,8:F2}{AverageZ * 1000,8:F2}");
+                writer.WriteLine($"Max.:       {MaxX * 1000,8:F2}{MaxY * 1000,8:F2}{MaxZ * 1000,8:F2}");
+                writer.WriteLine($"Min.:       {MinX * 1000,8:F2}{MinY * 1000,8:F2}{MinZ * 1000,8:F2}");
+                writer.WriteLine($"Mean:       {MeanX * 1000,8:F2}{MeanY * 1000,8:F2}{MeanZ * 1000,8:F2}");
                 writer.WriteLine($"RMS:        {RmsX * 1000,8:F2}{RmsY * 1000,8:F2}{RmsZ * 1000,8:F2}");
 
                 writer.WriteLine();
@@ -482,9 +477,9 @@ namespace gridfiles
                 writer.WriteLine("Name              X              Y              Z              X              Y              Z        vX        vY        vZ");
                 writer.WriteLine("----------------------------------------------------------------------------------------------------------------------------");
                 
-                foreach (var point in PointList.Where(x => !x.HasNullValues))
+                foreach (var point in ValidPointList.Where(x => !x.HasNullValues))
                 {
-                    var index = PointList.IndexOf(point);
+                    var index = ValidPointList.IndexOf(point);
 
                     double vx = V[index * 3 + 0, 0];
                     double vy = V[index * 3 + 1, 0];
@@ -511,13 +506,13 @@ namespace gridfiles
                 var sum = 0d;
                 var n = 0;
 
-                foreach (var p1 in PointList)
+                foreach (var p1 in ValidPointList)
                 {
-                    var index1 = PointList.IndexOf(p1);
+                    var index1 = ValidPointList.IndexOf(p1);
 
-                    foreach (var p2 in PointList)
+                    foreach (var p2 in ValidPointList)
                     {
-                        var index2 = PointList.IndexOf(p2);
+                        var index2 = ValidPointList.IndexOf(p2);
                         var d = p1.GetDistance(p2);
 
                         if (d >= r1 + step || d <= r1)
@@ -607,6 +602,7 @@ namespace gridfiles
             return t + S * r * pin;
         }
         
+        // TODO: Refactorize architectur
         public override bool PopulatedGrid(double k, double c, double sn)
         {
             C0 = k;
@@ -617,6 +613,7 @@ namespace gridfiles
             _griY.Data.Clear();
             _griZ.Data.Clear();
 
+            // TODO: Move to virtual method
             if (!Helmert(k, c, sn))
                 return false;
 

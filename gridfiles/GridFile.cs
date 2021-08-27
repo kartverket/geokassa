@@ -31,6 +31,8 @@ namespace gridfiles
             set => _list = value;
         }
 
+        public List<CommonPointXYZ> ValidPointList => PointList.Where(o => !o.HasNullValues).ToList();
+
         public virtual bool GenerateGridFile(string outputFileName, bool isRandom = false)
         {
             return true;
