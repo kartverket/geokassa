@@ -1,7 +1,6 @@
 {
   "profiles": {
     "geokassa": {
-      "commandName": "Project"
     }
   }
 }
