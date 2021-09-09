@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "c6d4c1a14172336509a1870c31c21c39c8de567e"
+    "signature": "66cfaf7c350b557f510d9ba886a69af59977c1c0"
   },
   "compilationOptions": {},
   "targets": {
@@ -31,6 +31,17 @@
           "lib/netstandard2.0/DelaunatorSharp.dll": {
             "assemblyVersion": "1.0.7.0",
             "fileVersion": "1.0.7.0"
+          }
+        }
+      },
+      "GeoJSON.Net/1.2.19": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/GeoJSON.Net.dll": {
+            "assemblyVersion": "1.2.16.0",
+            "fileVersion": "1.2.16.0"
           }
         }
       },
@@ -368,6 +379,41 @@
           "runtime/win/lib/_._": {
             "rid": "win",
             "assetType": "runtime"
+          }
+        }
+      },
+      "NetTopologySuite/2.3.0": {
+        "dependencies": {
+          "System.Memory": "4.5.4"
+        },
+        "runtime": {
+          "lib/netstandard2.0/NetTopologySuite.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
+          }
+        }
+      },
+      "NetTopologySuite.Features/2.0.0": {
+        "dependencies": {
+          "NetTopologySuite": "2.3.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/NetTopologySuite.Features.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
+          }
+        }
+      },
+      "NetTopologySuite.IO.GeoJSON/2.0.4": {
+        "dependencies": {
+          "NetTopologySuite": "2.3.0",
+          "NetTopologySuite.Features": "2.0.0",
+          "Newtonsoft.Json": "13.0.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/NetTopologySuite.IO.GeoJSON.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
           }
         }
       },
@@ -1041,7 +1087,10 @@
         "dependencies": {
           "BitMiracle.LibTiff.NET": "2.4.639",
           "Delaunator": "1.0.7",
+          "GeoJSON.Net": "1.2.19",
           "MathNet.Numerics": "4.15.0",
+          "NetTopologySuite": "2.3.0",
+          "NetTopologySuite.IO.GeoJSON": "2.0.4",
           "Newtonsoft.Json": "13.0.1"
         },
         "runtime": {
@@ -1069,6 +1118,13 @@
       "sha512": "sha512-JeggYlIzFFQwzDFq2SnWR+LMpuGXCj4CGPpRSPMBBgHEFIkqxt91jN44r347po9YfTpItYk3JRwBrqcun+dnaQ==",
       "path": "delaunator/1.0.7",
       "hashPath": "delaunator.1.0.7.nupkg.sha512"
+    },
+    "GeoJSON.Net/1.2.19": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-b1sIWezvF7a4dBz6d0nQfbwJEWFeRjJ6Mri+Hm/FJ1OIEksekiY1X+CgPG/7E3NcHKz3+3RnbX3VAhx03GG21w==",
+      "path": "geojson.net/1.2.19",
+      "hashPath": "geojson.net.1.2.19.nupkg.sha512"
     },
     "MathNet.Numerics/4.15.0": {
       "type": "package",
@@ -1139,6 +1195,27 @@
       "sha512": "sha512-q+eLtROUAQ3OxYA5mpQrgyFgzLQxIyrfT2eLpYX5IEPlHmIio2nh4F5bgOaQoGOV865kFKZZso9Oq9RlazvXtg==",
       "path": "microsoft.win32.registry/4.0.0",
       "hashPath": "microsoft.win32.registry.4.0.0.nupkg.sha512"
+    },
+    "NetTopologySuite/2.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Y+YOvA5um+75Wm9NKE+EhUNCvLYWiPhPW5Q5eBNi6kVNbxsX60/nvIJtve5iRcbrAl38W9h2w2yBjU81cjDO5g==",
+      "path": "nettopologysuite/2.3.0",
+      "hashPath": "nettopologysuite.2.3.0.nupkg.sha512"
+    },
+    "NetTopologySuite.Features/2.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-RDbEpujDL0bsAyTMHlbKj36KIPhUrtSGUaO/jUjMnsLcixrJFwoDJ8p717FdgMHpQDrcEJAKF+QsAlYsSULkew==",
+      "path": "nettopologysuite.features/2.0.0",
+      "hashPath": "nettopologysuite.features.2.0.0.nupkg.sha512"
+    },
+    "NetTopologySuite.IO.GeoJSON/2.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0lN7W6m8ZiUz+AnHAnWUKjiv3F9bCy1295z6TAGVADgyhF60N2CRvhWX1hBQyle6u2d3kdH6aRzux9IBYoBPog==",
+      "path": "nettopologysuite.io.geojson/2.0.4",
+      "hashPath": "nettopologysuite.io.geojson.2.0.4.nupkg.sha512"
     },
     "Newtonsoft.Json/13.0.1": {
       "type": "package",
