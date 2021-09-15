@@ -89,6 +89,18 @@ namespace gridfiles
         public FileInfo GJs { get; set; }
     }
 
+    public class MakeGridCommandParams
+    {
+        public FileInfo Output { get; set; }
+        public double LowerLeftLongitude { get; set; }
+        public double LowerLeftLatitude { get; set; }
+        public double DeltaLongitude { get; set; }
+        public double DeltaLatitude { get; set; }
+        public int Rows { get; set; }
+        public int Columns { get; set; }
+        public string Sep { get; set; } = " ";
+    }
+
     public class MergeGridsCommandParams
     {
         public string Desc { get; set; } = "";

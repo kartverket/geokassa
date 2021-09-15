@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace gridfiles
@@ -27,36 +28,25 @@ namespace gridfiles
         public string Sep
         {
             get => _sep;
-            set
-            {
-                // TODO: Not finished
-                /* char[] charArray = value.ToCharArray();
-                if (charArray.Count() >= 3)
-                {  
-                    string charToString = new string(charArray, 1, charArray.Count() - 2);
-                    _sep = charToString;
-                    return;
-                }*/
-                _sep = value;
-            }
+            set => _sep = Regex.Unescape(value);
         }
 
-        public List<PointNEH> GridData
+        public List<PointLLH> GridData
         {
             get
             {
-                var data = new List<PointNEH>();              
+                var data = new List<PointLLH>();              
                 var k = 0;
 
                 for (var j = 0; j < NRows; j++)
                 {
                     for (var i = 0; i < NColumns; i++)
                     {
-                        var p = new PointNEH
+                        var p = new PointLLH
                         {
                             Name = (++k).ToString(),
-                            East = LowerLeftEast + i * DeltaEast,
-                            North = LowerLeftNorth + j * DeltaNorth
+                            Lon = LowerLeftEast + i * DeltaEast,
+                            Lat = LowerLeftNorth + j * DeltaNorth
                         };
                         data.Add(p);
                     }
@@ -73,7 +63,8 @@ namespace gridfiles
             using (StreamWriter outputFile = new StreamWriter(_fileName, false))
             {
                 foreach (var p in GridData)
-                    outputFile.WriteLine($"{p.East}{Sep}{p.North}{Sep}{p.Height}{Sep}{p.Time}");
+                    outputFile.WriteLine($"{p.Name}{Sep}{p.Lat}{Sep}{p.Lon}");
+                //  outputFile.WriteLine($"{p.East}{Sep}{p.North}{Sep}{p.Height}{Sep}{p.Time}");
                 // outputFile.WriteLine($"{p.Name}{Sep}{p.North}{Sep}{p.East}{Sep}{p.Height}{Sep}{p.Time}");
 
                 outputFile.Close();

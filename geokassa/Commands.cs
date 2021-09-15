@@ -116,7 +116,7 @@ namespace geokassa
                 tiff.Email = par.Email ?? "";
                 tiff.Dimensions = par.Dim == 0 ? 3 : par.Dim;
                 tiff.TileSize = par.TileSize;
-                tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;                
+                tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
                 tiff.Epsg2d.CodeString = par.Epsg2d;
                 tiff.EpsgSource.CodeString = par.EpsgSource;
                 tiff.EpsgTarget.CodeString = par.EpsgTarget;
@@ -125,7 +125,7 @@ namespace geokassa
                 tiff.LowerLeftLatitude = (double)par.LowerLeftLatitude;
                 tiff.LowerLeftLongitude = (double)par.LowerLeftLongitude;
                 tiff.DeltaLatitude = (double)par.DeltaLatitude;
-                tiff.DeltaLongitude = (double)par.DeltaLongitude;              
+                tiff.DeltaLongitude = (double)par.DeltaLongitude;
                 tiff.CommonPoints.Agl = par.Agl;
 
                 if (!tiff.ReadSourceFromFile(par.InputSource.FullName))
@@ -158,7 +158,7 @@ namespace geokassa
                 throw ex;
             }
         }
-    } 
+    }
 
     public class Bin2GeoTiffCommand : Command
     {
@@ -203,7 +203,7 @@ namespace geokassa
                 tiff.EpsgTarget.CodeString = par.EpsgTarget;
                 tiff.Dimensions = 1;
                 tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
-              
+
                 if (!tiff.Gtx.ReadBin(par.Input.FullName))
                 {
                     Console.WriteLine($"Importing of bin file {par.Input.Name} failed.");
@@ -231,8 +231,8 @@ namespace geokassa
         {
             Name = name;
             Description = description;
-           
-            AddArgument(new Argument<FileInfo> ("output", "Output GeoTiff file"));
+
+            AddArgument(new Argument<FileInfo>("output", "Output GeoTiff file"));
 
             AddOption(new Option<GeoTiffFile.TiffOutputTypeshort>("--type", "TiffOutputType") { Argument = new Argument<GeoTiffFile.TiffOutputTypeshort>("type"), IsRequired = true });
             AddOption(new Option("--inpute", "Gri file - easting") { Argument = new Argument<string>("inpute") });
@@ -267,7 +267,7 @@ namespace geokassa
                 string inputUName = inputU != null ? inputU.FullName : "";
 
                 var tiff = new GeoTiffFile(inputEName, inputNName, inputUName);
-                
+
                 tiff.Grid_name = par.GridName;
                 tiff.ImageDescription = par.Desc ?? "";
                 tiff.Area_of_use = par.Area ?? "";
@@ -325,7 +325,7 @@ namespace geokassa
                 return HandleCommand(pars);
             });
         }
-        
+
         private int HandleCommand(Gtx2GeoTiffCommandParams parameters)
         {
             try
@@ -352,7 +352,7 @@ namespace geokassa
                 {
                     Console.WriteLine($"Generation of tiff file {parameters.Output.Name} failed.");
                     return -1;
-                }              
+                }
                 return 0;
             }
             catch (Exception ex)
@@ -363,9 +363,9 @@ namespace geokassa
             }
         }
     }
-    
+
     public class Ct2Gtx2GeoTiffCommand : Command
-    {    
+    {
         public Ct2Gtx2GeoTiffCommand(string name, string description = null) : base(name, description)
         {
             Name = name;
@@ -387,7 +387,7 @@ namespace geokassa
             AddOption(new Option("--epsgsource", "Source EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgsource"), IsRequired = true });
             AddOption(new Option("--epsgtarget", "Target EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgtarget"), IsRequired = true });
             AddOption(new Option("--tilesize", "Tile size (multiple of 16)") { Argument = new Argument<int>("tilesize"), IsRequired = true });
-         
+
             Handler = CommandHandler.Create((Ct2Gtx2GeoTiffCommandParams pars) =>
             {
                 return HandleCommand(pars);
@@ -406,14 +406,14 @@ namespace geokassa
                 tiff.Area_of_use = par.Area ?? "";
                 tiff.Email = par.Email ?? "";
                 tiff.TileSize = par.TileSize;
-                tiff.Dimensions = (par.Dim == 0) ? 
+                tiff.Dimensions = (par.Dim == 0) ?
                     ((par.Ct2 != null ? 2 : 0) + (par.Gtx != null ? 1 : 0)) :
-                    par.Dim;    
+                    par.Dim;
                 tiff.Epsg2d.CodeString = par.Epsg2d;
                 tiff.EpsgSource.CodeString = par.EpsgSource;
                 tiff.EpsgTarget.CodeString = par.EpsgTarget;
                 tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
-            
+
                 if (par.Ct2 != null && !tiff.Ct2.ReadCt2(par.Ct2.FullName, true))
                 {
                     Console.WriteLine($"Cound not read the ct2 file {par.Ct2.Name}.");
@@ -448,7 +448,7 @@ namespace geokassa
             Description = description;
 
             AddArgument(new Argument<FileInfo>("fromsys", "Input csv From system") { ArgumentType = typeof(FileInfo) });
-            AddArgument(new Argument<FileInfo>("tosys", "Input csv To system") { ArgumentType = typeof(FileInfo) } );
+            AddArgument(new Argument<FileInfo>("tosys", "Input csv To system") { ArgumentType = typeof(FileInfo) });
             AddArgument(new Argument<FileInfo>("output", "Output Ct2 file") { ArgumentType = typeof(FileInfo) });
 
             AddOption(new Option("--desc", "Description") { Argument = new Argument<string>("desc") });
@@ -462,7 +462,7 @@ namespace geokassa
                 return HandleCommand(pars);
             });
         }
-        
+
         private int HandleCommand(Csvs2Ct2CommandParams par)
         {
             try
@@ -478,7 +478,7 @@ namespace geokassa
                     Console.WriteLine($"Cound not parse the geojson file {par.GJs.Name}.");
                     return -1;
                 }
-                if (par.FromSys != null && !ct2.ReadSystem1PointList(par.FromSys.FullName) )
+                if (par.FromSys != null && !ct2.ReadSystem1PointList(par.FromSys.FullName))
                 {
                     Console.WriteLine($"Cound not read the csv file {par.FromSys.Name}.");
                     return -1;
@@ -502,7 +502,65 @@ namespace geokassa
                 {
                     Console.WriteLine($"Cound not write the ct2 file {par.Output.Name}.");
                     return -1;
-                }              
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+                return -1;
+                throw ex;
+            }
+        }
+    }
+
+    public class MakeGrid : Command
+    {
+        public MakeGrid(string name, string description = null) : base(name, description)
+        {
+            Name = name;
+            Description = description;
+
+            AddArgument(new Argument<FileInfo>("output", "Output csv file") { ArgumentType = typeof(FileInfo) });
+
+            AddOption(new Option("--lle", "Lower left longitude in grid (deg)") { Name = "LowerLeftLongitude", Argument = new Argument<double>("lle"), IsRequired = true });
+            AddOption(new Option("--lln", "Lower left latitude in grid (deg)") { Name = "LowerLeftLatitude", Argument = new Argument<double>("lln"), IsRequired = true });
+            AddOption(new Option("--de", "Longitude resolution in grid (deg)") { Name = "DeltaLongitude", Argument = new Argument<double>("de"), IsRequired = true });
+            AddOption(new Option("--dn", "Latitude resolution in grid (deg)") { Name = "DeltaLatitude", Argument = new Argument<double>("dn"), IsRequired = true });
+            AddOption(new Option("--rows", "Number of rows in grid") { Name = "Rows", Argument = new Argument<int>("rows"), IsRequired = true });
+            AddOption(new Option("--cols", "Number of cols in grid") { Name = "Columns", Argument = new Argument<int>("cols"), IsRequired = true });
+            AddOption(new Option("--sep", "Columns separator (\" \", \";\")") { Argument = new Argument<string>("sep")});
+
+
+            Handler = CommandHandler.Create((MakeGridCommandParams pars) =>
+            {
+                return HandleCommand(pars);
+            });
+        }
+
+        private int HandleCommand(MakeGridCommandParams par)
+        {
+            try
+            {
+                if (par.Output == null || par.Output.Name == null)
+                {
+                    Console.WriteLine($"{par.Output.Name} is not a valid outout file.");
+                    return -1;
+                }
+
+                var p = new PointCloudFile(par.Output.FullName)
+                {
+                    DeltaEast = (decimal)par.DeltaLongitude,
+                    DeltaNorth = (decimal)par.DeltaLongitude,
+                    LowerLeftEast = (decimal)par.LowerLeftLongitude,
+                    LowerLeftNorth = (decimal)par.LowerLeftLatitude,
+                    NColumns = par.Columns,
+                    NRows = par.Rows,
+                    Sep = par.Sep
+                };
+
+                p.SaveFile();
+
                 return 0;
             }
             catch (Exception ex)
