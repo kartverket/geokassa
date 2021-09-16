@@ -2,7 +2,7 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "makegrid test.csv --lle 1.5 --lln 2.2 --de 0.5 --dn 0.4 --rows 4 --cols 5 --sep \";\"",
+      "commandLineArgs": "makegrid test.csv --lle -3.34 --lln 56.08 --de 0.04 --dn 0.02 --rows 1433 --cols 1034",
       "workingDirectory": "C:\\Prosjekter\\ED50"
     }
   }

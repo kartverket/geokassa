@@ -551,7 +551,7 @@ namespace geokassa
                 var p = new PointCloudFile(par.Output.FullName)
                 {
                     DeltaEast = (decimal)par.DeltaLongitude,
-                    DeltaNorth = (decimal)par.DeltaLongitude,
+                    DeltaNorth = (decimal)par.DeltaLatitude,
                     LowerLeftEast = (decimal)par.LowerLeftLongitude,
                     LowerLeftNorth = (decimal)par.LowerLeftLatitude,
                     NColumns = par.Columns,
