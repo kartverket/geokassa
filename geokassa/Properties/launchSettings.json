@@ -2,8 +2,8 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "makegrid test.csv --lle -3.34 --lln 56.08 --de 0.04 --dn 0.02 --rows 1433 --cols 1034",
-      "workingDirectory": "C:\\Prosjekter\\ED50"
+      "commandLineArgs": "geokassa bin2geotiff ChartDatum_above_Ellipsoid_EUREF89_v2021a.bin ChartDatum_above_Ellipsoid_EUREF89_v2021a.tif --gridname no_kv_CD_above_Ell_ETRS89_v2021a --epsg3d EPSG:4937 --epsgtarget EPSG:9672 --tilesize 64 --type vsep --epsg2d EPSG:4258 --desc \"ETRS89 height (EPSG:4937) to CD Norway height (EPSG:9672). Converted from ChartDatum_above_Ellipsoid_EUREF89_v2021a.bin.\" --email vesola@kartverket.no --area \"Norway - onshore\"",
+      "workingDirectory": "C:\\Prosjekter\\Høgde\\Sjø"
     }
   }
 }
