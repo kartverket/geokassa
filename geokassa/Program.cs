@@ -15,6 +15,7 @@ namespace geokassa
                 new JsonTinCommand("jsontin", "Makes triangulated TIN from point clouds"),
                 new Lsc2GeoTiffCommand("lsc2geotiff", "Converts GeoTiff translations based on Helmert + Least Squares Collocation"),
                 new Bin2GeoTiffCommand("bin2geotiff", "Converts bin file to GeoTiff"),
+                new Bin2GtxCommand("bin2gtx", "Converts bin file to Gtx"),
                 new Gri2GeoTiffCommand("gri2geotiff", "Converts gri file(s) to GeoTiff"),
                 new Gtx2GeoTiffCommand("gtx2geotiff", "Converts gtx file to GeoTiff"),
                 new Ct2Gtx2GeoTiffCommand("ct2gtx2geotiff", "Converts gtx or ct2 files to GeoTiff"),

@@ -408,7 +408,6 @@ namespace gridfiles
             return true;
         }
 
-        // TODO: Denne er feil!
         public bool ReadBin(string binFileName)
         {          
             var index = 0;
@@ -459,8 +458,12 @@ namespace gridfiles
                                     continue;
                                 else
                                     col = 0;
-                            }                       
- 
+                            }
+                            
+                            // Note: Max/min filter
+                            if (data > 100f || data < -100f)
+                                data = -88.8888f;
+
                             if (data == 9999f || data == 9999.999f)
                                 data = -88.8888f;
  
