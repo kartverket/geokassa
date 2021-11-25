@@ -415,7 +415,7 @@ namespace gridfiles
                         X = (A.Transpose() * A).Inverse() * A.Transpose() * L;
                     else // Least Squares Collocation:
                          // Without noise parameter, Sn:
-                         //   X = (A.Transpose() * CovNn(k, c).Inverse() * A).Inverse() * (A.Transpose() * CovNn(k, c).Inverse() * L);
+                         // X = (A.Transpose() * CovNn(k, c).Inverse() * A).Inverse() * (A.Transpose() * CovNn(k, c).Inverse() * L);
                          // With noise parameter, Sn:
                         X = (A.Transpose() * CovNn_D_Inv(k, c, sn) * A).Inverse() * (A.Transpose() * CovNn_D_Inv(k, c, sn) * L);                                    
 

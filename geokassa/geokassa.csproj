@@ -23,8 +23,4 @@
     <ProjectReference Include="..\gridfiles\gridfiles.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Scripts\" />
-  </ItemGroup>
-
 </Project>
