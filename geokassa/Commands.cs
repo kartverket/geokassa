@@ -112,6 +112,7 @@ namespace geokassa
                 var tiff = new GeoTiffFile();
 
                 tiff.ImageDescription = par.Desc ?? "";
+                tiff.Grid_name = par.GridName ?? "";
                 tiff.Area_of_use = par.Area ?? "";
                 tiff.Email = par.Email ?? "";
                 tiff.Dimensions = par.Dim == 0 ? 3 : par.Dim;
