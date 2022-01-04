@@ -215,3 +215,5 @@ geokassatest/obj/Release/netcoreapp2.1/geokassatests.dll
 geokassa/obj/Debug/netcoreapp2.1/.NETCoreApp,Version=v2.1.AssemblyAttributes.cs
 geokassa/obj/Debug/netcoreapp2.1/geokassa.genruntimeconfig.cache
 geokassa/bin/Debug/
+geokassa/obj/Debug/geokassa.1.3.0.nuspec
+geokassa/obj/Release/geokassa.1.3.0.nuspec

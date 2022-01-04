@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.1": {
-      "geokassa/1.2.0": {
+      "geokassa/1.3.0": {
         "dependencies": {
           "System.CommandLine": "2.0.0-beta1.20574.7",
           "gridfiles": "1.1.0"
@@ -124,7 +124,7 @@
     }
   },
   "libraries": {
-    "geokassa/1.2.0": {
+    "geokassa/1.3.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
