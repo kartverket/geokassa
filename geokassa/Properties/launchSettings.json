@@ -2,8 +2,8 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "geokassa lsc2geotiff ETRF14_e2000_nkg17_all.csv 7922_e2000_nkg17_correct.csv no_kv_NKGETRF14_EPSG7922_2000.tif --type 3 --gridname no_kv_NKGETRF14_EPSG7922_2000 --email skakar@kartverket.no --area \"Norway - onshore\" --desc \"Geocentric translations from NKG:ETRF14 to EPSG:7922.\" --epsg2d EPSG:9069 --epsgsource NKG:ETRF14 --epsgtarget EPSG:7922 --lle 4.0 --lln 57.0 --de 0.04 --dn 0.02 --agl 400.0 --rows 740 --cols 720 --tilesize 256 --c0 0.0004 --cl 120000 --sn 0.025",
-      "workingDirectory": "C:\\Users\\Administrator\\source\\repos\\transanalyse\\NKG_Accuracy\\Mod_Helmert"
+      "commandLineArgs": "geokassa bin2geotiff ChartDatum_above_Ellipsoid_EUREF89_v2021a.bin no_kv_CD_above_Ell_ETRS89_v2021a.tif --gridname no_kv_CD_above_Ell_ETRS89_v2021a --epsg3d EPSG:4937 --epsgsource EPSG:4937 --epsgtarget EPSG:9672 --tilesize 64 --type vsep --epsg2d EPSG:4258 --desc \"ETRS89 height (EPSG:4937) to CD Norway height (EPSG:9672). Converted from ChartDatum_above_Ellipsoid_EUREF89_v2021a.bin.\" --email vesola@kartverket.no --area \"Norway - onshore\"",
+      "workingDirectory": "C:\\Prosjekter\\Høgde\\Sjø"
     }
   }
 }

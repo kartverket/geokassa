@@ -178,6 +178,7 @@ namespace geokassa
             AddOption(new Option("--desc", "Description") { Argument = new Argument<string>("desc") });
             AddOption(new Option("--epsg2d", "Source EPSG interpolation CRS ('autority:XXXX')") { Argument = new Argument<string>("epsg2d"), IsRequired = true });
             AddOption(new Option("--epsg3d", "Source EPSG 3D CRS ('autority:XXXX')") { Argument = new Argument<string>("epsg3d"), IsRequired = true });
+            AddOption(new Option("--epsgsource", "Source EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgsource"), IsRequired = false });
             AddOption(new Option("--epsgtarget", "Target EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgtarget"), IsRequired = true });
             AddOption(new Option("--geoid", "Geoid- or separationmodel") { Argument = new Argument<bool>("geoid") });
             AddOption(new Option("--tilesize", "Tile size (multiple of 16)") { Argument = new Argument<int>("tilesize"), IsRequired = true });
@@ -201,6 +202,7 @@ namespace geokassa
                 tiff.TileSize = par.TileSize;
                 tiff.Epsg2d.CodeString = par.Epsg2d;
                 tiff.Epsg3d.CodeString = par.Epsg3d;
+                tiff.EpsgSource.CodeString = par.EpsgSource;
                 tiff.EpsgTarget.CodeString = par.EpsgTarget;
                 tiff.Dimensions = 1;
                 tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
