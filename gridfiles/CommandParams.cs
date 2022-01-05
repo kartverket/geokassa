@@ -53,7 +53,7 @@ namespace gridfiles
         public string Epsg2d { get; set; }
         public string Epsg3d { get; set; }
         public string EpsgTarget { get; set; }
-
+        public string EpsgSource { get; set; }
         public int Dim =>
             (InputE != null ? 1 : 0) +
             (InputN != null ? 1 : 0) +

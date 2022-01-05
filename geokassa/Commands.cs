@@ -119,8 +119,8 @@ namespace geokassa
                 tiff.TileSize = par.TileSize;
                 tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
                 tiff.Epsg2d.CodeString = par.Epsg2d;
-                tiff.EpsgSource.CodeString = par.EpsgSource;
-                tiff.EpsgTarget.CodeString = par.EpsgTarget;
+                tiff.EpsgSource.CodeString = par.EpsgSource ?? "";
+                tiff.EpsgTarget.CodeString = par.EpsgTarget ?? "";
                 tiff.NRows = par.Rows;
                 tiff.NColumns = par.Cols;
                 tiff.LowerLeftLatitude = (double)par.LowerLeftLatitude;
@@ -202,8 +202,8 @@ namespace geokassa
                 tiff.TileSize = par.TileSize;
                 tiff.Epsg2d.CodeString = par.Epsg2d;
                 tiff.Epsg3d.CodeString = par.Epsg3d;
-                tiff.EpsgSource.CodeString = par.EpsgSource;
-                tiff.EpsgTarget.CodeString = par.EpsgTarget;
+                tiff.EpsgSource.CodeString = par.EpsgSource ?? "";
+                tiff.EpsgTarget.CodeString = par.EpsgTarget ?? "";
                 tiff.Dimensions = 1;
                 tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
 
@@ -454,8 +454,8 @@ namespace geokassa
                     ((par.Ct2 != null ? 2 : 0) + (par.Gtx != null ? 1 : 0)) :
                     par.Dim;
                 tiff.Epsg2d.CodeString = par.Epsg2d;
-                tiff.EpsgSource.CodeString = par.EpsgSource;
-                tiff.EpsgTarget.CodeString = par.EpsgTarget;
+                tiff.EpsgSource.CodeString = par.EpsgSource ?? "";
+                tiff.EpsgTarget.CodeString = par.EpsgTarget ?? "";
                 tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
 
                 if (par.Ct2 != null && !tiff.Ct2.ReadCt2(par.Ct2.FullName, true))
