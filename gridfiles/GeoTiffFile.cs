@@ -20,7 +20,7 @@ namespace gridfiles
             VELOCITY = 4,
             DEFORMATION_MODEL = 5
         }
-      
+
         public enum TiffOutputTypeshort
         {
             hoffset = TiffOutputType.HORIZONTAL_OFFSET,
@@ -47,6 +47,7 @@ namespace gridfiles
         private const TiffTag TIFFTAG_ASCIITAG = (TiffTag)666;
         private const TiffTag GDAL_METADATA = (TiffTag)42112;
         private const TiffTag GDAL_NODATA = (TiffTag)42113;
+        private byte[] _data;
 
         public GeoTiffFile()
         {
@@ -263,6 +264,93 @@ namespace gridfiles
                 return _cps.ReadTargetFromFile(inputFileName);
 
             return false;
+        }
+
+        public bool ReadGeoTiff(string inputTiffFile)
+        {
+            if (!File.Exists(inputTiffFile))
+                return false;
+
+            if (!(_data == null))
+                return true;
+
+            using (var tiff = Tiff.Open(inputTiffFile, "r"))
+            {
+                NRows = tiff.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
+                NColumns = tiff.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
+                               
+                if (false)
+                {
+                    //Tiff.GetR()
+                    int[] imageRaster = new int[NRows * NColumns * 4 * 3];
+
+                    if (!tiff.ReadRGBAImage(NColumns, NRows, imageRaster, false))
+                        return false;
+                }
+
+                FieldValue[] modelPixelScaleTag = tiff.GetField((TiffTag)33550);
+                FieldValue[] modelTiepointTag = tiff.GetField((TiffTag)33922);
+
+                byte[] modelPixelScale = modelPixelScaleTag[1].GetBytes();
+                double pixelSizeX = BitConverter.ToDouble(modelPixelScale, 0);
+                double pixelSizeY = BitConverter.ToDouble(modelPixelScale, 8) * -1;
+
+                byte[] modelTransformation = modelTiepointTag[1].GetBytes();
+                double originLon = BitConverter.ToDouble(modelTransformation, 24);
+                double originLat = BitConverter.ToDouble(modelTransformation, 32);
+
+                int bitsPerPixel = tiff.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
+                int samples = tiff.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
+                int bytes = (int) (tiff.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt()/8);
+                
+                double startLat = originLat + (pixelSizeY / 2.0);
+                double startLon = originLon + (pixelSizeX / 2.0);
+                                
+                var scanline = new byte[tiff.ScanlineSize()];
+
+                double currentLat = startLat;
+                double currentLon = startLon;
+
+                _data = new byte[NRows * NColumns * bytes * samples];
+
+                for (int k = 0; k < samples; k++)
+                {
+                    for (int i = 0; i < NRows /** bytes*/; i++)
+                    {
+                        tiff.ReadScanline(scanline, i);
+
+                        var latitude = currentLat + (pixelSizeY * i);
+
+                        Buffer.BlockCopy(scanline, 0, _data, scanline.Length * i + k * scanline.Length * NRows, scanline.Length);
+
+                        for (var j = 0; j < NColumns; j++)
+                        {
+                            var longitude = currentLon + (pixelSizeX * j);
+                            // geodata.Points[0] = new[] { new PointXY(longitude, latitude) };
+
+                            var byteArray = new Byte[bytes];
+                            Buffer.BlockCopy(scanline, j * 4, byteArray, 0, byteArray.Length);                    
+                            var xValue = BitConverter.ToSingle(byteArray);
+
+                            // Buffer.BlockCopy(scanline, height + (j * 4), byteArray, 0, byteArray.Length);
+                            // var yValue = BitConverter.ToSingle(byteArray);
+                            // yield return dataItem;
+                        }
+                    }
+                }
+                tiff.Close();
+            }
+            return true;
+        }
+
+        public bool GetGeoTiffValue(double latitude, double longitude, int bandNo, out object value)
+        {
+            value = 0;
+
+            if (_data == null)
+                return false;           
+
+            return true;
         }
 
         public void CleanNullPoints()

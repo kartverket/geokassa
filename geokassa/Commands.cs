@@ -195,6 +195,14 @@ namespace geokassa
             {
                 var tiff = new GeoTiffFile();
 
+                // Test av ReadGeoTiff
+                string inputTiffFile = @"C:\Users\himsve\Miniconda3\Library\share\proj\eur_nkg_nkgrf17vel.tif";
+                if (!tiff.ReadGeoTiff(inputTiffFile))
+                {
+                    Console.WriteLine($"Tiff file {inputTiffFile} does not exist.");
+                    return -1;
+                }
+
                 tiff.Grid_name = par.GridName;
                 tiff.ImageDescription = par.Desc;
                 tiff.Area_of_use = par.Area;
