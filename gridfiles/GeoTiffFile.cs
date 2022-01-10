@@ -155,6 +155,12 @@ namespace gridfiles
 
         public int Size => _tileSize * _tileSize;
 
+        public int Samples { get; set; }
+
+        public int BitsPerSample { get; set; }
+
+        public int Bytes => BitsPerSample / 8;
+
         public string ImageDescription
         {
             get =>  _imageDescription + _cps.HelmertResult + _cps.LscParameters;
@@ -278,15 +284,6 @@ namespace gridfiles
             {
                 NRows = tiff.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
                 NColumns = tiff.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
-                               
-                if (false)
-                {
-                    //Tiff.GetR()
-                    int[] imageRaster = new int[NRows * NColumns * 4 * 3];
-
-                    if (!tiff.ReadRGBAImage(NColumns, NRows, imageRaster, false))
-                        return false;
-                }
 
                 FieldValue[] modelPixelScaleTag = tiff.GetField((TiffTag)33550);
                 FieldValue[] modelTiepointTag = tiff.GetField((TiffTag)33922);
@@ -295,13 +292,21 @@ namespace gridfiles
                 double pixelSizeX = BitConverter.ToDouble(modelPixelScale, 0);
                 double pixelSizeY = BitConverter.ToDouble(modelPixelScale, 8) * -1;
 
+                DeltaLongitude = pixelSizeX;
+                DeltaLatitude = -pixelSizeY;
+
                 byte[] modelTransformation = modelTiepointTag[1].GetBytes();
                 double originLon = BitConverter.ToDouble(modelTransformation, 24);
                 double originLat = BitConverter.ToDouble(modelTransformation, 32);
 
-                int bitsPerPixel = tiff.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
-                int samples = tiff.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
-                int bytes = (int) (tiff.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt()/8);
+                LowerLeftLongitude = /*DeltaLongitude * (NColumns - 1) + */ originLon;
+                LowerLeftLatitude = -DeltaLatitude * (NRows - 1) + originLat;
+
+                //UpperLeftLatitude = originLat;
+                //UpperLeftLongitude = originLon;
+
+                BitsPerSample = tiff.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
+                Samples = tiff.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
                 
                 double startLat = originLat + (pixelSizeY / 2.0);
                 double startLon = originLon + (pixelSizeX / 2.0);
@@ -311,24 +316,24 @@ namespace gridfiles
                 double currentLat = startLat;
                 double currentLon = startLon;
 
-                _data = new byte[NRows * NColumns * bytes * samples];
+                _data = new byte[NRows * NColumns * Bytes * Samples];
 
-                for (int k = 0; k < samples; k++)
+                for (int k = 0; k < Samples; k++)
                 {
-                    for (int i = 0; i < NRows /** bytes*/; i++)
+                    //for (int i = NRows - 1; i >= 0; i--)
+                    for (int i = 0; i < NRows; i++)
                     {
                         tiff.ReadScanline(scanline, i);
 
                         var latitude = currentLat + (pixelSizeY * i);
 
-                        Buffer.BlockCopy(scanline, 0, _data, scanline.Length * i + k * scanline.Length * NRows, scanline.Length);
+                        Buffer.BlockCopy(scanline, 0, _data, scanline.Length * (NRows - i - 1) + k * scanline.Length * NRows, scanline.Length);
 
                         for (var j = 0; j < NColumns; j++)
                         {
                             var longitude = currentLon + (pixelSizeX * j);
-                            // geodata.Points[0] = new[] { new PointXY(longitude, latitude) };
 
-                            var byteArray = new Byte[bytes];
+                            var byteArray = new Byte[Bytes];
                             Buffer.BlockCopy(scanline, j * 4, byteArray, 0, byteArray.Length);                    
                             var xValue = BitConverter.ToSingle(byteArray);
 
@@ -348,7 +353,62 @@ namespace gridfiles
             value = 0;
 
             if (_data == null)
-                return false;           
+                return false;
+
+            // Hack:
+           // latitude = 49.0;
+           // longitude = 0.0;
+
+            var gridLat = (latitude - LowerLeftLatitude) / DeltaLatitude;
+            var gridLon = (longitude - LowerLeftLongitude) / DeltaLongitude;
+
+            int lat1 = (int)Math.Floor(gridLat);
+            int lon1 = (int)Math.Floor(gridLon);
+            
+            var byteArray = new Byte[Bytes];
+            var index1 = (NColumns * lat1 + lon1) * Bytes;
+            Buffer.BlockCopy(_data, index1, byteArray, 0, byteArray.Length);
+            var dx1 = BitConverter.ToSingle(byteArray);
+
+            int lat2 = lat1;
+            int lon2 = lon1 + 1;
+
+            var index2 = (NColumns * lat2 + lon2) * Bytes;
+            Buffer.BlockCopy(_data, index2, byteArray, 0, byteArray.Length);
+            var dx2 = BitConverter.ToSingle(byteArray);
+
+            int lat3 = lat1 + 1;
+            int lon3 = lon1;
+
+            var index3 = (NColumns * lat3 + lon3) * Bytes;
+            Buffer.BlockCopy(_data, index3, byteArray, 0, byteArray.Length);
+            var dx3 = BitConverter.ToSingle(byteArray);
+
+            int lat4 = lat1 + 1;
+            int lon4 = lon1 + 1;
+
+            var index4 = (NColumns * lat4 + lon4) * Bytes;
+            Buffer.BlockCopy(_data, index4, byteArray, 0, byteArray.Length);
+            var dx4 = BitConverter.ToSingle(byteArray);
+
+            double frctLon = gridLon - lon1;
+            double frctLat = gridLat - lat1;
+            double m10 = frctLon;
+            double m11 = m10;
+            double m01 = 1d - frctLon;
+            double m00 = m01;
+
+            m11 *= frctLat;
+            m01 *= frctLat;
+            frctLat = 1d - frctLat;
+            m00 *= frctLat;
+            m10 *= frctLat;
+
+            var v1 = m00 * dx1 + m10 * dx2 + m01 * dx3 + m11 * dx4;
+            //var v2 = m00 * dy1 + m10 * dy2 + m01 * dy3 + m11 * dy4;
+            //var v3 = m00 * dz1 + m10 * dz2 + m01 * dz3 + m11 * dz4;
+
+               
 
             return true;
         }

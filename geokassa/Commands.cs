@@ -203,6 +203,10 @@ namespace geokassa
                     return -1;
                 }
 
+                tiff.GetGeoTiffValue(60.1d, 10.1d, 1, out object xValue);
+                tiff.GetGeoTiffValue(60d, 10d, 2, out object yValue);
+                tiff.GetGeoTiffValue(60d, 10d, 3, out object zValue);
+
                 tiff.Grid_name = par.GridName;
                 tiff.ImageDescription = par.Desc;
                 tiff.Area_of_use = par.Area;
