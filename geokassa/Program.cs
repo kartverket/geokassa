@@ -22,7 +22,8 @@ namespace geokassa
                 new Csvs2Ct2("csvs2ct2", "Converts horisontal shift between two csv's into Ct2"),
                 new MergeGrids("merge", "Merges two ct2 files"),
                 new MakeGrid("makegrid", "Grids points into csv-file" ),
-                new Helmert("helmert", "Computes helmert parametres based on two csv point sets")
+                new Helmert("helmert", "Computes helmert parametres based on two csv point sets"),
+                new TiffValueCommand("tiffvalue","Gets interpolated values from a grid")
             };
 
             var _ = new CommandLineBuilder(rootCommand)

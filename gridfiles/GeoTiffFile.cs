@@ -328,11 +328,7 @@ namespace gridfiles
 
             if (_data == null)
                 return false;
-
-            // Hack:
-            // latitude = 49.0;
-            // longitude = 0.0;
-
+            
             var gridLat = (latitude - LowerLeftLatitude) / DeltaLatitude;
             var gridLon = (longitude - LowerLeftLongitude) / DeltaLongitude;
 

@@ -493,7 +493,80 @@ namespace geokassa
             }
         }
     }
-       
+    
+    public class TiffValueCommand : Command
+    {
+        public TiffValueCommand(string name, string description = null) : base(name, description)
+        {
+            Name = name;
+            Description = description;
+
+            AddArgument(new Argument<FileInfo>("gridfile", "Input GeoTiff file") { ArgumentType = typeof(FileInfo) });
+
+            Handler = CommandHandler.Create<FileInfo>((FileInfo gridfile) => HandleCommand(gridfile));
+        }
+
+        private int HandleCommand(FileInfo gridfile)
+        {
+            try
+            {
+                if (!File.Exists(gridfile.FullName))
+                {
+                    Console.WriteLine($"The file {gridfile.Name} does not exist.");
+                    return -1;
+                }
+                var tiff = new GeoTiffFile();
+
+                if (!tiff.ReadGeoTiff(gridfile.FullName))
+                {
+                    Console.WriteLine($"Could not read the file {gridfile.Name}.");
+                    return -1;
+                }
+                Console.WriteLine("Enter latitude longitude: ");
+
+                do
+                {
+                    while (!Console.KeyAvailable)
+                    {
+                        while (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                        {
+                            return 0;
+                        }
+
+                        var inputCoord = Console.ReadLine().Split(new char[] { ' ', ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        if (inputCoord.Length != 2)
+                            continue;
+
+                        if (!double.TryParse(inputCoord[0], out double latInput) || !double.TryParse(inputCoord[1], out double lonInput))
+                        {
+                            Console.WriteLine("Input parsing failed");
+                            continue;
+                        }
+                        if (!tiff.GetGeoTiffValue(latInput, lonInput, out object[] output))
+                        {
+                            Console.WriteLine("Corrupt output value");
+                            continue;
+                        }
+                        foreach (var v in output)
+                        {
+                            Console.Write($"{v} ");
+                        }
+                        Console.WriteLine();
+                    }
+                } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+                return -1;
+                throw ex;
+            }
+        }
+    }
+
     public class Csvs2Ct2 : Command
     {
         public Csvs2Ct2(string name, string description = null) : base(name, description)
