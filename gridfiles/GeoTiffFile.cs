@@ -290,10 +290,10 @@ namespace gridfiles
 
                 byte[] modelPixelScale = modelPixelScaleTag[1].GetBytes();
                 double pixelSizeX = BitConverter.ToDouble(modelPixelScale, 0);
-                double pixelSizeY = BitConverter.ToDouble(modelPixelScale, 8) * -1;
+                double pixelSizeY = BitConverter.ToDouble(modelPixelScale, 8);
 
                 DeltaLongitude = pixelSizeX;
-                DeltaLatitude = -pixelSizeY;
+                DeltaLatitude = pixelSizeY;
 
                 byte[] modelTransformation = modelTiepointTag[1].GetBytes();
                 double originLon = BitConverter.ToDouble(modelTransformation, 24);
@@ -302,45 +302,19 @@ namespace gridfiles
                 LowerLeftLongitude = /*DeltaLongitude * (NColumns - 1) + */ originLon;
                 LowerLeftLatitude = -DeltaLatitude * (NRows - 1) + originLat;
 
-                //UpperLeftLatitude = originLat;
-                //UpperLeftLongitude = originLon;
-
                 BitsPerSample = tiff.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
                 Samples = tiff.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
-                
-                double startLat = originLat + (pixelSizeY / 2.0);
-                double startLon = originLon + (pixelSizeX / 2.0);
-                                
+                             
                 var scanline = new byte[tiff.ScanlineSize()];
-
-                double currentLat = startLat;
-                double currentLon = startLon;
 
                 _data = new byte[NRows * NColumns * Bytes * Samples];
 
                 for (int k = 0; k < Samples; k++)
                 {
-                    //for (int i = NRows - 1; i >= 0; i--)
                     for (int i = 0; i < NRows; i++)
                     {
-                        tiff.ReadScanline(scanline, i);
-
-                        var latitude = currentLat + (pixelSizeY * i);
-
+                        tiff.ReadScanline(scanline, i, (short)k);
                         Buffer.BlockCopy(scanline, 0, _data, scanline.Length * (NRows - i - 1) + k * scanline.Length * NRows, scanline.Length);
-
-                        for (var j = 0; j < NColumns; j++)
-                        {
-                            var longitude = currentLon + (pixelSizeX * j);
-
-                            var byteArray = new Byte[Bytes];
-                            Buffer.BlockCopy(scanline, j * 4, byteArray, 0, byteArray.Length);                    
-                            var xValue = BitConverter.ToSingle(byteArray);
-
-                            // Buffer.BlockCopy(scanline, height + (j * 4), byteArray, 0, byteArray.Length);
-                            // var yValue = BitConverter.ToSingle(byteArray);
-                            // yield return dataItem;
-                        }
                     }
                 }
                 tiff.Close();
@@ -348,48 +322,46 @@ namespace gridfiles
             return true;
         }
 
-        public bool GetGeoTiffValue(double latitude, double longitude, int bandNo, out object value)
+        public bool GetGeoTiffValue(double latitude, double longitude, out object[] value)
         {
-            value = 0;
+            value = new object[Samples];
 
             if (_data == null)
                 return false;
 
             // Hack:
-           // latitude = 49.0;
-           // longitude = 0.0;
+            // latitude = 49.0;
+            // longitude = 0.0;
 
             var gridLat = (latitude - LowerLeftLatitude) / DeltaLatitude;
             var gridLon = (longitude - LowerLeftLongitude) / DeltaLongitude;
 
             int lat1 = (int)Math.Floor(gridLat);
             int lon1 = (int)Math.Floor(gridLon);
-            
-            var byteArray = new Byte[Bytes];
-            var index1 = (NColumns * lat1 + lon1) * Bytes;
-            Buffer.BlockCopy(_data, index1, byteArray, 0, byteArray.Length);
-            var dx1 = BitConverter.ToSingle(byteArray);
 
             int lat2 = lat1;
             int lon2 = lon1 + 1;
 
-            var index2 = (NColumns * lat2 + lon2) * Bytes;
-            Buffer.BlockCopy(_data, index2, byteArray, 0, byteArray.Length);
-            var dx2 = BitConverter.ToSingle(byteArray);
-
             int lat3 = lat1 + 1;
             int lon3 = lon1;
-
-            var index3 = (NColumns * lat3 + lon3) * Bytes;
-            Buffer.BlockCopy(_data, index3, byteArray, 0, byteArray.Length);
-            var dx3 = BitConverter.ToSingle(byteArray);
 
             int lat4 = lat1 + 1;
             int lon4 = lon1 + 1;
 
-            var index4 = (NColumns * lat4 + lon4) * Bytes;
-            Buffer.BlockCopy(_data, index4, byteArray, 0, byteArray.Length);
-            var dx4 = BitConverter.ToSingle(byteArray);
+            var dx1 = GetValue(NColumns * lat1 + lon1, 0);
+            var dx2 = GetValue(NColumns * lat2 + lon2, 0);
+            var dx3 = GetValue(NColumns * lat3 + lon3, 0);
+            var dx4 = GetValue(NColumns * lat4 + lon4, 0);
+
+            var dy1 = GetValue(NColumns * lat1 + lon1, 1);
+            var dy2 = GetValue(NColumns * lat2 + lon2, 1);
+            var dy3 = GetValue(NColumns * lat3 + lon3, 1);
+            var dy4 = GetValue(NColumns * lat4 + lon4, 1);
+
+            var dz1 = GetValue(NColumns * lat1 + lon1, 2);
+            var dz2 = GetValue(NColumns * lat2 + lon2, 2);
+            var dz3 = GetValue(NColumns * lat3 + lon3, 2);
+            var dz4 = GetValue(NColumns * lat4 + lon4, 2);
 
             double frctLon = gridLon - lon1;
             double frctLat = gridLat - lat1;
@@ -405,12 +377,23 @@ namespace gridfiles
             m10 *= frctLat;
 
             var v1 = m00 * dx1 + m10 * dx2 + m01 * dx3 + m11 * dx4;
-            //var v2 = m00 * dy1 + m10 * dy2 + m01 * dy3 + m11 * dy4;
-            //var v3 = m00 * dz1 + m10 * dz2 + m01 * dz3 + m11 * dz4;
+            var v2 = m00 * dy1 + m10 * dy2 + m01 * dy3 + m11 * dy4;
+            var v3 = m00 * dz1 + m10 * dz2 + m01 * dz3 + m11 * dz4;
 
-               
+            value[0] = v1;
+            value[1] = v2;
+            value[2] = v3;
 
             return true;
+        }
+
+        internal double GetValue(int index, int band)
+        {
+            var byteArray = new Byte[Bytes];
+            Buffer.BlockCopy(_data, (index + band * NRows * NColumns) * Bytes, byteArray, 0, byteArray.Length);
+            var value = BitConverter.ToSingle(byteArray);
+
+            return value;
         }
 
         public void CleanNullPoints()
