@@ -86,7 +86,14 @@ Commands:
   csvs2ct2 <fromsys> <tosys> <output>                 Converts horisontal shift between two csv's into Ct2
   merge <grid1> <grid2> <gridtarget>                  Merges two ct2 files
   helmert <fromsys> <tosys>                           Computes helmert parametres based on two csv point sets
+  tiffvalue <gridfile>                                Gets interpolated values from a grid
 ```
+
+Example *tiffvalue* in Linux:
+
+```
+dotnet geokassa.dll tiffvalue ~/anaconda3/share/proj/eur_nkg_nkgrf17vel.tif
+```  
 
 ## NuGet
 

@@ -492,8 +492,10 @@ namespace geokassa
             Description = description;
 
             AddArgument(new Argument<FileInfo>("gridfile", "Path to input GeoTiff file") { ArgumentType = typeof(FileInfo) });
-
+           
             Handler = CommandHandler.Create<FileInfo>((FileInfo gridfile) => HandleCommand(gridfile));
+
+            // dotnet geokassa.dll tiffvalue ~/anaconda3/share/proj/eur_nkg_nkgrf17vel.tif
         }
 
         private int HandleCommand(FileInfo gridfile)
