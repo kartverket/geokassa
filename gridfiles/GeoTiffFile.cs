@@ -113,15 +113,13 @@ namespace gridfiles
             set => _gridParam.LowerLeftLongitude = value;
         }
 
-        public double UpperLeftLatitude
-        {
-            get => _gridParam.UpperLeftLatitude;
-        }
+        public double UpperLeftLatitude => _gridParam.UpperLeftLatitude;
+        
+        public double UpperLeftLongitude => _gridParam.UpperLeftLongitude;
 
-        public double UpperLeftLongitude
-        {
-            get => _gridParam.UpperLeftLongitude;
-        }
+        public double UpperRightLatitude => _gridParam.UpperRightLatitude;
+
+        public double UpperRightLongitude => _gridParam.UpperRightLongitude;
 
         public double DeltaLatitude
         {
@@ -290,10 +288,10 @@ namespace gridfiles
 
                 byte[] modelPixelScale = modelPixelScaleTag[1].GetBytes();
                 double pixelSizeX = BitConverter.ToDouble(modelPixelScale, 0);
-                double pixelSizeY = BitConverter.ToDouble(modelPixelScale, 8);
+                double pixelSizeY = BitConverter.ToDouble(modelPixelScale, 8)*-1;
 
                 DeltaLongitude = pixelSizeX;
-                DeltaLatitude = pixelSizeY;
+                DeltaLatitude = -pixelSizeY;
 
                 byte[] modelTransformation = modelTiepointTag[1].GetBytes();
                 double originLon = BitConverter.ToDouble(modelTransformation, 24);
@@ -328,7 +326,10 @@ namespace gridfiles
 
             if (_data == null)
                 return false;
-            
+
+            if (!IsInSideExtent(latitude, longitude))
+                return false;
+
             var gridLat = (latitude - LowerLeftLatitude) / DeltaLatitude;
             var gridLon = (longitude - LowerLeftLongitude) / DeltaLongitude;
 
@@ -390,6 +391,11 @@ namespace gridfiles
             var value = BitConverter.ToSingle(byteArray);
 
             return value;
+        }
+
+        internal bool IsInSideExtent(double latitude, double longitude)
+        {
+            return latitude > LowerLeftLatitude && latitude < UpperLeftLatitude && longitude > LowerLeftLongitude && longitude < UpperRightLongitude; 
         }
 
         public void CleanNullPoints()

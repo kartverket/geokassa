@@ -29,6 +29,10 @@ namespace gridfiles
 
         public double UpperLeftLongitude => _lowerLeftLongitude;
 
+        public double UpperRightLatitude => _lowerLeftLatitude + (NRows - 1) * _deltaLatitude;
+
+        public double UpperRightLongitude => _lowerLeftLongitude + (NColumns - 1) * _deltaLongitude;
+
         public virtual double DeltaLatitude
         {
             get => _deltaLatitude;

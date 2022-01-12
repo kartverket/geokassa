@@ -194,16 +194,6 @@ namespace geokassa
             try
             {
                 var tiff = new GeoTiffFile();
-
-                // Test av ReadGeoTiff
-                string inputTiffFile = @"C:\Users\himsve\Miniconda3\Library\share\proj\eur_nkg_nkgrf17vel.tif";
-                if (!tiff.ReadGeoTiff(inputTiffFile))
-                {
-                    Console.WriteLine($"Tiff file {inputTiffFile} does not exist.");
-                    return -1;
-                }
-
-                tiff.GetGeoTiffValue(60.1d, 10.1d, out object[] values);
             
                 tiff.Grid_name = par.GridName;
                 tiff.ImageDescription = par.Desc;
@@ -501,7 +491,7 @@ namespace geokassa
             Name = name;
             Description = description;
 
-            AddArgument(new Argument<FileInfo>("gridfile", "Input GeoTiff file") { ArgumentType = typeof(FileInfo) });
+            AddArgument(new Argument<FileInfo>("gridfile", "Path to input GeoTiff file") { ArgumentType = typeof(FileInfo) });
 
             Handler = CommandHandler.Create<FileInfo>((FileInfo gridfile) => HandleCommand(gridfile));
         }
@@ -528,12 +518,16 @@ namespace geokassa
                 {
                     while (!Console.KeyAvailable)
                     {
-                        while (Console.ReadKey(true).Key == ConsoleKey.Escape)
-                        {
-                            return 0;
-                        }
+                        // while (Console.ReadKey(false).Key == ConsoleKey.Escape)
+                        // while (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                        // {
+                        //    return 0;
+                        // }
 
                         var inputCoord = Console.ReadLine().Split(new char[] { ' ', ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        if (inputCoord.Length != 2)
+                            return 0;
 
                         if (inputCoord.Length != 2)
                             continue;
@@ -545,7 +539,7 @@ namespace geokassa
                         }
                         if (!tiff.GetGeoTiffValue(latInput, lonInput, out object[] output))
                         {
-                            Console.WriteLine("Corrupt output value");
+                            Console.WriteLine("Corrupt input values");
                             continue;
                         }
                         foreach (var v in output)

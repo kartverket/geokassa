@@ -1,14 +1,14 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "4c487e9ec0a06569711d0133f8a007e9e20c23b9"
+    "signature": "cd3138d1976e6c22919dbbc86e7b5273240c1693"
   },
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.1": {
       "gridfiles/1.1.0": {
         "dependencies": {
-          "BitMiracle.LibTiff.NET": "2.4.639",
+          "BitMiracle.LibTiff.NET": "2.4.649",
           "Delaunator": "1.0.7",
           "GeoJSON.Net": "1.2.19",
           "MathNet.Numerics": "4.15.0",
@@ -20,11 +20,11 @@
           "gridfiles.dll": {}
         }
       },
-      "BitMiracle.LibTiff.NET/2.4.639": {
+      "BitMiracle.LibTiff.NET/2.4.649": {
         "runtime": {
           "lib/netstandard2.0/BitMiracle.LibTiff.NET.dll": {
-            "assemblyVersion": "2.4.639.0",
-            "fileVersion": "2.4.639.0"
+            "assemblyVersion": "2.4.649.0",
+            "fileVersion": "2.4.649.0"
           }
         }
       },
@@ -107,12 +107,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "BitMiracle.LibTiff.NET/2.4.639": {
+    "BitMiracle.LibTiff.NET/2.4.649": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-lfeMt4XIVnsGYuk3XaVOeBUm4FUuWBWayMApnWP59VdxGsurPj9fyYS6rsQr5OOFLZDEDsrByV84xtX6q9edJA==",
-      "path": "bitmiracle.libtiff.net/2.4.639",
-      "hashPath": "bitmiracle.libtiff.net.2.4.639.nupkg.sha512"
+      "sha512": "sha512-XCEdfCphKo0UAvSg1h/OzOFWtjkIGnPMAziYkNqV7NVrqb/tZJTBxJhxIEX7gpvQwg8GIRYt133SUncfkKfjLA==",
+      "path": "bitmiracle.libtiff.net/2.4.649",
+      "hashPath": "bitmiracle.libtiff.net.2.4.649.nupkg.sha512"
     },
     "Delaunator/1.0.7": {
       "type": "package",

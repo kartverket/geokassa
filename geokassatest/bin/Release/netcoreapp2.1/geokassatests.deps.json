@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "66cfaf7c350b557f510d9ba886a69af59977c1c0"
+    "signature": "77d4ca9b727c7dd79dd3f4d745b31121ff3cca8f"
   },
   "compilationOptions": {},
   "targets": {
@@ -9,7 +9,7 @@
       "geokassatests/1.1.0": {
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "15.9.0",
-          "geokassa": "1.2.0",
+          "geokassa": "1.3.0",
           "gridfiles": "1.1.0",
           "xunit": "2.4.0",
           "xunit.runner.visualstudio": "2.4.0"
@@ -18,11 +18,11 @@
           "geokassatests.dll": {}
         }
       },
-      "BitMiracle.LibTiff.NET/2.4.639": {
+      "BitMiracle.LibTiff.NET/2.4.649": {
         "runtime": {
           "lib/netstandard2.0/BitMiracle.LibTiff.NET.dll": {
-            "assemblyVersion": "2.4.639.0",
-            "fileVersion": "2.4.639.0"
+            "assemblyVersion": "2.4.649.0",
+            "fileVersion": "2.4.649.0"
           }
         }
       },
@@ -1074,7 +1074,7 @@
           "Microsoft.NET.Test.Sdk": "15.9.0"
         }
       },
-      "geokassa/1.2.0": {
+      "geokassa/1.3.0": {
         "dependencies": {
           "System.CommandLine": "2.0.0-beta1.20574.7",
           "gridfiles": "1.1.0"
@@ -1085,7 +1085,7 @@
       },
       "gridfiles/1.1.0": {
         "dependencies": {
-          "BitMiracle.LibTiff.NET": "2.4.639",
+          "BitMiracle.LibTiff.NET": "2.4.649",
           "Delaunator": "1.0.7",
           "GeoJSON.Net": "1.2.19",
           "MathNet.Numerics": "4.15.0",
@@ -1105,12 +1105,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "BitMiracle.LibTiff.NET/2.4.639": {
+    "BitMiracle.LibTiff.NET/2.4.649": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-lfeMt4XIVnsGYuk3XaVOeBUm4FUuWBWayMApnWP59VdxGsurPj9fyYS6rsQr5OOFLZDEDsrByV84xtX6q9edJA==",
-      "path": "bitmiracle.libtiff.net/2.4.639",
-      "hashPath": "bitmiracle.libtiff.net.2.4.639.nupkg.sha512"
+      "sha512": "sha512-XCEdfCphKo0UAvSg1h/OzOFWtjkIGnPMAziYkNqV7NVrqb/tZJTBxJhxIEX7gpvQwg8GIRYt133SUncfkKfjLA==",
+      "path": "bitmiracle.libtiff.net/2.4.649",
+      "hashPath": "bitmiracle.libtiff.net.2.4.649.nupkg.sha512"
     },
     "Delaunator/1.0.7": {
       "type": "package",
@@ -1686,7 +1686,7 @@
       "path": "xunit.runner.visualstudio/2.4.0",
       "hashPath": "xunit.runner.visualstudio.2.4.0.nupkg.sha512"
     },
-    "geokassa/1.2.0": {
+    "geokassa/1.3.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
