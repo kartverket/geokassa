@@ -379,7 +379,8 @@ namespace gridfiles
                 foreach (var p2 in ValidPointList)
                 {
                     var d = p1.GetDistance(p2);
-                    var v = k * Math.Exp(-(Math.PI / 2) * (d / c));
+                    var v = k * Math.Exp(-(d / c));
+                    // var v = k * Math.Exp(-(Math.PI / 2) * (d / c));
                     var index2 = ValidPointList.IndexOf(p2);
 
                     _covNn[index1 * 2 + 0, index2 * 2 + 0] = v;
@@ -408,7 +409,8 @@ namespace gridfiles
             foreach (var p in ValidPointList)
             {
                 var d = p.GetDistance(tempPoint);
-                var v = k * Math.Exp(-(Math.PI / 2) * (d / c));
+                var v = k * Math.Exp(-(d / c));
+                //var v = k * Math.Exp(-(Math.PI / 2) * (d / c));
                 var index = ValidPointList.IndexOf(p);
 
                 covMN[index * 2 + 0, 0] = v;

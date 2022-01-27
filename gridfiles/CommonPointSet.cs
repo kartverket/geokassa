@@ -341,7 +341,7 @@ namespace gridfiles
 
             if (filter)            
                 if (PointList.Min(p => p.GetDistance(x, y, z)) > 100000d)
-                    return covMN;                     
+                    return covMN;
 
             foreach (var p in ValidPointList)
             {
@@ -381,9 +381,26 @@ namespace gridfiles
         {
             Matrix<double> d = Matrix<double>.Build.Dense(3 * NumberOfPoints, 3 * NumberOfPoints);
 
-            for (int i = 0; i < 3 * NumberOfPoints; i++)
-                d[i, i] = sn * sn;
+            foreach (var p in ValidPointList)
+            {
+                var index = ValidPointList.IndexOf(p);
+                if (p.Noise1 > 0d)
+                {
+                    for (int i = 0; i < 3; i++)
+                        d[index * 3 + i, index * 3 + i] = Math.Pow(p.Noise1, 2);
+                 
+                    continue;
+                }
+                if (p.Noise2 > 0d)
+                {
+                    for (int i = 0; i < 3; i++)
+                        d[index * 3 + i, index * 3 + i] = Math.Pow(p.Noise2, 2);
 
+                    continue;
+                }
+                for (int i = 0; i < 3; i++)
+                    d[index * 3 + i, index * 3 + i] = sn * sn;
+            }
             return d;
         }
 
@@ -596,9 +613,9 @@ namespace gridfiles
             var xIn  = Matrix<double>.Build.Dense(7, 1);
             xIn[0, 0] = Rx; xIn[1, 0] = Ry; xIn[2, 0] = Rz; xIn[3, 0] = S; xIn[4, 0] = Tx; xIn[5, 0] = Ty; xIn[6, 0] = Tz;
 
-            var xOut = Ai * xIn; 
-            return xOut; */
-
+            var xOut = Ai * xIn;
+            return xOut;
+            */
             return t + S * r * pin;
         }
         
@@ -701,11 +718,16 @@ namespace gridfiles
                     if (!double.TryParse(values[1], out double x) ||
                         !double.TryParse(values[2], out double y) ||
                         !double.TryParse(values[3], out double z) ||
-                        !double.TryParse(values[4], out double epoch))                    
-                        continue;
+                        !double.TryParse(values[4], out double epoch))
+                         continue;
                     else
                     {
                         CommonPointXYZ cpPoint;
+                        var noise = 0d;
+
+                        if (values.Count() == 6)                       
+                            if (!double.TryParse(values[5], out noise))
+                                continue;
 
                         if (PointList.Any(p => p.Name == name))
                         {
@@ -714,6 +736,7 @@ namespace gridfiles
                             cpPoint.Y1 = y;
                             cpPoint.Z1 = z;
                             cpPoint.Time = epoch;
+                            cpPoint.Noise1 = noise;
                         }
                         else
                         {
@@ -723,7 +746,8 @@ namespace gridfiles
                                 X1 = x,
                                 Y1 = y,
                                 Z1 = z,
-                                Time = epoch
+                                Time = epoch,
+                                Noise1 = noise
                             };
                             PointList.Add(cpPoint);
                         }                      
@@ -765,6 +789,11 @@ namespace gridfiles
                     else
                     {
                         CommonPointXYZ cpPoint;
+                        var noise = 0d;
+
+                        if (values.Count() == 6)
+                            if (!double.TryParse(values[5], out noise))
+                                continue;
 
                         if (PointList.Any(p => p.Name == name))
                         {
@@ -773,6 +802,7 @@ namespace gridfiles
                             cpPoint.Y2 = y;
                             cpPoint.Z2 = z;
                             cpPoint.Time = epoch;
+                            cpPoint.Noise2 = noise;
                         }
                         else
                         {
@@ -782,7 +812,8 @@ namespace gridfiles
                                 X2 = x,
                                 Y2 = y,
                                 Z2 = z,
-                                Time = epoch
+                                Time = epoch,
+                                Noise2 = noise
                             };
                             PointList.Add(cpPoint);
                         }                       

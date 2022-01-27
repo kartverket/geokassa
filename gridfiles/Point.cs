@@ -120,6 +120,12 @@ namespace gridfiles
             set => _fromPoint.LambdaDeg = value;
         }
 
+        public double Noise1
+        {
+            get => _fromPoint.Noise;
+            set => _fromPoint.Noise = value;
+        }
+
         public double Time { get; set; }
 
         public double X2
@@ -168,7 +174,13 @@ namespace gridfiles
         {
             get => Lambda2 * 180d / Math.PI;
             set => Lambda2 = value * Math.PI / 180d;
-        } 
+        }
+
+        public double Noise2
+        {
+            get => _toPoint.Noise;
+            set => _toPoint.Noise = value;
+        }
 
         public double Distance
         {
@@ -425,6 +437,8 @@ namespace gridfiles
             get => Lambda * 180d / Math.PI;
             set => Lambda = value * Math.PI / 180d;
         }
+
+        public double Noise { get; set; } = 0d;
     }
 
     public class PointXYZT
