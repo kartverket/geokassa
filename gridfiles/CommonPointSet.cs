@@ -132,7 +132,7 @@ namespace gridfiles
             set => _signalNoise = value;
         }
 
-        public double C0 { get; set; } = 0d;        
+        public double C0 { get; set; } = 0d;
 
         public double Sn { get; set; } = 0d;   
     
@@ -434,7 +434,7 @@ namespace gridfiles
                          // Without noise parameter, Sn:
                          // X = (A.Transpose() * CovNn(k, c).Inverse() * A).Inverse() * (A.Transpose() * CovNn(k, c).Inverse() * L);
                          // With noise parameter, Sn:
-                        X = (A.Transpose() * CovNn_D_Inv(k, c, sn) * A).Inverse() * (A.Transpose() * CovNn_D_Inv(k, c, sn) * L);                                    
+                        X = (A.Transpose() * CovNn_D_Inv(k, c, sn) * A).Inverse() * (A.Transpose() * CovNn_D_Inv(k, c, sn) * L);
 
                     Rx += X[0, 0] / _factor;
                     Ry += X[1, 0] / _factor;
@@ -448,6 +448,9 @@ namespace gridfiles
                 } while (!X.ForAll(x => Math.Abs(x) < 1E-8) && iterations < 10);
 
                 SignalNoise = (L - A * X);
+                
+                // TODO: Correct method:
+                // SignalNoise = CovNn(k, c) * CovNn_D_Inv(k, c, sn) * (L - A * X);
 
                 return true;
             } 

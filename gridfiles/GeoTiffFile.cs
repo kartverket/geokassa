@@ -55,7 +55,7 @@ namespace gridfiles
 
             _gtxFile = new GtxFile(_gridParam);
             _ct2File = new Ct2File(_gridParam);
-            _cps = new CommonPointSet(_gridParam);          
+            _cps = new CommonPointSet(_gridParam);
         }
 
         public GeoTiffFile(string griEFilename, string griNFilename, string griUFilename)
@@ -85,7 +85,7 @@ namespace gridfiles
             set => _cps = value;
         }
 
-        public TiffOutputType TiffOutput { get; set; }       
+        public TiffOutputType TiffOutput { get; set; }
 
         public int Dimensions { get; set; } = 1;
 
@@ -185,12 +185,17 @@ namespace gridfiles
 
                 if (Epsg2d.CodeNumber > 0)
                 {
-                    geotags.SetValue((UInt16)2048, index++); geotags.SetValue((UInt16)0, index++); geotags.SetValue((UInt16)1, index++); geotags.SetValue((UInt16)Epsg2d.CodeNumber, index++);         
+                    geotags.SetValue((UInt16)2048, index++);
+                    geotags.SetValue((UInt16)0, index++);
+                    geotags.SetValue((UInt16)1, index++);
+                    geotags.SetValue((UInt16)Epsg2d.CodeNumber, index++);         
                 }
-                 
                 if (Epsg3d.CodeNumber > 0)
                 {
-                    geotags.SetValue((UInt16)4096, index++); geotags.SetValue((UInt16)0, index++); geotags.SetValue((UInt16)1, index++); geotags.SetValue((UInt16)Epsg3d.CodeNumber, index++);                
+                    geotags.SetValue((UInt16)4096, index++);
+                    geotags.SetValue((UInt16)0, index++);
+                    geotags.SetValue((UInt16)1, index++); 
+                    geotags.SetValue((UInt16)Epsg3d.CodeNumber, index++);                
                 }                  
                 return geotags; 
             }
@@ -585,9 +590,10 @@ namespace gridfiles
                 return false;
 
             string xmlValue = GdalMetadata.SerializeToString(_gdalMetadata);
+          
             if (!tiff.SetField(GDAL_METADATA, xmlValue))
-                 return false;
-
+                return false;
+            
             if (!tiff.CheckpointDirectory())
                 return false;
 
@@ -771,7 +777,7 @@ namespace gridfiles
         }
 
         internal void TagExtender(Tiff tif)
-        {         
+        {
             TiffFieldInfo[] tiffFieldInfo =
             {
                 new TiffFieldInfo(TiffTag.GEOTIFF_MODELPIXELSCALETAG, 3, 3, TiffType.DOUBLE, 65, true, false, "GEOTIFF_MODELPIXELSCALETAG"),

@@ -125,6 +125,6 @@ namespace gridfiles
         public string Role { get; set; }
 
         [XmlText]
-        public string MyString { get; set; } = "";
+        public String MyString { get; set; } = "";
     }
 }
