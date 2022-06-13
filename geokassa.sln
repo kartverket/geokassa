@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1321
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "geokassa", "geokassa\geokassa.csproj", "{CCCD7A35-58C6-420D-B269-1B41197EB460}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -10,26 +10,40 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "geokassa", "geokassa\geokas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gridfiles", "gridfiles\gridfiles.csproj", "{CCC7082D-1E1A-471A-A586-6187B8D3687A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "geokassatests", "geokassatest\geokassatests.csproj", "{0CE129A3-1222-4D7B-BE12-54DE89D69141}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "geokassatests", "geokassatest\geokassatests.csproj", "{0CE129A3-1222-4D7B-BE12-54DE89D69141}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CCCD7A35-58C6-420D-B269-1B41197EB460}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CCCD7A35-58C6-420D-B269-1B41197EB460}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCD7A35-58C6-420D-B269-1B41197EB460}.Debug|x64.ActiveCfg = Debug|x64
+		{CCCD7A35-58C6-420D-B269-1B41197EB460}.Debug|x64.Build.0 = Debug|x64
 		{CCCD7A35-58C6-420D-B269-1B41197EB460}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCCD7A35-58C6-420D-B269-1B41197EB460}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCCD7A35-58C6-420D-B269-1B41197EB460}.Release|x64.ActiveCfg = Release|x64
+		{CCCD7A35-58C6-420D-B269-1B41197EB460}.Release|x64.Build.0 = Release|x64
 		{CCC7082D-1E1A-471A-A586-6187B8D3687A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CCC7082D-1E1A-471A-A586-6187B8D3687A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCC7082D-1E1A-471A-A586-6187B8D3687A}.Debug|x64.ActiveCfg = Debug|x64
+		{CCC7082D-1E1A-471A-A586-6187B8D3687A}.Debug|x64.Build.0 = Debug|x64
 		{CCC7082D-1E1A-471A-A586-6187B8D3687A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCC7082D-1E1A-471A-A586-6187B8D3687A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCC7082D-1E1A-471A-A586-6187B8D3687A}.Release|x64.ActiveCfg = Release|x64
+		{CCC7082D-1E1A-471A-A586-6187B8D3687A}.Release|x64.Build.0 = Release|x64
 		{0CE129A3-1222-4D7B-BE12-54DE89D69141}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0CE129A3-1222-4D7B-BE12-54DE89D69141}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CE129A3-1222-4D7B-BE12-54DE89D69141}.Debug|x64.ActiveCfg = Debug|x64
+		{0CE129A3-1222-4D7B-BE12-54DE89D69141}.Debug|x64.Build.0 = Debug|x64
 		{0CE129A3-1222-4D7B-BE12-54DE89D69141}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CE129A3-1222-4D7B-BE12-54DE89D69141}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CE129A3-1222-4D7B-BE12-54DE89D69141}.Release|x64.ActiveCfg = Release|x64
+		{0CE129A3-1222-4D7B-BE12-54DE89D69141}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
