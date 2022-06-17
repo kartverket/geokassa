@@ -230,3 +230,6 @@ geokassa/bin/x64/Debug/netcoreapp2.1/gridfiles.dll
 geokassa/bin/x64/Debug/netcoreapp2.1/gridfiles.pdb
 geokassatest/bin/
 gridfiles/bin/
+.vs/GeoKassa/config/applicationhost.config
+.vs/GeoKassa/DesignTimeBuild/.dtbcache.v2
+.vs/GeoKassa/v16/.suo
