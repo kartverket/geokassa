@@ -133,13 +133,12 @@ namespace geokassatest
 
             Assert.True(result);
 
-            Assert.Equal(1.029648449917d, helmert.Apar, 10);
-            Assert.Equal(0.016941945629d, helmert.Bpar, 10);
-            Assert.Equal(-0.06932768d, helmert.Tx, 6);
-            Assert.Equal(-0.36724001d, helmert.Ty, 6);
+            Assert.Equal(1.0295493546159107d, helmert.Apar, 10);
+            Assert.Equal(0.016956239704441076d, helmert.Bpar, 10);
+            Assert.Equal(-0.0694617213710258d, helmert.Tx, 6);
+            Assert.Equal(-0.36188548811447446d, helmert.Ty, 6);
 
-            //a: 1.02964844991704 b: 0.0169419456285466 tx: -0.0693276806223762 ty; -0.367240005934891
-           // Debug.WriteLine($"a: {helmert.Apar } b: {helmert.Bpar} tx: {helmert.Tx} ty; {helmert.Ty}");           
+            // Debug.WriteLine($"a: {helmert.Apar } b: {helmert.Bpar} tx: {helmert.Tx} ty; {helmert.Ty}");           
         }
     }
 }
