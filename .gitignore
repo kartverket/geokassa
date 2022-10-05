@@ -222,3 +222,4 @@ geokassatest/bin/
 gridfiles/bin/
 .vs/
 geokassa/bin/
+x64/Release/netcoreapp2.1/

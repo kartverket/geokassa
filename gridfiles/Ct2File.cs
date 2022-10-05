@@ -985,7 +985,7 @@ namespace gridfiles
                 var data2 = Grid2.GriEast.Data.ElementAt(index++);
 
                 if (!float.IsNaN(data1) && !float.IsNaN(data2))
-                    GriEast.Data.Add(data2);
+                    GriEast.Data.Add(data1);
                 else if (!float.IsNaN(data1))
                     GriEast.Data.Add(data1);               
                 else
@@ -999,7 +999,7 @@ namespace gridfiles
                 var data2 = Grid2.GriNorth.Data.ElementAt(index++);
 
                 if (!float.IsNaN(data1) && !float.IsNaN(data2))
-                    GriNorth.Data.Add(data2);
+                    GriNorth.Data.Add(data1);
                 else if (!float.IsNaN(data1))
                     GriNorth.Data.Add(data1);
                 else

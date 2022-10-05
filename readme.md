@@ -77,8 +77,7 @@ Options:
 
 Commands:
   jsontin <input> <output>                            Makes triangulated TIN from point clouds
-  lsc2geotiff <inputsource> <inputtarget> <output>    Converts GeoTiff translations based on Helmert + Least Squares
-                                                      Collocation
+  lsc2geotiff <inputsource> <inputtarget> <output>    Converts GeoTiff translations based on Helmert + Least Squares Collocation
   bin2geotiff <input> <output>                        Converts bin file to GeoTiff
   gri2geotiff <output>                                Converts gri file(s) to GeoTiff
   gtx2geotiff <input> <output>                        Converts gtx file to GeoTiff

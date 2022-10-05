@@ -206,7 +206,7 @@ namespace geokassa
                 tiff.EpsgTarget.CodeString = par.EpsgTarget ?? "";
                 tiff.Dimensions = 1;
                 tiff.TiffOutput = (GeoTiffFile.TiffOutputType)par.Type;
-
+                
                 if (!tiff.Gtx.ReadBin(par.Input.FullName))
                 {
                     Console.WriteLine($"Importing of bin file {par.Input.Name} failed.");
@@ -653,7 +653,6 @@ namespace geokassa
             AddOption(new Option("--rows", "Number of rows in grid") { Name = "Rows", Argument = new Argument<int>("rows"), IsRequired = true });
             AddOption(new Option("--cols", "Number of cols in grid") { Name = "Columns", Argument = new Argument<int>("cols"), IsRequired = true });
             AddOption(new Option("--sep", "Columns separator (\" \", \";\")") { Argument = new Argument<string>("sep")});
-
 
             Handler = CommandHandler.Create((MakeGridCommandParams pars) =>
             {
