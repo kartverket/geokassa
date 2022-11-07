@@ -483,6 +483,58 @@ namespace geokassa
             }
         }
     }
+
+    public class ClipCommand : Command
+    {
+        public ClipCommand(string name, string description = null) : base(name, description)
+        {
+            Name = name;
+            Description = description;
+
+            // var weew = GridFile.GridType;
+            AddArgument(new Argument<FileInfo>("inputFile", "Path to input grid file") { ArgumentType = typeof(FileInfo) });
+            AddArgument(new Argument<FileInfo>("outputFile", "Path to output grid file") { ArgumentType = typeof(FileInfo) });
+
+            AddOption(new Option<GridFile.GridType>("--type", "GridType") { Argument = new Argument<GridFile.GridType>("type"), IsRequired = true });
+            AddOption(new Option("--epsg", "EPSG code of clip extent ('autority:XXXX')") { Argument = new Argument<string>("epsg") /*, IsRequired = true */ });
+
+            Handler = CommandHandler.Create<FileInfo, FileInfo, GridFile.GridType>((FileInfo inputFile, FileInfo outputFile, GridFile.GridType type) => 
+            {
+                switch (type)
+                {
+                    case GridFile.GridType.bin:
+                        break;
+                    case GridFile.GridType.ct2:
+                        break;
+                    case GridFile.GridType.gtx:
+                        break;
+                    default:
+                        {
+                            var tiff = new GeoTiffFile();
+
+                            if (!tiff.ReadGeoTiff(inputFile.FullName))
+                            {
+
+                                // tiff
+                            }
+                            tiff.TileSize = 16;
+                            tiff.TiffOutput = GeoTiffFile.TiffOutputType.VERTICAL_OFFSET_VERTICAL_TO_VERTICAL;
+                            tiff.Grid_name = "Clipped grid";
+                            tiff.ImageDescription = "This is a test";
+                            tiff.Area_of_use = "Norway";
+                            tiff.Email = "himsve@kartverket.no";
+                            tiff.Epsg2d.CodeString = "EPSG:4258";
+                            tiff.Epsg3d.CodeString = "EPSG:4937";
+                            tiff.EpsgTarget.CodeString = "EPSG:5942";
+
+                            tiff.GenerateGridFile(outputFile.FullName);
+                        }
+                        break;
+                }
+                Console.WriteLine("Works!");
+            });
+        }
+    }
     
     public class TiffValueCommand : Command
     {
@@ -520,12 +572,6 @@ namespace geokassa
                 {
                     while (!Console.KeyAvailable)
                     {
-                        // while (Console.ReadKey(false).Key == ConsoleKey.Escape)
-                        // while (Console.ReadKey(true).Key == ConsoleKey.Escape)
-                        // {
-                        //    return 0;
-                        // }
-
                         var inputCoord = Console.ReadLine().Split(new char[] { ' ', ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                         if (inputCoord.Length != 2)

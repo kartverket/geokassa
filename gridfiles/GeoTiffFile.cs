@@ -40,6 +40,7 @@ namespace gridfiles
         private GdalMetadata _gdalMetadata = new GdalMetadata();
         private const int byteDepth = 4;
         private int _tileSize = 0;
+        private int _tileCount = 0;
         private string _imageDescription = "";
         private const TiffTag GeoKeyDirectoryTag = (TiffTag)34735;
         private const TiffTag GeoDoubleParamsTag = (TiffTag)34736;
@@ -151,6 +152,12 @@ namespace gridfiles
             set => _tileSize = value;
         }
 
+        public int TileCount
+        {
+            get => _tileCount;
+            set => _tileCount = value;
+        }
+
         public int Size => _tileSize * _tileSize;
 
         public int Samples { get; set; }
@@ -161,7 +168,7 @@ namespace gridfiles
 
         public string ImageDescription
         {
-            get =>  _imageDescription + _cps.HelmertResult + _cps.LscParameters;
+            get => _imageDescription + _cps.HelmertResult + _cps.LscParameters;
             set => _imageDescription = value;
         }
 
@@ -307,19 +314,90 @@ namespace gridfiles
 
                 BitsPerSample = tiff.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
                 Samples = tiff.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
-                             
-                var scanline = new byte[tiff.ScanlineSize()];
-
-                _data = new byte[NRows * NColumns * Bytes * Samples];
-
-                for (int k = 0; k < Samples; k++)
+                
+                // Area_of_use = tiff.GetField()
+ 
+                if (tiff.IsTiled())
                 {
-                    for (int i = 0; i < NRows; i++)
+                    TileSize = tiff.TileSize(); // 64 * 64 * Bytes // 16384
+ 
+                    var tileRowSize = tiff.TileRowSize(); // 64 * Bytes // 256
+                    var numberOfTiles = tiff.NumberOfTiles();
+                    var tileBuffer = new byte[TileSize];
+                    var size = (int)(tileRowSize / Bytes);
+
+                    var colSize = size;
+                    var rowSize = size;
+
+                   // int noOfTiledRow = (int)Math.Ceiling((double)NRows / (double)size);
+                    int noOfTiledCol = (int)Math.Ceiling((double)NColumns / (double)size);
+
+                    int noOfTiledRowFloor = (int) NRows / size;
+                    int noOfTiledColFloor = (int) NColumns / size;
+
+                    //int noOfTiledRowRest = NRows % size;
+                    //int noOfTiledColRest = NColumns % size;
+
+                    for (int k = 0; k < numberOfTiles; k++)
                     {
-                        tiff.ReadScanline(scanline, i, (short)k);
-                        Buffer.BlockCopy(scanline, 0, _data, scanline.Length * (NRows - i - 1) + k * scanline.Length * NRows, scanline.Length);
+                        var res = tiff.ReadEncodedTile(k, tileBuffer, 0, TileSize);
+
+                        if (res == -1)
+                        {
+                            tiff.Close();
+                            return false;
+                        }
+
+                        var byteArray = new Byte[Bytes];
+                        
+                        var rowTile = k / noOfTiledCol;
+                        var colTile = k % noOfTiledCol;
+
+                        if (colTile == noOfTiledColFloor)
+                            colSize = NColumns - colTile * size;
+
+                        if (rowTile == noOfTiledRowFloor)
+                            rowSize = NRows - rowTile * size;
+
+                        for (int i = 0; i < rowSize; i++) // Row
+                        {
+                            for (int j = 0; j < colSize; j++) // Column 
+                            {                                
+                                Buffer.BlockCopy(tileBuffer, j * Bytes + i * tileRowSize, byteArray, 0, byteArray.Length);
+
+                                var value = BitConverter.ToSingle(byteArray, 0);
+                                
+                                var arrayIndex =
+                                    j +
+                                    i * NColumns +
+                                    rowTile * size * NColumns +
+                                     colTile * size;
+
+                                while (arrayIndex >= _gtxFile.Data.Count())
+                                    _gtxFile.Data.Add(0f);
+                                
+                                _gtxFile.Data[arrayIndex] = value;
+                            }
+                        }
+                        colSize = size;
+                        rowSize = size;
                     }
                 }
+                else
+                {
+                    _data = new byte[NRows * NColumns * Bytes * Samples];
+        
+                    var scanline = new byte[tiff.ScanlineSize()];
+                    
+                    for (int k = 0; k < Samples; k++)
+                    {
+                        for (int i = 0; i < NRows; i++)
+                        {
+                            tiff.ReadScanline(scanline, i, (short)k);
+                            Buffer.BlockCopy(scanline, 0, _data, scanline.Length * (NRows - i - 1) + k * scanline.Length * NRows, scanline.Length);
+                        }
+                    }
+                }               
                 tiff.Close();
             }
             return true;
@@ -700,7 +778,7 @@ namespace gridfiles
 
         internal bool WriteBand(Tiff tiff, List<float> bandList)
         {
-            var myDictionary = BandListToTiledDictionary(bandList);           
+            var myDictionary = BandListToTiledDictionary(bandList);
 
             if (myDictionary is null)
                 return false;
@@ -728,23 +806,19 @@ namespace gridfiles
                 return null;
 
             var myDictionary = new Dictionary<KeyValuePair<int, int>, float[]>();
-
-            int indexTileRow = 0;
-            int indexTileCol = 0;
-            int indexRow = 0;
-            int indexCol = 0;         
+            var floatArray = new float[0];
+                   
             int indexData = 0;
-            float[] floatArray = new float[0];
 
             for (var row = 0; row < NRows; row++)
             {
-                indexRow = row / TileSize;
-                indexTileRow = row % TileSize;
+                int indexRow = row / TileSize;
+                int indexTileRow = row % TileSize;
 
                 for (var col = 0; col < NColumns; col++)
                 {
-                    indexCol = col / TileSize;
-                    indexTileCol = col % TileSize;
+                    int indexCol = col / TileSize;
+                    int indexTileCol = col % TileSize;
 
                     if (indexTileCol == 0 && indexTileRow == 0)
                         myDictionary.Add(new KeyValuePair<int, int>(indexRow, indexCol), new float[Size]);
@@ -766,6 +840,11 @@ namespace gridfiles
                 }
             }
             return myDictionary;
+        }
+
+        internal int BandListToScan(byte[] tile)
+        {
+            return 0;
         }
 
         public void TestGdalMetadata()

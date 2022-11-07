@@ -19,6 +19,7 @@ namespace geokassa
                 new Gri2GeoTiffCommand("gri2geotiff", "Converts gri file(s) to GeoTiff"),
                 new Gtx2GeoTiffCommand("gtx2geotiff", "Converts gtx file to GeoTiff"),
                 new Ct2Gtx2GeoTiffCommand("ct2gtx2geotiff", "Converts gtx or ct2 files to GeoTiff"),
+                new ClipCommand("clip", "Clips grid files"),
                 new Csvs2Ct2("csvs2ct2", "Converts horisontal shift between two csv's into Ct2"),
                 new MergeGrids("merge", "Merges two ct2 files"),
                 new MakeGrid("makegrid", "Grids points into csv-file" ),

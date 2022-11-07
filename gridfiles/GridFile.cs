@@ -10,9 +10,10 @@ namespace gridfiles
     {
         public enum GridType
         {
-            ct2 = 0,
-            gtx = 1,
-            tiff = 2
+            bin = 0,
+            ct2 = 1,
+            gtx = 2,
+            tiff = 3
         }
 
         public enum Direction
