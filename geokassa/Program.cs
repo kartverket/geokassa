@@ -28,6 +28,7 @@ namespace geokassa
             };
 
             var _ = new CommandLineBuilder(rootCommand)
+                .UseExceptionHandler()
                 .UseVersionOption()
                 .UseHelp()
                 .UseEnvironmentVariableDirective()

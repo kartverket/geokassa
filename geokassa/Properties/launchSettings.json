@@ -2,7 +2,7 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "geokassa merge --type ct2 --desc \"Horizonal correction grid ED50 to ETRS89 for extent EPSG:1182\" C:\\Prosjekter\\ED50\\ED50_ETRS89_land.ct2 C:\\Prosjekter\\ED50\\ED50_ETRS89_sea.ct2 C:\\Prosjekter\\ED50\\ED50_ETRS89.ct2",
+      "commandLineArgs": "geokassa clip \"C:\\Users\\himsve\\Miniconda3\\share\\proj\\HREF2018B_NN2000_EUREF89.tif\" \"c:\\temp\\output.tif\" --type tiff --bbox  2",
       "workingDirectory": "C:\\Prosjekter\\ED50"
     }
   }

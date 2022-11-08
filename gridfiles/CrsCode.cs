@@ -45,7 +45,7 @@ namespace gridfiles
                     return n;
 
                 return 0;
-            }           
+            }
         }
 
         public string GetWktString()
@@ -75,5 +75,30 @@ namespace gridfiles
 
             return trimmedRestult;
         }
+        
+        /*
+        public string GetWktBoundaryBox()
+        {
+            var cmd = new Process();
+            var startInfo = new ProcessStartInfo();
+
+            startInfo.FileName = "projinfo.exe";
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardInput = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.Arguments = "-k crs " + this.CodeString;
+
+            cmd.StartInfo = startInfo;
+            cmd.Start();
+
+            cmd.WaitForExit();
+
+            var result = cmd.StandardOutput.ReadToEnd();
+
+            return "";
+        }
+        */
     }
 }

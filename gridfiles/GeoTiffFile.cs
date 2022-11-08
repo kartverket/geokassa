@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BitMiracle.LibTiff.Classic;
+using static gridfiles.Item;
 
 namespace gridfiles
 {
@@ -315,13 +316,23 @@ namespace gridfiles
                 BitsPerSample = tiff.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
                 Samples = tiff.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
                 
-                // Area_of_use = tiff.GetField()
- 
+                var metadata = tiff.GetField(GDAL_METADATA);
+                var gdalMetadata = GdalMetadata.StringToSerialize(metadata);
+
+                //if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.area_of_use))
+                //    Area_of_use = gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.area_of_use).MyString;
+                
+                if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.TYPE))
+                    TiffOutput = ParseEnum<TiffOutputType>(gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.TYPE).MyString);
+
+                if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.target_crs_epsg_code))
+                    EpsgTarget.CodeString = gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.target_crs_epsg_code).MyString;
+
                 if (tiff.IsTiled())
                 {
-                    TileSize = tiff.TileSize(); // 64 * 64 * Bytes // 16384
+                    TileSize = tiff.TileSize();
  
-                    var tileRowSize = tiff.TileRowSize(); // 64 * Bytes // 256
+                    var tileRowSize = tiff.TileRowSize();
                     var numberOfTiles = tiff.NumberOfTiles();
                     var tileBuffer = new byte[TileSize];
                     var size = (int)(tileRowSize / Bytes);
@@ -359,19 +370,15 @@ namespace gridfiles
                         if (rowTile == noOfTiledRowFloor)
                             rowSize = NRows - rowTile * size;
 
-                        for (int i = 0; i < rowSize; i++) // Row
+                        for (int i = 0; i < rowSize; i++)
                         {
-                            for (int j = 0; j < colSize; j++) // Column 
+                            for (int j = 0; j < colSize; j++)
                             {                                
                                 Buffer.BlockCopy(tileBuffer, j * Bytes + i * tileRowSize, byteArray, 0, byteArray.Length);
 
                                 var value = BitConverter.ToSingle(byteArray, 0);
                                 
-                                var arrayIndex =
-                                    j +
-                                    i * NColumns +
-                                    rowTile * size * NColumns +
-                                     colTile * size;
+                                var arrayIndex = j + i * NColumns + rowTile * size * NColumns + colTile * size;
 
                                 while (arrayIndex >= _gtxFile.Data.Count())
                                     _gtxFile.Data.Add(0f);
@@ -397,7 +404,7 @@ namespace gridfiles
                             Buffer.BlockCopy(scanline, 0, _data, scanline.Length * (NRows - i - 1) + k * scanline.Length * NRows, scanline.Length);
                         }
                     }
-                }               
+                }
                 tiff.Close();
             }
             return true;
@@ -842,9 +849,12 @@ namespace gridfiles
             return myDictionary;
         }
 
-        internal int BandListToScan(byte[] tile)
+        public override bool ClipGrid(double west_long, double south_lat, double east_long, double north_lat)
         {
-            return 0;
+            if (Dimensions == 3 || Dimensions == 2)
+                return _ct2File.ClipGrid(west_long, south_lat, east_long, north_lat) && _gtxFile.ClipGrid(west_long, south_lat, east_long, north_lat);
+            
+            return _gtxFile.ClipGrid(west_long, south_lat, east_long, north_lat);
         }
 
         public void TestGdalMetadata()

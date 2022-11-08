@@ -477,7 +477,7 @@ namespace geokassa
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex);
+                Console.Error.WriteLine(ex.Message);
                 return -1;
                 throw ex;
             }
@@ -494,44 +494,70 @@ namespace geokassa
             // var weew = GridFile.GridType;
             AddArgument(new Argument<FileInfo>("inputFile", "Path to input grid file") { ArgumentType = typeof(FileInfo) });
             AddArgument(new Argument<FileInfo>("outputFile", "Path to output grid file") { ArgumentType = typeof(FileInfo) });
-
+            
             AddOption(new Option<GridFile.GridType>("--type", "GridType") { Argument = new Argument<GridFile.GridType>("type"), IsRequired = true });
-            AddOption(new Option("--epsg", "EPSG code of clip extent ('autority:XXXX')") { Argument = new Argument<string>("epsg") /*, IsRequired = true */ });
+            //AddOption(new Option("--area", "EPSG code of clip extent ('autority:XXXX')") { Argument = new Argument<string>("epsg") /*, IsRequired = true */ });
+            AddOption(new Option("--bbox", "Clip boundary box (west_long,south_lat,east_long,north_lat)") { Argument = new Argument<string[]>("bbox"), IsRequired = true });
 
-            Handler = CommandHandler.Create<FileInfo, FileInfo, GridFile.GridType>((FileInfo inputFile, FileInfo outputFile, GridFile.GridType type) => 
+            Handler = CommandHandler.Create<FileInfo, FileInfo, GridFile.GridType, string[]>((FileInfo inputFile, FileInfo outputFile, GridFile.GridType type, string[] bbox) =>
             {
-                switch (type)
+                var west_long = 0d;
+                var south_lat = 0d;
+                var east_long = 0d;
+                var north_lat = 0d;
+
+                try
                 {
-                    case GridFile.GridType.bin:
-                        break;
-                    case GridFile.GridType.ct2:
-                        break;
-                    case GridFile.GridType.gtx:
-                        break;
-                    default:
-                        {
-                            var tiff = new GeoTiffFile();
+                    if (bbox.Length != 4)                    
+                        throw new ArgumentException("Incorrect size of --bbox");
 
-                            if (!tiff.ReadGeoTiff(inputFile.FullName))
+                    if (!double.TryParse(bbox[0], out west_long) || !double.TryParse(bbox[1], out south_lat) || !double.TryParse(bbox[2], out east_long) || !double.TryParse(bbox[3], out north_lat))
+                        throw new FormatException("Invalid type in --bbox");                    
+
+                    switch (type)
+                    {
+                        case GridFile.GridType.bin:
+                            break;
+                        case GridFile.GridType.ct2:
+                            break;
+                        case GridFile.GridType.gtx:
+                            break;
+                        default:
                             {
+                                var tiff = new GeoTiffFile();
 
-                                // tiff
+                                if (!tiff.ReadGeoTiff(inputFile.FullName))
+                                {
+                                    // tiff
+                                }
+                                tiff.TileSize = 16;
+                                tiff.TiffOutput = GeoTiffFile.TiffOutputType.VERTICAL_OFFSET_VERTICAL_TO_VERTICAL;
+                                tiff.Grid_name = "Clipped grid";
+                                tiff.ImageDescription = "This is a test";
+                                tiff.Area_of_use = "Norway";
+                                tiff.Email = "himsve@kartverket.no";
+                                tiff.Epsg2d.CodeString = "EPSG:4258";
+                                tiff.Epsg3d.CodeString = "EPSG:4937";
+                                tiff.EpsgTarget.CodeString = "EPSG:5942";
+
+                                if (!tiff.ClipGrid(west_long, south_lat, east_long, north_lat))
+                                {
+                                }
+                                
+                                tiff.GenerateGridFile(outputFile.FullName);
+                                
+                              //  throw new DivideByZeroException("Drit og dra!");
                             }
-                            tiff.TileSize = 16;
-                            tiff.TiffOutput = GeoTiffFile.TiffOutputType.VERTICAL_OFFSET_VERTICAL_TO_VERTICAL;
-                            tiff.Grid_name = "Clipped grid";
-                            tiff.ImageDescription = "This is a test";
-                            tiff.Area_of_use = "Norway";
-                            tiff.Email = "himsve@kartverket.no";
-                            tiff.Epsg2d.CodeString = "EPSG:4258";
-                            tiff.Epsg3d.CodeString = "EPSG:4937";
-                            tiff.EpsgTarget.CodeString = "EPSG:5942";
-
-                            tiff.GenerateGridFile(outputFile.FullName);
-                        }
-                        break;
+                            break;
+                    }
+                    Console.WriteLine("Works!");
                 }
-                Console.WriteLine("Works!");
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine(ex.Message);
+                    return;
+                    throw ex;
+                }
             });
         }
     }

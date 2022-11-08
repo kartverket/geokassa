@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using BitMiracle.LibTiff.Classic;
 
 namespace gridfiles
 {
@@ -69,6 +70,24 @@ namespace gridfiles
                 stream.Close();
                 return stream.ToString();
             }
+        }
+
+        public static /*object*/ GdalMetadata StringToSerialize(FieldValue[] dataToString)
+        {
+            GdalMetadata obj = null;
+
+            XmlSerializer ser = new XmlSerializer(typeof(GdalMetadata));
+
+            using (var stream = new StringReader(dataToString[1].ToString()))
+            {
+                using (var reader = new XmlTextReader(stream))
+                {
+                    obj = (GdalMetadata)ser.Deserialize(reader);
+                    reader.Close();
+                }
+                stream.Close();
+            }
+            return obj;
         }
     }
 }

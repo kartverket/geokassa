@@ -54,6 +54,11 @@ namespace gridfiles
             return true;
         }
 
+        public virtual bool ClipGrid(double west_long, double south_lat, double east_long, double north_lat)
+        {
+            return true;
+        }
+
         // NOTE: Tests geocentric<>geodetic transformation
         public bool TestTransformationsCommonPointXYZ()
         {
@@ -95,7 +100,6 @@ namespace gridfiles
         }
     }
 
- 
     public static class DoubleEx
     {
         public static double GetPrecision(this double value, int fractionRound)

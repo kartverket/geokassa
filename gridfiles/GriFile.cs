@@ -155,5 +155,14 @@ namespace gridfiles
                 return false;
             }
         }
+
+        public override bool ClipGrid(double west_long, double south_lat, double east_long, double north_lat)
+        {
+            foreach (var value in Data)
+            {
+
+            }
+            return true;
+        }
     }
 }
