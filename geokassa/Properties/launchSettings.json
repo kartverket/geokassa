@@ -2,7 +2,7 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "geokassa clip \"C:\\Users\\himsve\\Miniconda3\\share\\proj\\HREF2018B_NN2000_EUREF89.tif\" \"c:\\temp\\output.tif\" --type tiff --bbox  2",
+      "commandLineArgs": "geokassa clip \"C:\\Users\\himsve\\Anaconda3\\Library\\share\\proj\\no_kv_HREF2018B_NN2000_EUREF89.tif\" \"c:\\temp\\output.tif\" --type tiff --bbox 4 76.1666666666666667 38  81.1666666666666667",
       "workingDirectory": "C:\\Prosjekter\\ED50"
     }
   }
