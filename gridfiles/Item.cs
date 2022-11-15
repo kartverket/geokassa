@@ -116,11 +116,11 @@ namespace gridfiles
             }
         }
         
-        [DefaultValue(false)]
+        [DefaultValue("")]
         [XmlAttribute("sample")]
         public string Sample { get; set; }
 
-        [DefaultValue(false)]
+        [DefaultValue("")]
         [XmlAttribute("role")]
         public string Role { get; set; }
 

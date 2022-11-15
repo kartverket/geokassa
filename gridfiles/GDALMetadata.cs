@@ -11,7 +11,8 @@ using BitMiracle.LibTiff.Classic;
 
 namespace gridfiles
 {
-    [Serializable] 
+    [Serializable, XmlType("GdalMetadata")]
+    [XmlRoot(ElementName = "GdalMetadata")]
     public class GdalMetadata
     {
         private List<Item> _gdalMetadataList = new List<Item>();
@@ -72,17 +73,21 @@ namespace gridfiles
             }
         }
 
-        public static /*object*/ GdalMetadata StringToSerialize(FieldValue[] dataToString)
+        public static GdalMetadata StringToSerialize(FieldValue[] dataToString)
         {
             GdalMetadata obj = null;
-
+            
             XmlSerializer ser = new XmlSerializer(typeof(GdalMetadata));
 
-            using (var stream = new StringReader(dataToString[1].ToString()))
-            {
+            string xmlString = dataToString[1].ToString();            
+
+            using (var stream = new StringReader(xmlString))
+            {   
                 using (var reader = new XmlTextReader(stream))
                 {
-                    obj = (GdalMetadata)ser.Deserialize(reader);
+                    if (ser.CanDeserialize(reader))
+                        obj = (GdalMetadata)ser.Deserialize(reader);
+                    
                     reader.Close();
                 }
                 stream.Close();
