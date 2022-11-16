@@ -74,7 +74,7 @@ namespace gridfiles
         up_velocity = 11
     }
     */
-
+        
         public enum NameType
         {
             UNITTYPE = 0,
@@ -91,7 +91,7 @@ namespace gridfiles
             source_crs_wkt = 11
         }
 
-        private NameType _name;       
+        private NameType _name;
 
         public Item()
         {
@@ -116,11 +116,11 @@ namespace gridfiles
             }
         }
         
-        [DefaultValue("")]
+        [DefaultValue(false)]
         [XmlAttribute("sample")]
         public string Sample { get; set; }
 
-        [DefaultValue("")]
+        [DefaultValue(false)]
         [XmlAttribute("role")]
         public string Role { get; set; }
 

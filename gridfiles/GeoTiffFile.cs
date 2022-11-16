@@ -38,7 +38,7 @@ namespace gridfiles
         private Ct2File _ct2File;
         private CommonPointSet _cps;
 
-        private GdalMetadata _gdalMetadata = new GdalMetadata();
+        private GDALMetadata _gdalMetadata = new GDALMetadata();
         private const int byteDepth = 4;
         private int _tileSize = 0;
         private int _tileCount = 0;
@@ -315,18 +315,24 @@ namespace gridfiles
 
                 BitsPerSample = tiff.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
                 Samples = tiff.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
+
+                // This is a test:                
+                //var serObject = SerializedObject.StringToSerialize();
                 
                 var metadata = tiff.GetField(GDAL_METADATA);
-                var gdalMetadata = GdalMetadata.StringToSerialize(metadata);
-
-                //if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.area_of_use))
-                //    Area_of_use = gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.area_of_use).MyString;
+                var gdalMetadata = GDALMetadata.StringToSerialize(metadata);
+                
+                if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.area_of_use))
+                    Area_of_use = gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.area_of_use).MyString;
                 
                 if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.TYPE))
                     TiffOutput = ParseEnum<TiffOutputType>(gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.TYPE).MyString);
 
+                if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.source_crs_epsg_code))
+                    EpsgSource.CodeString = "EPSG:" + gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.source_crs_epsg_code).MyString;
+
                 if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.target_crs_epsg_code))
-                    EpsgTarget.CodeString = gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.target_crs_epsg_code).MyString;
+                    EpsgTarget.CodeString = "EPSG:" + gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.target_crs_epsg_code).MyString;
 
                 if (tiff.IsTiled())
                 {
@@ -674,7 +680,7 @@ namespace gridfiles
             if (!tiff.SetField(GDAL_NODATA, Int16.MinValue))
                 return false;
 
-            string xmlValue = GdalMetadata.SerializeToString(_gdalMetadata);
+            string xmlValue = GDALMetadata.SerializeToString(_gdalMetadata);
           
             if (!tiff.SetField(GDAL_METADATA, xmlValue))
                 return false;
@@ -851,6 +857,18 @@ namespace gridfiles
 
         public override bool ClipGrid(double west_long, double south_lat, double east_long, double north_lat)
         {
+            if (west_long < LowerLeftLongitude)
+                return false;
+
+            if (south_lat < LowerLeftLatitude)
+                return false;
+
+            if (east_long > UpperRightLongitude)
+                return false;
+
+            if (north_lat > UpperRightLatitude )
+                return false;
+
             if (Dimensions == 3 || Dimensions == 2)
                 return _ct2File.ClipGrid(west_long, south_lat, east_long, north_lat) && _gtxFile.ClipGrid(west_long, south_lat, east_long, north_lat);
             
@@ -859,10 +877,10 @@ namespace gridfiles
 
         public void TestGdalMetadata()
         {
-            var gdaltest = new gridfiles.GdalMetadata();
+            var gdaltest = new gridfiles.GDALMetadata();
             gdaltest.SerializeObject("GDAL_Metadata.xml");
 
-            var item = GdalMetadata.SerializeToString(gdaltest);
+            var item = GDALMetadata.SerializeToString(gdaltest);
         }
 
         internal void TagExtender(Tiff tif)

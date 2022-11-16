@@ -490,8 +490,7 @@ namespace geokassa
         {
             Name = name;
             Description = description;
-
-            // var weew = GridFile.GridType;
+             
             AddArgument(new Argument<FileInfo>("inputFile", "Path to input grid file") { ArgumentType = typeof(FileInfo) });
             AddArgument(new Argument<FileInfo>("outputFile", "Path to output grid file") { ArgumentType = typeof(FileInfo) });
             
@@ -528,7 +527,8 @@ namespace geokassa
 
                                 if (!tiff.ReadGeoTiff(inputFile.FullName))
                                 {
-                                    // tiff
+                                    Console.WriteLine($"The file {inputFile.FullName} does not exist!");
+                                    return;                                    
                                 }
                                 tiff.TileSize = 16;
                                 tiff.TiffOutput = GeoTiffFile.TiffOutputType.VERTICAL_OFFSET_VERTICAL_TO_VERTICAL;
@@ -540,15 +540,15 @@ namespace geokassa
                                 tiff.Epsg3d.CodeString = "EPSG:4937";
                                 tiff.EpsgTarget.CodeString = "EPSG:5942";
 
-                                if (!tiff.ClipGrid(west_long, south_lat, east_long, north_lat))
-                                {
-                                }
-                                
-                                tiff.GenerateGridFile(outputFile.FullName);
-                                
-                              //  throw new DivideByZeroException("Drit og dra!");
+                                if (!tiff.ClipGrid(west_long, south_lat, east_long, north_lat))                                
+                                    return;
+                                                                
+                                if (!tiff.GenerateGridFile(outputFile.FullName))
+                                    return;
+
+                                //  throw new DivideByZeroException("Drit og dra!");
                             }
-                            break;
+                            break;  
                     }
                     Console.WriteLine("Works!");
                 }

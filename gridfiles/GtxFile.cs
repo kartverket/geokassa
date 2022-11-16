@@ -21,7 +21,7 @@ namespace gridfiles
         private Matrix<double> _signalNoise = null;
         private GridParam _gridParam;
         private GriFile _griFile = new GriFile();
-        private CptFile _cptFile = new CptFile();      
+        private CptFile _cptFile = new CptFile();
 
         public GtxFile()
         {
@@ -599,6 +599,14 @@ namespace gridfiles
             {
                 throw ex;
             }
+        }
+
+        public override bool ClipGrid(double west_long, double south_lat, double east_long, double north_lat)
+        {
+            if (_griFile == null)
+                return false;
+
+            return _griFile.ClipGrid(west_long, south_lat, east_long, north_lat);            
         }
 
         public void CleanNullPoints()

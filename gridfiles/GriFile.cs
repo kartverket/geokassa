@@ -158,9 +158,49 @@ namespace gridfiles
 
         public override bool ClipGrid(double west_long, double south_lat, double east_long, double north_lat)
         {
-            foreach (var value in Data)
-            {
+            if (IsEmpty)
+                return false;
+            
+            var newData  = new List<float>();
+            var newLowerLeftLatitude = Double.MaxValue;
+            var newLowerLeftLongitude = Double.MaxValue;
 
+            for (Int32 i = 0; i < NRows; i++)
+            {
+                var lat = UpperLeftLatitude - i * DeltaLatitude;
+
+                if (lat < south_lat || lat > north_lat)
+                    continue;
+
+                newLowerLeftLatitude = lat < newLowerLeftLatitude ? lat : newLowerLeftLatitude;
+
+                for (Int32 j = 0; j < NColumns; j++)
+                {
+                    var lon = UpperLeftLongitude + j * DeltaLongitude;                    
+                    
+                    if (lon < west_long || lon > east_long)
+                        continue;
+
+                    newLowerLeftLongitude = lon < newLowerLeftLongitude ? lon : newLowerLeftLongitude;
+
+                    var index = i * NColumns + j;
+                    var v = Data.ElementAt(index);
+                    
+                    newData.Add(v);
+
+                    // Console.Write($"{index} {v:F2} ");
+                }
+                // Console.WriteLine();
+            }
+            if (newData.Count() > 0)
+            {
+                Data = newData;
+
+                NColumns = (Int32)((east_long - west_long) / DeltaLongitude) + 1;
+                NRows = (Int32)((north_lat - south_lat) / DeltaLatitude) + 1;
+
+                LowerLeftLatitude = newLowerLeftLatitude;
+                LowerLeftLongitude = newLowerLeftLongitude;
             }
             return true;
         }
