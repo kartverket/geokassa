@@ -110,4 +110,13 @@ namespace gridfiles
         public FileInfo Grid2 { get; set; }
         public FileInfo GridTarget { get; set; }
     }
+    
+    public class ClipCommandParams
+    {
+        public FileInfo InputFile { get; set; }
+        public FileInfo OutputFile { get; set; }
+        public GridFile.GridType Type { get; set; }
+        public string[] Bbox { get; set; }
+        public int TileSize { get; set; }
+    }
 }

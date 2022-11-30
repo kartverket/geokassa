@@ -32,6 +32,18 @@ namespace gridfiles
             deform = TiffOutputType.DEFORMATION_MODEL
         }
 
+        public enum RasterTypeEnum
+        {
+            RasterPixelIsArea = 1,
+            RasterPixelIsPoint = 2
+        }
+
+        public enum ModelTypeEnum
+        {            
+            ModelTypeProjected = 1,
+            ModelTypeGeographic = 2
+        }
+
         private GridParam _gridParam;
 
         private GtxFile _gtxFile;
@@ -173,6 +185,10 @@ namespace gridfiles
             set => _imageDescription = value;
         }
 
+        public RasterTypeEnum RasterType { get; set; } = RasterTypeEnum.RasterPixelIsPoint;
+
+        public ModelTypeEnum ModelType { get; set; } = ModelTypeEnum.ModelTypeProjected;
+
         public string Email { get; set; }
 
         internal UInt16[] GeoTags
@@ -187,23 +203,34 @@ namespace gridfiles
 
                 var geotags = new UInt16[(count + 1) * 4];
 
-                geotags.SetValue((UInt16)1, index++); geotags.SetValue((UInt16)1, index++); geotags.SetValue((UInt16)1, index++); geotags.SetValue((UInt16)count, index++);
-                geotags.SetValue((UInt16)1024, index++); geotags.SetValue((UInt16)0, index++); geotags.SetValue((UInt16)1, index++); geotags.SetValue((UInt16)2, index++);
-                geotags.SetValue((UInt16)1025, index++); geotags.SetValue((UInt16)0, index++); geotags.SetValue((UInt16)1, index++); geotags.SetValue((UInt16)2, index++);
+                geotags.SetValue((UInt16)1, index++);
+                geotags.SetValue((UInt16)1, index++); 
+                geotags.SetValue((UInt16)1, index++);
+                geotags.SetValue((UInt16)count, index++);
+
+                geotags.SetValue((UInt16)1024, index++); 
+                geotags.SetValue((UInt16)0, index++);
+                geotags.SetValue((UInt16)1, index++);
+                geotags.SetValue((UInt16)ModelType, index++);
+
+                geotags.SetValue((UInt16)1025, index++);
+                geotags.SetValue((UInt16)0, index++);
+                geotags.SetValue((UInt16)1, index++);
+                geotags.SetValue((UInt16)RasterType, index++);
 
                 if (Epsg2d.CodeNumber > 0)
                 {
                     geotags.SetValue((UInt16)2048, index++);
                     geotags.SetValue((UInt16)0, index++);
                     geotags.SetValue((UInt16)1, index++);
-                    geotags.SetValue((UInt16)Epsg2d.CodeNumber, index++);         
+                    geotags.SetValue((UInt16)Epsg2d.CodeNumber, index++);
                 }
                 if (Epsg3d.CodeNumber > 0)
                 {
                     geotags.SetValue((UInt16)4096, index++);
                     geotags.SetValue((UInt16)0, index++);
-                    geotags.SetValue((UInt16)1, index++); 
-                    geotags.SetValue((UInt16)Epsg3d.CodeNumber, index++);                
+                    geotags.SetValue((UInt16)1, index++);
+                    geotags.SetValue((UInt16)Epsg3d.CodeNumber, index++);
                 }                  
                 return geotags; 
             }
@@ -310,21 +337,36 @@ namespace gridfiles
                 double originLon = BitConverter.ToDouble(modelTransformation, 24);
                 double originLat = BitConverter.ToDouble(modelTransformation, 32);
 
-                LowerLeftLongitude = /*DeltaLongitude * (NColumns - 1) + */ originLon;
+                LowerLeftLongitude = originLon;
                 LowerLeftLatitude = -DeltaLatitude * (NRows - 1) + originLat;
 
                 BitsPerSample = tiff.GetField(TiffTag.BITSPERSAMPLE)[0].ToInt();
                 Samples = tiff.GetField(TiffTag.SAMPLESPERPIXEL)[0].ToInt();
+                                
+                ImageDescription = tiff.GetField(TiffTag.IMAGEDESCRIPTION).Count() > 0 ? tiff.GetField(TiffTag.IMAGEDESCRIPTION)[0].ToString() : "";
 
-                // This is a test:                
-                //var serObject = SerializedObject.StringToSerialize();
-                
+                Email = tiff.GetField(TiffTag.ARTIST).Count() > 0 ? tiff.GetField(TiffTag.ARTIST)[0].ToString() : "";
+
+                var geoKeyDirectoryTag = tiff.GetField(GeoKeyDirectoryTag);
+
+                ReadGeoTiffTags(geoKeyDirectoryTag);
+
                 var metadata = tiff.GetField(GDAL_METADATA);
-                var gdalMetadata = GDALMetadata.StringToSerialize(metadata);
+
+                var gdalMetadata = SerializedObject<GDALMetadata>.StringToSerialize(metadata);
+                
+                if (gdalMetadata == null)
+                    gdalMetadata = SerializedObject<GdalMetadata>.StringToSerialize(metadata);
+                
+                if (gdalMetadata == null)
+                    return false;
                 
                 if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.area_of_use))
                     Area_of_use = gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.area_of_use).MyString;
-                
+
+                if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.grid_name))
+                    Grid_name = gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.grid_name).MyString;
+
                 if (gdalMetadata.GdalMetadataList.Any(x => x.Name == NameType.TYPE))
                     TiffOutput = ParseEnum<TiffOutputType>(gdalMetadata.GdalMetadataList.Find(x => x.Name == NameType.TYPE).MyString);
 
@@ -346,14 +388,10 @@ namespace gridfiles
                     var colSize = size;
                     var rowSize = size;
 
-                   // int noOfTiledRow = (int)Math.Ceiling((double)NRows / (double)size);
                     int noOfTiledCol = (int)Math.Ceiling((double)NColumns / (double)size);
 
                     int noOfTiledRowFloor = (int) NRows / size;
                     int noOfTiledColFloor = (int) NColumns / size;
-
-                    //int noOfTiledRowRest = NRows % size;
-                    //int noOfTiledColRest = NColumns % size;
 
                     for (int k = 0; k < numberOfTiles; k++)
                     {
@@ -680,7 +718,7 @@ namespace gridfiles
             if (!tiff.SetField(GDAL_NODATA, Int16.MinValue))
                 return false;
 
-            string xmlValue = GDALMetadata.SerializeToString(_gdalMetadata);
+            string xmlValue = SerializedObject<GDALMetadata>.SerializeToString(_gdalMetadata);
           
             if (!tiff.SetField(GDAL_METADATA, xmlValue))
                 return false;
@@ -693,7 +731,7 @@ namespace gridfiles
 
         /*
         * References:
-        * https://portal.dgiwg.org/files/?artifact_id=68102&format=pdf    
+        * https://portal.dgiwg.org/files/?artifact_id=68102&format=pdf
         * http://geotiff.maptools.org/spec/geotiff3.html
         * http://geotiff.maptools.org/spec/geotiff6.html
         * https://www.alternatiff.com/resources/TIFF6.pdf
@@ -701,7 +739,7 @@ namespace gridfiles
         * https://docs.opengeospatial.org/is/19-008r4/19-008r4.html
         *
         * // For GDAL_METADATA:
-        * https://www.awaresystems.be/imaging/tiff/tifftags/gdal_metadata.html 
+        * https://www.awaresystems.be/imaging/tiff/tifftags/gdal_metadata.html
         * https://gdal.org/drivers/raster/gtiff.html
         */
         public override bool GenerateGridFile(string outputFileName, bool isRandom = false)
@@ -866,7 +904,7 @@ namespace gridfiles
             if (east_long > UpperRightLongitude)
                 return false;
 
-            if (north_lat > UpperRightLatitude )
+            if (north_lat > UpperRightLatitude)
                 return false;
 
             if (Dimensions == 3 || Dimensions == 2)
@@ -880,7 +918,7 @@ namespace gridfiles
             var gdaltest = new gridfiles.GDALMetadata();
             gdaltest.SerializeObject("GDAL_Metadata.xml");
 
-            var item = GDALMetadata.SerializeToString(gdaltest);
+            var item = SerializedObject<GDALMetadata>.SerializeToString(gdaltest);
         }
 
         internal void TagExtender(Tiff tif)
@@ -894,7 +932,66 @@ namespace gridfiles
                 new TiffFieldInfo(GDAL_METADATA, -1, -1, TiffType.ASCII, FieldBit.Custom, true, false, "GDAL_METADATA"),
                 new TiffFieldInfo(GDAL_NODATA, -1, -1,  TiffType.ASCII,  FieldBit.Custom, true, false, "GDAL_NODATA")
             };
-            tif.MergeFieldInfo(tiffFieldInfo, tiffFieldInfo.Length); 
+            tif.MergeFieldInfo(tiffFieldInfo, tiffFieldInfo.Length);
+        }
+
+        internal void ReadGeoTiffTags(FieldValue[] geoKeyDirectoryTag)
+        {
+            foreach (var fieldValue in geoKeyDirectoryTag)
+            {
+                var sourceArray = fieldValue.GetBytes().ToArray();
+
+                if (sourceArray.Length <= 4)
+                    continue;
+
+                var byteArray = new Byte[8];
+                var byteValue = new Byte[2];
+
+                for (int i = 0; i < sourceArray.Length; i += 8)
+                {
+                    Buffer.BlockCopy(sourceArray, i, byteArray, 0, byteArray.Length);
+                                        
+                    Buffer.BlockCopy(byteArray , 0, byteValue, 0, byteValue.Length);
+                    var tag = BitConverter.ToUInt16(byteValue);
+
+                    Buffer.BlockCopy(byteArray, 2, byteValue, 0, byteValue.Length);
+                    var type = BitConverter.ToUInt16(byteValue);
+
+                    Buffer.BlockCopy(byteArray, 4, byteValue, 0, byteValue.Length);
+                    var card = BitConverter.ToUInt16(byteValue);
+
+                    Buffer.BlockCopy(byteArray, 6, byteValue, 0, byteValue.Length);
+                    var roci = BitConverter.ToUInt16(byteValue);
+
+                    switch (tag)
+                    {
+                        case 1:
+                            break;
+                        case 1024:
+                            {
+                                ModelType = (ModelTypeEnum) roci;
+                                break;
+                            }                            
+                        case 1025:
+                            {
+                                RasterType =  (RasterTypeEnum) roci;
+                                break;
+                            }
+                        case 2048:
+                            {
+                                Epsg2d.SetCodeString("EPGS:" + roci);
+                                break;
+                            }
+                        case 4096:
+                            {
+                                Epsg3d.SetCodeString("EPGS:" + roci);
+                                break;
+                            }
+                        default:
+                            break;
+                    }
+                }
+            }
         }
     }
 }

@@ -196,8 +196,8 @@ namespace gridfiles
             {
                 Data = newData;
 
-                NColumns = (Int32)((east_long - west_long) / DeltaLongitude) + 1;
-                NRows = (Int32)((north_lat - south_lat) / DeltaLatitude) + 1;
+                NColumns = (Int32)((east_long - west_long) / DeltaLongitude);
+                NRows = (Int32)((north_lat - south_lat) / DeltaLatitude);
 
                 LowerLeftLatitude = newLowerLeftLatitude;
                 LowerLeftLongitude = newLowerLeftLongitude;
