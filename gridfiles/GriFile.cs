@@ -165,6 +165,9 @@ namespace gridfiles
             var newLowerLeftLatitude = Double.MaxValue;
             var newLowerLeftLongitude = Double.MaxValue;
 
+            var newUpperLeftLatitude = -Double.MaxValue;
+            var newUpperLeftLongitude = -Double.MaxValue;
+
             for (Int32 i = 0; i < NRows; i++)
             {
                 var lat = UpperLeftLatitude - i * DeltaLatitude;
@@ -173,6 +176,7 @@ namespace gridfiles
                     continue;
 
                 newLowerLeftLatitude = lat < newLowerLeftLatitude ? lat : newLowerLeftLatitude;
+                newUpperLeftLatitude = lat > newUpperLeftLatitude ? lat : newUpperLeftLatitude;
 
                 for (Int32 j = 0; j < NColumns; j++)
                 {
@@ -182,22 +186,23 @@ namespace gridfiles
                         continue;
 
                     newLowerLeftLongitude = lon < newLowerLeftLongitude ? lon : newLowerLeftLongitude;
+                    newUpperLeftLongitude = lon > newUpperLeftLongitude ? lon : newUpperLeftLongitude;
 
                     var index = i * NColumns + j;
                     var v = Data.ElementAt(index);
                     
                     newData.Add(v);
-
-                    // Console.Write($"{index} {v:F2} ");
                 }
-                // Console.WriteLine();
             }
             if (newData.Count() > 0)
             {
                 Data = newData;
 
-                NColumns = (Int32)((east_long - west_long) / DeltaLongitude);
-                NRows = (Int32)((north_lat - south_lat) / DeltaLatitude);
+                // NColumns = (Int32)((east_long - west_long) / DeltaLongitude);
+                // NRows = (Int32)((north_lat - south_lat) / DeltaLatitude);
+               
+                NColumns = (Int32)Math.Round((newUpperLeftLongitude - newLowerLeftLongitude) / DeltaLongitude, 6) + 1;
+                NRows = (Int32)Math.Round((newUpperLeftLatitude - newLowerLeftLatitude) / DeltaLatitude, 6) + 1;
 
                 LowerLeftLatitude = newLowerLeftLatitude;
                 LowerLeftLongitude = newLowerLeftLongitude;

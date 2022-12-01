@@ -7,10 +7,11 @@
     <StartupObject />
     <AssemblyName>gridfiles</AssemblyName>
     <RootNamespace>gridfiles</RootNamespace>
-    <Version>1.1.0</Version>
+    <Version>1.4.0</Version>
     <Company>Kartverket</Company>
     <Copyright>Kartverket</Copyright>
     <Platforms>AnyCPU;x64</Platforms>
+    <Authors>Sveinung Himle</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

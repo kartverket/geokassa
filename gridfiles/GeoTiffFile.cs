@@ -849,7 +849,7 @@ namespace gridfiles
                 return false;
 
             return true;
-        }  
+        }
 
         internal Dictionary<KeyValuePair<int, int>, float[]> BandListToTiledDictionary(List<float> bandList)
         {
