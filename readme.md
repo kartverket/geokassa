@@ -79,11 +79,14 @@ Commands:
   jsontin <input> <output>                            Makes triangulated TIN from point clouds
   lsc2geotiff <inputsource> <inputtarget> <output>    Converts GeoTiff translations based on Helmert + Least Squares Collocation
   bin2geotiff <input> <output>                        Converts bin file to GeoTiff
+  bin2gtx <input> <output>                            Converts bin file to Gtx
   gri2geotiff <output>                                Converts gri file(s) to GeoTiff
   gtx2geotiff <input> <output>                        Converts gtx file to GeoTiff
   ct2gtx2geotiff <output>                             Converts gtx or ct2 files to GeoTiff
+  clip <inputFile> <outputFile>                       Clips grid files
   csvs2ct2 <fromsys> <tosys> <output>                 Converts horisontal shift between two csv's into Ct2
   merge <grid1> <grid2> <gridtarget>                  Merges two ct2 files
+  makegrid <output>                                   Grids points into csv-file
   helmert <fromsys> <tosys>                           Computes helmert parametres based on two csv point sets
   tiffvalue <gridfile>                                Gets interpolated values from a grid
 ```

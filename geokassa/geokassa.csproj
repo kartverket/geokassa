@@ -36,4 +36,8 @@
     <ProjectReference Include="..\gridfiles\gridfiles.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Schemas\" />
+  </ItemGroup>
+
 </Project>

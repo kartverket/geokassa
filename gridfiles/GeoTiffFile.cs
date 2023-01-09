@@ -676,7 +676,7 @@ namespace gridfiles
                 {
                     _gdalMetadata.AddItem(new Item() { Name = Item.NameType.UNITTYPE, Sample = bandNo.ToString(), MyString = "millimetres per year" });
                     _gdalMetadata.AddItem(new Item() { Name = Item.NameType.DESCRIPTION, Sample = (bandNo++).ToString(), MyString = "up_velocity" });
-                 }
+                }
             }
             else if (TiffOutput == TiffOutputType.HORIZONTAL_OFFSET)
             {
