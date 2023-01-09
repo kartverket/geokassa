@@ -14,6 +14,8 @@
     <PackageId>geokassa</PackageId>
     <Copyright>Kartverket</Copyright>
     <Platforms>AnyCPU;x64</Platforms>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Description>geokassa - Kartverket's geodetic utility package</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -38,6 +40,13 @@
 
   <ItemGroup>
     <Folder Include="Schemas\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
