@@ -1,0 +1,33 @@
+{
+    "$id": "https://example.com/geographical-location.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Longitude and Latitude Values",
+    "description": "A geographical coordinate.",
+    "required": [ "Point-id", "X", "Y", "Z", "Epoch" ],
+    "type": "object",
+    "properties": {
+        "Point-id": {
+            "type": "string"
+        },
+        "X": {
+            "type": "number",
+            "minimum": -7000000,
+            "maximum": 7000000
+        },
+        "Y": {
+            "type": "number",
+            "minimum": -7000000,
+            "maximum": 7000000
+        },
+        "Z": {
+            "type": "number",
+            "minimum": -7000000,
+            "maximum": 7000000
+        },
+        "Epoch": {
+            "type": "number",
+            "minimum": 1990,
+            "maximum": 2050
+        }
+    }
+}
