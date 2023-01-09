@@ -39,14 +39,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Schemas\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties schemas_4geocentric-pointlist_1schema_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
