@@ -243,10 +243,10 @@ namespace gridfiles
 
             var tempPoint = new CommonPointXYZ()
             {
-                Phi1Deg = lat,
-                Lambda1Deg = lon,
-                Phi2Deg = lat,
-                Lambda2Deg = lon
+                Phi_SourceDeg = lat,
+                Lambda_SourceDeg = lon,
+                Phi_TargetDeg = lat,
+                Lambda_TargetDeg = lon
             };
 
             // NOTE: Limit interpolation:
@@ -273,7 +273,7 @@ namespace gridfiles
 
                     foreach (var p in ValidPointList)
                     {
-                        var dH = p.H2 - p.H1;
+                        var dH = p.H_Target - p.H_Source;
                         var index = ValidPointList.IndexOf(p);
                         _l[index, 0] = dH;
                     }
@@ -513,20 +513,20 @@ namespace gridfiles
                         if (PointList.Any(p => p.Name == name))
                         {
                             cpPoint = PointList.Find(p => p.Name == name);
-                            cpPoint.X1 = lon;
-                            cpPoint.Y1 = lat;
-                            cpPoint.Z1 = h;
-                            cpPoint.Time = epoch;
+                            cpPoint.X_Source = lon;
+                            cpPoint.Y_Source = lat;
+                            cpPoint.Z_Source = h;
+                            cpPoint.Epoch = epoch;
                         }
                         else
                         {
                             cpPoint = new CommonPointXYZ
                             {
                                 Name = name,
-                                Lambda1Deg = lon,
-                                Phi1Deg = lat,
-                                H1 = h,
-                                Time = epoch
+                                Lambda_SourceDeg = lon,
+                                Phi_SourceDeg = lat,
+                                H_Source = h,
+                                Epoch = epoch
                             };
                             PointList.Add(cpPoint);
                         }
@@ -572,20 +572,20 @@ namespace gridfiles
                         if (PointList.Any(p => p.Name == name))
                         {
                             cpPoint = PointList.Find(p => p.Name == name);
-                            cpPoint.Lambda2Deg = lon;
-                            cpPoint.Phi2Deg = lat;
-                            cpPoint.H2 = h;
-                            cpPoint.Time = epoch;
+                            cpPoint.Lambda_TargetDeg = lon;
+                            cpPoint.Phi_TargetDeg = lat;
+                            cpPoint.H_Target = h;
+                            cpPoint.Epoch = epoch;
                         }
                         else
                         {
                             cpPoint = new CommonPointXYZ
                             {
                                 Name = name,
-                                Lambda2Deg = lon,
-                                Phi2Deg = lat,
-                                H2 = h,
-                                Time = epoch
+                                Lambda_TargetDeg = lon,
+                                Phi_TargetDeg = lat,
+                                H_Target = h,
+                                Epoch = epoch
                             };
                             PointList.Add(cpPoint);
                         }

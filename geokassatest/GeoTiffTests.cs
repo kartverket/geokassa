@@ -17,14 +17,14 @@ namespace geokassatest
         {
             var p = new CommonPointXYZ
             {
-                X1 = 3172870.23825d,
-                Y1 = 604208.66255d,
-                Z1 = 5481574.62046d
+                X_Source = 3172870.23825d,
+                Y_Source = 604208.66255d,
+                Z_Source = 5481574.62046d
             };
 
-            Assert.Equal(10.78172626272929868207d, p.Lambda1Deg, 14);
-            Assert.Equal(59.66033766924358161532d, p.Phi1Deg, 14);
-            Assert.Equal(133.59799729101359844208d, p.H1, 6);
+            Assert.Equal(10.78172626272929868207d, p.Lambda_SourceDeg, 14);
+            Assert.Equal(59.66033766924358161532d, p.Phi_SourceDeg, 14);
+            Assert.Equal(133.59799729101359844208d, p.H_Source, 6);
         }
 
         /// <Summary>
@@ -36,14 +36,14 @@ namespace geokassatest
         {
             var p = new CommonPointXYZ
             {
-                Lambda1Deg = 10.78172626272929868207d,
-                Phi1Deg = 59.66033766924358161532d,
-                H1 = 133.59799729101359844208d
+                Lambda_SourceDeg = 10.78172626272929868207d,
+                Phi_SourceDeg = 59.66033766924358161532d,
+                H_Source = 133.59799729101359844208d
             };
 
-            Assert.Equal(3172870.23825d, p.X1, 5);
-            Assert.Equal(604208.66255d, p.Y1, 5);
-            Assert.Equal(5481574.62046d, p.Z1, 5);
+            Assert.Equal(3172870.23825d, p.X_Source, 5);
+            Assert.Equal(604208.66255d, p.Y_Source, 5);
+            Assert.Equal(5481574.62046d, p.Z_Source, 5);
         }
 
         [Fact]
@@ -54,38 +54,38 @@ namespace geokassatest
             cps.PointList.Add(new CommonPointXYZ()
             {
                 Name = "P1",
-                X1 = 3138260.91460d, Y1 = 293529.56074d, Z1 = 5526461.89476d,
-                X2 = 3138261.4077d, Y2 = 293529.1950d, Z2 = 5526461.5566d
+                X_Source = 3138260.91460d, Y_Source = 293529.56074d, Z_Source = 5526461.89476d,
+                X_Target = 3138261.4077d, Y_Target = 293529.1950d, Z_Target = 5526461.5566d
             });
             cps.PointList.Add(new CommonPointXYZ()
             {
                 Name = "P2",
-                X1 = 3143949.72043d, Y1 = 367015.67869d, Z1 = 5518814.23919d,
-                X2 = 3143950.2112d, Y2 = 367015.3120d, Z2 = 5518813.8886d
+                X_Source = 3143949.72043d, Y_Source = 367015.67869d, Z_Source = 5518814.23919d,
+                X_Target = 3143950.2112d, Y_Target = 367015.3120d, Z_Target = 5518813.8886d
             });
             cps.PointList.Add(new CommonPointXYZ()
             {
                 Name = "P3",
-                X1 = 3131965.49862d, Y1 = 403032.06854d, Z1 = 5523941.73158d,
-                X2 = 3131965.9862d, Y2 = 403031.7041d, Z2 = 5523941.3731d
+                X_Source = 3131965.49862d, Y_Source = 403032.06854d, Z_Source = 5523941.73158d,
+                X_Target = 3131965.9862d, Y_Target = 403031.7041d, Z_Target = 5523941.3731d
             });
             cps.PointList.Add(new CommonPointXYZ()
             {
                 Name = "P4",
-                X1 = 3143234.46880d, Y1 = 338308.62192d, Z1 = 5521033.59735d,
-                X2 = 3143234.9625d, Y2 = 338308.2564d, Z2 = 5521033.2535d
+                X_Source = 3143234.46880d, Y_Source = 338308.62192d, Z_Source = 5521033.59735d,
+                X_Target = 3143234.9625d, Y_Target = 338308.2564d, Z_Target = 5521033.2535d
             });
             cps.PointList.Add(new CommonPointXYZ()
             {
                 Name = "P5",
-                X1 = 3181051.59622d, Y1 = 335027.81022d, Z1 = 5499661.60383d,
-                X2 = 3181052.0882d, Y2 = 335027.4393d, Z2 = 5499661.2612d
+                X_Source = 3181051.59622d, Y_Source = 335027.81022d, Z_Source = 5499661.60383d,
+                X_Target = 3181052.0882d, Y_Target = 335027.4393d, Z_Target = 5499661.2612d
             });
             cps.PointList.Add(new CommonPointXYZ()
             {
                 Name = "P6",
-                X1 = 3116663.05249d, Y1 = 350851.90199d, Z1 = 5535247.35347d,
-                X2 = 3116663.5447d, Y2 = 350851.5402d, Z2 = 5535247.0068d
+                X_Source = 3116663.05249d, Y_Source = 350851.90199d, Z_Source = 5535247.35347d,
+                X_Target = 3116663.5447d, Y_Target = 350851.5402d, Z_Target = 5535247.0068d
             });
             var result = cps.Helmert(0.1d, 100000d, 0.05d);
 
@@ -107,27 +107,27 @@ namespace geokassatest
             helmert.PointList.Add(new CommonPointXYZ()
             {
                 Name = "P1",
-                Lambda1Deg = 9.05267d, Phi1Deg = 62.46513d, H1 = 0d,
-                Lambda2Deg = 11.34994d, Phi2Deg = 63.93045d, H2 = 0.1d
+                Lambda_SourceDeg = 9.05267d, Phi_SourceDeg = 62.46513d, H_Source = 0d,
+                Lambda_TargetDeg = 11.34994d, Phi_TargetDeg = 63.93045d, H_Target = 0.1d
             });
             helmert.PointList.Add(new CommonPointXYZ()
             {
                 Name = "P2",
-                Lambda1Deg = 11.99644d, Phi1Deg = 53.86300d, H1 = 0d,
-                Lambda2Deg = 14.11489d, Phi2Deg = 54.98329d, H2 = 0.2d
+                Lambda_SourceDeg = 11.99644d, Phi_SourceDeg = 53.86300d, H_Source = 0d,
+                Lambda_TargetDeg = 14.11489d, Phi_TargetDeg = 54.98329d, H_Target = 0.2d
             });
             helmert.PointList.Add(new CommonPointXYZ()
             {
                 Name = "P3",
-                Lambda1Deg = 11.02224d, Phi1Deg = 63.07495d, H1 = 0d,
-                Lambda2Deg = 13.39652d, Phi2Deg = 64.49743d, H2 = -0.1d
+                Lambda_SourceDeg = 11.02224d, Phi_SourceDeg = 63.07495d, H_Source = 0d,
+                Lambda_TargetDeg = 13.39652d, Phi_TargetDeg = 64.49743d, H_Target = -0.1d
             });
 
             helmert.PointList.Add(new CommonPointXYZ()
             {
                 Name = "P4",
-                Lambda1Deg = 13.83649d, Phi1Deg = 64.28125d, H1 = 0d,
-                Lambda2Deg = 16.33116d, Phi2Deg = 65.65242d, H2 = 0d
+                Lambda_SourceDeg = 13.83649d, Phi_SourceDeg = 64.28125d, H_Source = 0d,
+                Lambda_TargetDeg = 16.33116d, Phi_TargetDeg = 65.65242d, H_Target = 0d
             });
             var result = helmert.Helmert(0.00001d, 100000d, 0.001d);
 

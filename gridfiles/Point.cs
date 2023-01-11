@@ -1,9 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Bson;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Schema.Generation;
+using Newtonsoft.Json.Serialization;
 
 namespace gridfiles
 {
@@ -59,129 +68,167 @@ namespace gridfiles
 
     public class CommonPointXYZ
     {
-        private PointXYZ _fromPoint;
-        private PointXYZ _toPoint;
+        private PointXYZ _sourcePoint;
+        private PointXYZ _targetPoint;
 
         private const double Ro = Math.PI / 180;
 
         public CommonPointXYZ()
         {
-            _fromPoint = new PointXYZ();
-            _toPoint = new PointXYZ();
+            _sourcePoint = new PointXYZ();
+            _targetPoint = new PointXYZ();
+        }
+                
+        [Description("Point name")]
+        [JsonProperty("name", NullValueHandling = NullValueHandling.Include)]
+        public string Name { get; set; } = "";
+        
+        [Description("Source geocentric X coordinate (m).")]
+        [JsonProperty("x_source", NullValueHandling = NullValueHandling.Include)]
+        public double X_Source
+        {
+            get => _sourcePoint.X;
+            set => _sourcePoint.X = value;
         }
 
-        public string Name { get; set; }
-
-        public double X1
+        [Description("Source geocentric Y coordinate (m).")]
+        [JsonProperty("y_source", NullValueHandling = NullValueHandling.Include)]
+        public double Y_Source
         {
-            get => _fromPoint.X;
-            set => _fromPoint.X = value;
+            get => _sourcePoint.Y;
+            set => _sourcePoint.Y = value;
         }
 
-        public double Y1
+        [Description("Source geocentric Z coordinate (m).")]
+        [JsonProperty("z_source", NullValueHandling = NullValueHandling.Include)]
+        public double Z_Source
         {
-            get => _fromPoint.Y;
-            set => _fromPoint.Y = value;
+            get => _sourcePoint.Z;
+            set => _sourcePoint.Z = value;
+        }
+                
+        [Description("Source latitude (rad).")]
+        [JsonProperty("phi_source", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
+        //[JsonProperty("phi_source", NullValueHandling = NullValueHandling.Include)]
+        public double Phi_Source
+        {
+            get => _sourcePoint.Phi;
+            set => _sourcePoint.Phi = value;
         }
 
-        public double Z1
+        [Description("Source longitude (rad).")]
+        [JsonProperty(Required = Required.Default)]
+        public double Lambda_Source
         {
-            get => _fromPoint.Z;
-            set => _fromPoint.Z = value;
+            get => _sourcePoint.Lambda;
+            set => _sourcePoint.Lambda = value;
         }
 
-        public double Phi1
+        [Description("Source height coordinate (m).")]
+        [JsonProperty(Required = Required.Default)]
+        public double H_Source
         {
-            get => _fromPoint.Phi;
-            set => _fromPoint.Phi = value;
+            get => _sourcePoint.H;
+            set => _sourcePoint.H = value;
         }
 
-        public double Lambda1
+        [Description("Source latitude (deg).")]
+        [JsonProperty(Required = Required.Default)]
+        public double Phi_SourceDeg
         {
-            get => _fromPoint.Lambda;
-            set => _fromPoint.Lambda = value;
-        }           
-
-        public double H1
-        {
-            get => _fromPoint.H;
-            set => _fromPoint.H = value;
+            get => _sourcePoint.PhiDeg;
+            set => _sourcePoint.PhiDeg = value;
         }
 
-        public double Phi1Deg
+        [Description("Source longitude (deg).")]
+        [JsonProperty(Required = Required.Default)]
+        public double Lambda_SourceDeg
         {
-            get => _fromPoint.PhiDeg;
-            set => _fromPoint.PhiDeg = value;
+            get => _sourcePoint.LambdaDeg;
+            set => _sourcePoint.LambdaDeg = value;
         }
 
-        public double Lambda1Deg
+        [Description("Source noise (m).")]
+        [JsonProperty(Required = Required.Default)]
+        public double Noise_Source
         {
-            get => _fromPoint.LambdaDeg;
-            set => _fromPoint.LambdaDeg = value;
+            get => _sourcePoint.Noise;
+            set => _sourcePoint.Noise = value;
         }
 
-        public double Noise1
+        [Description("Epoch (year).")]
+        public double Epoch { get; set; } = 0d;
+
+        [Description("Target geocentric X coordinate (m).")]
+        public double X_Target
         {
-            get => _fromPoint.Noise;
-            set => _fromPoint.Noise = value;
+            get => _targetPoint.X;
+            set => _targetPoint.X = value;
         }
 
-        public double Time { get; set; }
-
-        public double X2
+        [Description("Target geocentric Y coordinate (m).")]
+        public double Y_Target
         {
-            get => _toPoint.X;
-            set => _toPoint.X = value;
+            get => _targetPoint.Y;
+            set => _targetPoint.Y = value;
         }
 
-        public double Y2
+        [Description("Target geocentric Z coordinate (m).")]
+        public double Z_Target
         {
-            get => _toPoint.Y;
-            set => _toPoint.Y = value;
+            get => _targetPoint.Z;
+            set => _targetPoint.Z = value;
+        }
+        
+        [Description("Target latitude (rad).")]
+        [JsonProperty(Required = Required.Default)]
+        public double Phi_Target
+        {
+            get => _targetPoint.Phi;
+            set => _targetPoint.Phi = value;
         }
 
-        public double Z2
+        [Description("Target longitude (rad).")]
+        [JsonProperty(Required = Required.Default)]
+        public double Lambda_Target
         {
-            get => _toPoint.Z;
-            set => _toPoint.Z = value;
+            get => _targetPoint.Lambda;
+            set => _targetPoint.Lambda = value;
         }
 
-        public double Phi2
+        [Description("Target height coordinate (m).")]
+        [JsonProperty(Required = Required.Default)]
+        public double H_Target
         {
-            get => _toPoint.Phi;
-            set => _toPoint.Phi = value;
+            get => _targetPoint.H;
+            set => _targetPoint.H = value;
         }
 
-        public double Lambda2
+        [Description("Target latitude (deg).")]
+        [JsonProperty(Required = Required.Default)]
+        public double Phi_TargetDeg
         {
-            get => _toPoint.Lambda;
-            set => _toPoint.Lambda = value;
+            get => Phi_Target * 180d / Math.PI;
+            set => Phi_Target = value * Math.PI / 180d;
         }
 
-        public double H2
+        [Description("Target longitude (deg).")]        
+        [JsonProperty("lambda_targetdeg", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
+        public double Lambda_TargetDeg
         {
-            get => _toPoint.H;
-            set => _toPoint.H = value;
+            get => Lambda_Target * 180d / Math.PI;
+            set => Lambda_Target = value * Math.PI / 180d;
         }
 
-        public double Phi2Deg
+        [Description("Target noise (m).")]        
+        [JsonProperty("noise_target", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
+        public double Noise_Target
         {
-            get => Phi2 * 180d / Math.PI;
-            set => Phi2 = value * Math.PI / 180d;
-        }        
-
-        public double Lambda2Deg
-        {
-            get => Lambda2 * 180d / Math.PI;
-            set => Lambda2 = value * Math.PI / 180d;
+            get => _targetPoint.Noise;
+            set => _targetPoint.Noise = value;
         }
 
-        public double Noise2
-        {
-            get => _toPoint.Noise;
-            set => _toPoint.Noise = value;
-        }
-
+        [JsonIgnore]
         public double Distance
         {
             get
@@ -189,20 +236,21 @@ namespace gridfiles
                 if (HasNullValues)
                     return 0d;
 
-                return Math.Sqrt(Math.Pow(X1 - X2, 2) + Math.Pow(Y1 - Y2, 2) + Math.Pow(Z1 - Z2, 2));
+                return Math.Sqrt(Math.Pow(X_Source - X_Target, 2) + Math.Pow(Y_Source - Y_Target, 2) + Math.Pow(Z_Source - Z_Target, 2));
             }
         }
-       
-        public bool HasNullValues => X1 == 0d || Y1 == 0d || Z1 == 0d || X2 == 0d || Y2 == 0d || Z2 == 0d; 
+
+        [JsonIgnore]
+        public bool HasNullValues => X_Source == 0d || Y_Source == 0d || Z_Source == 0d || X_Target == 0d || Y_Target == 0d || Z_Target == 0d; 
 
         public double GetDistance(double x, double y, double z)
         {
             if (HasNullValues)
                 return 0d;
 
-            return Math.Sqrt(Math.Pow(X1 - x, 2) + Math.Pow(Y1 - y, 2) + Math.Pow(Z1 - z, 2));
+            return Math.Sqrt(Math.Pow(X_Source - x, 2) + Math.Pow(Y_Source - y, 2) + Math.Pow(Z_Source - z, 2));
         }
-
+        
         public double GetDistance(CommonPointXYZ point)
         {
             if (HasNullValues)
@@ -211,12 +259,13 @@ namespace gridfiles
             if (point.HasNullValues)
                 return 0d;
 
-            return Math.Sqrt(Math.Pow(this.X1 - point.X1, 2) +
-                Math.Pow(this.Y1 - point.Y1, 2) + 
-                Math.Pow(this.Z1 - point.Z1, 2));
+            return Math.Sqrt(
+                Math.Pow(this.X_Source - point.X_Source, 2) +
+                Math.Pow(this.Y_Source - point.Y_Source, 2) + 
+                Math.Pow(this.Z_Source - point.Z_Source, 2));
         }
 
-        public double GetDistance(double lat, double lon) => Math.Sqrt(Math.Pow((Lambda1Deg - lon) * CosLat(lat), 2) + Math.Pow(Phi1Deg - lat, 2));
+        public double GetDistance(double lat, double lon) => Math.Sqrt(Math.Pow((Lambda_SourceDeg - lon) * CosLat(lat), 2) + Math.Pow(Phi_SourceDeg - lat, 2));
 
         internal double CosLat(double lat) => Math.Cos(lat * Ro);
     }
@@ -240,7 +289,7 @@ namespace gridfiles
         { }
 
         public string Name { get; set; }
-
+        
         public double X
         {
             get
@@ -372,6 +421,7 @@ namespace gridfiles
                     return _lambda;
 
                 _lambda = Math.Atan2(_y, _x);
+
                 return _lambda;
             }
             set

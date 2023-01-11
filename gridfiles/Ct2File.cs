@@ -168,7 +168,7 @@ namespace gridfiles
                 if (ValidPointList.Count() == 0)
                     return 0d;
 
-                return ValidPointList.Sum(x => x.Phi1Deg) / NumberOfPoints;
+                return ValidPointList.Sum(x => x.Phi_SourceDeg) / NumberOfPoints;
             }
         }
 
@@ -184,13 +184,13 @@ namespace gridfiles
                     {
                         var index = ValidPointList.IndexOf(p);
 
-                        _a[index * 2 + 0, 0] = p.Lambda1Deg * CosLat(MeanLat);
-                        _a[index * 2 + 0, 1] = p.Phi1Deg;
+                        _a[index * 2 + 0, 0] = p.Lambda_SourceDeg * CosLat(MeanLat);
+                        _a[index * 2 + 0, 1] = p.Phi_SourceDeg;
                         _a[index * 2 + 0, 2] = 1d;
                         _a[index * 2 + 0, 3] = 0d;
 
-                        _a[index * 2 + 1, 0] = p.Phi1Deg;
-                        _a[index * 2 + 1, 1] = -p.Lambda1Deg * CosLat(MeanLat);
+                        _a[index * 2 + 1, 0] = p.Phi_SourceDeg;
+                        _a[index * 2 + 1, 1] = -p.Lambda_SourceDeg * CosLat(MeanLat);
                         _a[index * 2 + 1, 2] = 0d;
                         _a[index * 2 + 1, 3] = 1d;
                     }
@@ -218,13 +218,13 @@ namespace gridfiles
                     var index = ValidPointList.IndexOf(point);
 
                     var p1 = Matrix<double>.Build.Dense(2, 1);
-                    p1[0, 0] = point.Lambda1Deg * CosLat(MeanLat);
-                    p1[1, 0] = point.Phi1Deg;
+                    p1[0, 0] = point.Lambda_SourceDeg * CosLat(MeanLat);
+                    p1[1, 0] = point.Phi_SourceDeg;
 
                     var p = t + r * p1;
 
-                    l[index * 2 + 0, 0] = point.Lambda2Deg * CosLat(MeanLat) - p[0, 0];
-                    l[index * 2 + 1, 0] = point.Phi2Deg - p[1, 0];
+                    l[index * 2 + 0, 0] = point.Lambda_TargetDeg * CosLat(MeanLat) - p[0, 0];
+                    l[index * 2 + 1, 0] = point.Phi_TargetDeg - p[1, 0];
                 }
                 return l;
             }
@@ -396,10 +396,10 @@ namespace gridfiles
 
             var tempPoint = new CommonPointXYZ()
             {
-                Phi1Deg = lat,
-                Lambda1Deg = lon,
-                Phi2Deg = lat,
-                Lambda2Deg = lon
+                Phi_SourceDeg = lat,
+                Lambda_SourceDeg = lon,
+                Phi_TargetDeg = lat,
+                Lambda_TargetDeg = lon
             };
 
             //  NOTE: Limit interpolation:
@@ -776,20 +776,20 @@ namespace gridfiles
                         if (PointList.Any(p => p.Name == name))
                         {
                             cpPoint = PointList.Find(p => p.Name == name);
-                            cpPoint.X1 = lon;
-                            cpPoint.Y1 = lat;
-                            cpPoint.Z1 = h;
-                            cpPoint.Time = epoch;
+                            cpPoint.X_Source = lon;
+                            cpPoint.Y_Source = lat;
+                            cpPoint.Z_Source = h;
+                            cpPoint.Epoch = epoch;
                         }
                         else
                         {
                             cpPoint = new CommonPointXYZ
                             {
                                 Name = name,
-                                Lambda1Deg = lon,
-                                Phi1Deg = lat,
-                                H1 = h,
-                                Time = epoch
+                                Lambda_SourceDeg = lon,
+                                Phi_SourceDeg = lat,
+                                H_Source = h,
+                                Epoch = epoch
                             };
                             PointList.Add(cpPoint);
                         }
@@ -835,20 +835,20 @@ namespace gridfiles
                         if (PointList.Any(p => p.Name == name))
                         {
                             cpPoint = PointList.Find(p => p.Name == name);
-                            cpPoint.Lambda2Deg = lon;
-                            cpPoint.Phi2Deg = lat;
-                            cpPoint.H2 = h;
-                            cpPoint.Time = epoch;
+                            cpPoint.Lambda_TargetDeg = lon;
+                            cpPoint.Phi_TargetDeg = lat;
+                            cpPoint.H_Target = h;
+                            cpPoint.Epoch = epoch;
                         }
                         else
                         {
                             cpPoint = new CommonPointXYZ
                             {
                                 Name = name,
-                                Lambda2Deg = lon,
-                                Phi2Deg = lat,
-                                H2 = h,
-                                Time = epoch
+                                Lambda_TargetDeg = lon,
+                                Phi_TargetDeg = lat,
+                                H_Target = h,
+                                Epoch = epoch
                             };
                             PointList.Add(cpPoint);
                         }

@@ -165,9 +165,9 @@ namespace gridfiles
                 {
                     var index = ValidPointList.IndexOf(point);
 
-                    double x = (point.X1 - X0) / _factor;
-                    double y = (point.Y1 - Y0) / _factor;
-                    double z = (point.Z1 - Z0) / _factor;
+                    double x = (point.X_Source - X0) / _factor;
+                    double y = (point.Y_Source - Y0) / _factor;
+                    double z = (point.Z_Source - Z0) / _factor;
                      
                     _a[index * 3 + 0, 0] = 0d; _a[index * 3 + 0, 1] =  z; _a[index * 3 + 0, 2] = -y; _a[index * 3 + 0, 3] = x; _a[index * 3 + 0, 4] = 1d; _a[index * 3 + 0, 5] = 0d; _a[index * 3 + 0, 6] = 0d;
                     _a[index * 3 + 1, 0] = -z; _a[index * 3 + 1, 1] = 0d; _a[index * 3 + 1, 2] =  x; _a[index * 3 + 1, 3] = y; _a[index * 3 + 1, 4] = 0d; _a[index * 3 + 1, 5] = 1d; _a[index * 3 + 1, 6] = 0d;
@@ -203,15 +203,15 @@ namespace gridfiles
                     var index = ValidPointList.IndexOf(point);
 
                     var p1 = Matrix<double>.Build.Dense(3, 1);
-                    p1[0, 0] = point.X1 - X0;
-                    p1[1, 0] = point.Y1 - Y0;
-                    p1[2, 0] = point.Z1 - Z0;
+                    p1[0, 0] = point.X_Source - X0;
+                    p1[1, 0] = point.Y_Source - Y0;
+                    p1[2, 0] = point.Z_Source - Z0;
 
                     var p = t + t0 + S * r * p1;
 
-                    l[index * 3 + 0, 0] = point.X2 - p[0, 0];
-                    l[index * 3 + 1, 0] = point.Y2 - p[1, 0];
-                    l[index * 3 + 2, 0] = point.Z2 - p[2, 0];
+                    l[index * 3 + 0, 0] = point.X_Target - p[0, 0];
+                    l[index * 3 + 1, 0] = point.Y_Target - p[1, 0];
+                    l[index * 3 + 2, 0] = point.Z_Target - p[2, 0];
                 }
                 return l;
             }           
@@ -384,17 +384,17 @@ namespace gridfiles
             foreach (var p in ValidPointList)
             {
                 var index = ValidPointList.IndexOf(p);
-                if (p.Noise1 > 0d)
+                if (p.Noise_Source > 0d)
                 {
                     for (int i = 0; i < 3; i++)
-                        d[index * 3 + i, index * 3 + i] = Math.Pow(p.Noise1, 2);
+                        d[index * 3 + i, index * 3 + i] = Math.Pow(p.Noise_Source, 2);
                  
                     continue;
                 }
-                if (p.Noise2 > 0d)
+                if (p.Noise_Target > 0d)
                 {
                     for (int i = 0; i < 3; i++)
-                        d[index * 3 + i, index * 3 + i] = Math.Pow(p.Noise2, 2);
+                        d[index * 3 + i, index * 3 + i] = Math.Pow(p.Noise_Target, 2);
 
                     continue;
                 }
@@ -505,7 +505,7 @@ namespace gridfiles
                     double vy = V[index * 3 + 1, 0];
                     double vz = V[index * 3 + 2, 0];
 
-                    writer.WriteLine($"{point.Name}{point.X1,15:F4}{point.Y1,15:F4}{point.Z1,15:F4}{point.X2,15:F4}{point.Y2,15:F4}{point.Z2,15:F4}{vx,10:F4}{vy,10:F4}{vz,10:F4}");
+                    writer.WriteLine($"{point.Name}{point.X_Source,15:F4}{point.Y_Source,15:F4}{point.Z_Source,15:F4}{point.X_Target,15:F4}{point.Y_Target,15:F4}{point.Z_Target,15:F4}{vx,10:F4}{vy,10:F4}{vz,10:F4}");
                 }
                 writer.Close();
             }
@@ -548,10 +548,10 @@ namespace gridfiles
                         var y2 = SignalNoise.At(index2 + 1, 0);
                         var z2 = SignalNoise.At(index2 + 2, 0);
                        
-                        var pos = PredictedPosition(k, c, sn, p2.X1, p2.Y1, p2.Z1);
-                        var dx = (p2.X1 + pos.Item1) - p2.X2;
-                        var dy = (p2.Y1 + pos.Item2) - p2.Y2;
-                        var dz = (p2.Z1 + pos.Item3) - p2.Z2;
+                        var pos = PredictedPosition(k, c, sn, p2.X_Source, p2.Y_Source, p2.Z_Source);
+                        var dx = (p2.X_Source + pos.Item1) - p2.X_Target;
+                        var dy = (p2.Y_Source + pos.Item2) - p2.Y_Target;
+                        var dz = (p2.Z_Source + pos.Item3) - p2.Z_Target;
 
                         var dev2 = Math.Sqrt(Math.Pow(x2, 2) + Math.Pow(y2, 2) + Math.Pow(z2, 2));
 
@@ -735,22 +735,22 @@ namespace gridfiles
                         if (PointList.Any(p => p.Name == name))
                         {
                             cpPoint = PointList.Find(p => p.Name == name);
-                            cpPoint.X1 = x;
-                            cpPoint.Y1 = y;
-                            cpPoint.Z1 = z;
-                            cpPoint.Time = epoch;
-                            cpPoint.Noise1 = noise;
+                            cpPoint.X_Source = x;
+                            cpPoint.Y_Source = y;
+                            cpPoint.Z_Source = z;
+                            cpPoint.Epoch = epoch;
+                            cpPoint.Noise_Source = noise;
                         }
                         else
                         {
                             cpPoint = new CommonPointXYZ
                             {
                                 Name = name,
-                                X1 = x,
-                                Y1 = y,
-                                Z1 = z,
-                                Time = epoch,
-                                Noise1 = noise
+                                X_Source = x,
+                                Y_Source = y,
+                                Z_Source = z,
+                                Epoch = epoch,
+                                Noise_Source = noise
                             };
                             PointList.Add(cpPoint);
                         }                      
@@ -801,22 +801,22 @@ namespace gridfiles
                         if (PointList.Any(p => p.Name == name))
                         {
                             cpPoint = PointList.Find(p => p.Name == name);
-                            cpPoint.X2 = x;
-                            cpPoint.Y2 = y;
-                            cpPoint.Z2 = z;
-                            cpPoint.Time = epoch;
-                            cpPoint.Noise2 = noise;
+                            cpPoint.X_Target = x;
+                            cpPoint.Y_Target = y;
+                            cpPoint.Z_Target = z;
+                            cpPoint.Epoch = epoch;
+                            cpPoint.Noise_Target = noise;
                         }
                         else
                         {
                             cpPoint = new CommonPointXYZ
                             {
                                 Name = name,
-                                X2 = x,
-                                Y2 = y,
-                                Z2 = z,
-                                Time = epoch,
-                                Noise2 = noise
+                                X_Target = x,
+                                Y_Target = y,
+                                Z_Target = z,
+                                Epoch = epoch,
+                                Noise_Target = noise
                             };
                             PointList.Add(cpPoint);
                         }                       

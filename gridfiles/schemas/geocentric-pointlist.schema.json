@@ -1,41 +1,65 @@
 {
     "$id": "https://github.com/himsve/geokassa/tree/master/geokassa/schemas/geocentric-pointlist.schema.json",
     "$schema": "https://github.com/himsve/geokassa/tree/master/geokassa/schemas",
-    "title": "Geocentric coordinate list",
-    "description": "Geocentric coordinate list.",
-    "type": "array",
-    "items": {
-        "type": "object",
-        "properties": {
-            "Point-id": {
-                "type": "string"
-            },
-            "X": {
-                "type": "number",
-                "minimum": -7000000,
-                "maximum": 7000000
-            },
-            "Y": {
-                "type": "number",
-                "minimum": -7000000,
-                "maximum": 7000000
-            },
-            "Z": {
-                "type": "number",
-                "minimum": -7000000,
-                "maximum": 7000000
-            },
-            "Epoch": {
-                "type": "number",
-                "minimum": 1950,
-                "maximum": 2050
-            },
-            "Accuracy": {
-                "type": "number",
-                "minimum": 0,
-                "maximum": 10000
-            }
+    "description": "Schema for Geocentric coordinate list.",
+    "type": "object",
+    "properties": {
+        "file_type": {
+            "type": "string",
+            "enum": [
+                "geocentic_coordinate_list_file"
+            ],
+            "description": "File type. Always \"geocentic_coordinate_list_file\""
         },
-        "required": [ "Point-id", "X", "Y", "Z", "Epoch" ]
+        "description": {
+            "type": "string",
+            "description": "A text description of the file"
+        },
+        "crs": {
+            "$ref": "#/definitions/crs",
+            "description": "String identifying the CRS of coordinates in the list. Typically \"EPSG:XXXX\"."
+        }
+    },
+    "definitions": {
+        "crs": {
+            "type": "string"
+        }
+    },
+    "coordinate_list": {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "Point-id": {
+                    "type": "string"
+                },
+                "X": {
+                    "type": "number",
+                    "minimum": -7000000,
+                    "maximum": 7000000
+                },
+                "Y": {
+                    "type": "number",
+                    "minimum": -7000000,
+                    "maximum": 7000000
+                },
+                "Z": {
+                    "type": "number",
+                    "minimum": -7000000,
+                    "maximum": 7000000
+                },
+                "Epoch": {
+                    "type": "number",
+                    "minimum": 1950,
+                    "maximum": 2050
+                },
+                "Noise": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10000
+                }
+            },
+            "required": [ "Point-id", "X", "Y", "Z", "Epoch" ]
+        }
     }
 }
