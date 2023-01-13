@@ -53,37 +53,37 @@ namespace geokassatest
             var cps = new CommonPointSet();
             cps.PointList.Add(new CommonPointXYZ()
             {
-                Name = "P1",
+                PointName = "P1",
                 X_Source = 3138260.91460d, Y_Source = 293529.56074d, Z_Source = 5526461.89476d,
                 X_Target = 3138261.4077d, Y_Target = 293529.1950d, Z_Target = 5526461.5566d
             });
             cps.PointList.Add(new CommonPointXYZ()
             {
-                Name = "P2",
+                PointName = "P2",
                 X_Source = 3143949.72043d, Y_Source = 367015.67869d, Z_Source = 5518814.23919d,
                 X_Target = 3143950.2112d, Y_Target = 367015.3120d, Z_Target = 5518813.8886d
             });
             cps.PointList.Add(new CommonPointXYZ()
             {
-                Name = "P3",
+                PointName = "P3",
                 X_Source = 3131965.49862d, Y_Source = 403032.06854d, Z_Source = 5523941.73158d,
                 X_Target = 3131965.9862d, Y_Target = 403031.7041d, Z_Target = 5523941.3731d
             });
             cps.PointList.Add(new CommonPointXYZ()
             {
-                Name = "P4",
+                PointName = "P4",
                 X_Source = 3143234.46880d, Y_Source = 338308.62192d, Z_Source = 5521033.59735d,
                 X_Target = 3143234.9625d, Y_Target = 338308.2564d, Z_Target = 5521033.2535d
             });
             cps.PointList.Add(new CommonPointXYZ()
             {
-                Name = "P5",
+                PointName = "P5",
                 X_Source = 3181051.59622d, Y_Source = 335027.81022d, Z_Source = 5499661.60383d,
                 X_Target = 3181052.0882d, Y_Target = 335027.4393d, Z_Target = 5499661.2612d
             });
             cps.PointList.Add(new CommonPointXYZ()
             {
-                Name = "P6",
+                PointName = "P6",
                 X_Source = 3116663.05249d, Y_Source = 350851.90199d, Z_Source = 5535247.35347d,
                 X_Target = 3116663.5447d, Y_Target = 350851.5402d, Z_Target = 5535247.0068d
             });
@@ -106,26 +106,26 @@ namespace geokassatest
 
             helmert.PointList.Add(new CommonPointXYZ()
             {
-                Name = "P1",
+                PointName = "P1",
                 Lambda_SourceDeg = 9.05267d, Phi_SourceDeg = 62.46513d, H_Source = 0d,
                 Lambda_TargetDeg = 11.34994d, Phi_TargetDeg = 63.93045d, H_Target = 0.1d
             });
             helmert.PointList.Add(new CommonPointXYZ()
             {
-                Name = "P2",
+                PointName = "P2",
                 Lambda_SourceDeg = 11.99644d, Phi_SourceDeg = 53.86300d, H_Source = 0d,
                 Lambda_TargetDeg = 14.11489d, Phi_TargetDeg = 54.98329d, H_Target = 0.2d
             });
             helmert.PointList.Add(new CommonPointXYZ()
             {
-                Name = "P3",
+                PointName = "P3",
                 Lambda_SourceDeg = 11.02224d, Phi_SourceDeg = 63.07495d, H_Source = 0d,
                 Lambda_TargetDeg = 13.39652d, Phi_TargetDeg = 64.49743d, H_Target = -0.1d
             });
 
             helmert.PointList.Add(new CommonPointXYZ()
             {
-                Name = "P4",
+                PointName = "P4",
                 Lambda_SourceDeg = 13.83649d, Phi_SourceDeg = 64.28125d, H_Source = 0d,
                 Lambda_TargetDeg = 16.33116d, Phi_TargetDeg = 65.65242d, H_Target = 0d
             });

@@ -505,7 +505,7 @@ namespace gridfiles
                     double vy = V[index * 3 + 1, 0];
                     double vz = V[index * 3 + 2, 0];
 
-                    writer.WriteLine($"{point.Name}{point.X_Source,15:F4}{point.Y_Source,15:F4}{point.Z_Source,15:F4}{point.X_Target,15:F4}{point.Y_Target,15:F4}{point.Z_Target,15:F4}{vx,10:F4}{vy,10:F4}{vz,10:F4}");
+                    writer.WriteLine($"{point.PointName}{point.X_Source,15:F4}{point.Y_Source,15:F4}{point.Z_Source,15:F4}{point.X_Target,15:F4}{point.Y_Target,15:F4}{point.Z_Target,15:F4}{vx,10:F4}{vy,10:F4}{vz,10:F4}");
                 }
                 writer.Close();
             }
@@ -732,9 +732,9 @@ namespace gridfiles
                             if (!double.TryParse(values[5], out noise))
                                 continue;
 
-                        if (PointList.Any(p => p.Name == name))
+                        if (PointList.Any(p => p.PointName == name))
                         {
-                            cpPoint = PointList.Find(p => p.Name == name);
+                            cpPoint = PointList.Find(p => p.PointName == name);
                             cpPoint.X_Source = x;
                             cpPoint.Y_Source = y;
                             cpPoint.Z_Source = z;
@@ -745,7 +745,7 @@ namespace gridfiles
                         {
                             cpPoint = new CommonPointXYZ
                             {
-                                Name = name,
+                                PointName = name,
                                 X_Source = x,
                                 Y_Source = y,
                                 Z_Source = z,
@@ -798,9 +798,9 @@ namespace gridfiles
                             if (!double.TryParse(values[5], out noise))
                                 continue;
 
-                        if (PointList.Any(p => p.Name == name))
+                        if (PointList.Any(p => p.PointName == name))
                         {
-                            cpPoint = PointList.Find(p => p.Name == name);
+                            cpPoint = PointList.Find(p => p.PointName == name);
                             cpPoint.X_Target = x;
                             cpPoint.Y_Target = y;
                             cpPoint.Z_Target = z;
@@ -811,7 +811,7 @@ namespace gridfiles
                         {
                             cpPoint = new CommonPointXYZ
                             {
-                                Name = name,
+                                PointName = name,
                                 X_Target = x,
                                 Y_Target = y,
                                 Z_Target = z,

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -65,26 +67,29 @@ namespace gridfiles
             set => _toPoint.Height = value;
         }        
     }
-
+        
+   // [JsonObject("common_point_xyz", IsReference = true, ItemIsReference = true)]
     public class CommonPointXYZ
     {
-        private PointXYZ _sourcePoint;
-        private PointXYZ _targetPoint;
+        private PointXYZ _sourcePoint = null;
+        private PointXYZ _targetPoint = null;
 
-        private const double Ro = Math.PI / 180;
+        private const double Ro = Math.PI / 180;       
 
+        [JsonConstructor()]
         public CommonPointXYZ()
         {
-            _sourcePoint = new PointXYZ();
-            _targetPoint = new PointXYZ();
+            _sourcePoint = _sourcePoint ?? new PointXYZ();
+            _targetPoint = _targetPoint ?? new PointXYZ();
         }
-                
+
         [Description("Point name")]
-        [JsonProperty("name", NullValueHandling = NullValueHandling.Include)]
-        public string Name { get; set; } = "";
-        
+        [JsonProperty("point_name", NullValueHandling = NullValueHandling.Include, Required = Required.Always)]
+        public string PointName { get; set; } = "";
+
         [Description("Source geocentric X coordinate (m).")]
         [JsonProperty("x_source", NullValueHandling = NullValueHandling.Include)]
+        [Range(typeof(double), "-7000000", "7000000")]
         public double X_Source
         {
             get => _sourcePoint.X;
@@ -93,6 +98,7 @@ namespace gridfiles
 
         [Description("Source geocentric Y coordinate (m).")]
         [JsonProperty("y_source", NullValueHandling = NullValueHandling.Include)]
+        [Range(typeof(double), "-7000000", "7000000")]
         public double Y_Source
         {
             get => _sourcePoint.Y;
@@ -101,6 +107,7 @@ namespace gridfiles
 
         [Description("Source geocentric Z coordinate (m).")]
         [JsonProperty("z_source", NullValueHandling = NullValueHandling.Include)]
+        [Range(typeof(double), "-7000000", "7000000")]
         public double Z_Source
         {
             get => _sourcePoint.Z;
@@ -108,8 +115,7 @@ namespace gridfiles
         }
                 
         [Description("Source latitude (rad).")]
-        [JsonProperty("phi_source", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
-        //[JsonProperty("phi_source", NullValueHandling = NullValueHandling.Include)]
+        [JsonProperty("phi_source", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]        
         public double Phi_Source
         {
             get => _sourcePoint.Phi;
@@ -117,15 +123,15 @@ namespace gridfiles
         }
 
         [Description("Source longitude (rad).")]
-        [JsonProperty(Required = Required.Default)]
+        [JsonProperty("lambda_source", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
         public double Lambda_Source
         {
             get => _sourcePoint.Lambda;
             set => _sourcePoint.Lambda = value;
         }
 
-        [Description("Source height coordinate (m).")]
-        [JsonProperty(Required = Required.Default)]
+        [Description("Source height coordinate (m).")]        
+        [JsonProperty("h_source", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
         public double H_Source
         {
             get => _sourcePoint.H;
@@ -133,15 +139,15 @@ namespace gridfiles
         }
 
         [Description("Source latitude (deg).")]
-        [JsonProperty(Required = Required.Default)]
+        [JsonProperty("phi_sourcedeg", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
         public double Phi_SourceDeg
         {
             get => _sourcePoint.PhiDeg;
             set => _sourcePoint.PhiDeg = value;
         }
 
-        [Description("Source longitude (deg).")]
-        [JsonProperty(Required = Required.Default)]
+        [Description("Source longitude (deg).")]        
+        [JsonProperty("lambda_sourcedeg", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
         public double Lambda_SourceDeg
         {
             get => _sourcePoint.LambdaDeg;
@@ -149,7 +155,7 @@ namespace gridfiles
         }
 
         [Description("Source noise (m).")]
-        [JsonProperty(Required = Required.Default)]
+        [JsonProperty("noise_source", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
         public double Noise_Source
         {
             get => _sourcePoint.Noise;
@@ -157,9 +163,13 @@ namespace gridfiles
         }
 
         [Description("Epoch (year).")]
+        [JsonProperty("epoch", NullValueHandling = NullValueHandling.Include)]
+        [Range(typeof(double), "1950", "2050")]
         public double Epoch { get; set; } = 0d;
 
         [Description("Target geocentric X coordinate (m).")]
+        [JsonProperty("x_target", NullValueHandling = NullValueHandling.Include)]
+        [Range(typeof(double), "-7000000", "7000000")]
         public double X_Target
         {
             get => _targetPoint.X;
@@ -167,6 +177,8 @@ namespace gridfiles
         }
 
         [Description("Target geocentric Y coordinate (m).")]
+        [JsonProperty("y_target", NullValueHandling = NullValueHandling.Include)]
+        [Range(typeof(double), "-7000000", "7000000")]
         public double Y_Target
         {
             get => _targetPoint.Y;
@@ -174,30 +186,32 @@ namespace gridfiles
         }
 
         [Description("Target geocentric Z coordinate (m).")]
+        [JsonProperty("z_target", NullValueHandling = NullValueHandling.Include)]
+        [Range(typeof(double), "-7000000", "7000000")]
         public double Z_Target
         {
             get => _targetPoint.Z;
             set => _targetPoint.Z = value;
         }
         
-        [Description("Target latitude (rad).")]
-        [JsonProperty(Required = Required.Default)]
+        [Description("Target latitude (rad).")]        
+        [JsonProperty("phi_target", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
         public double Phi_Target
         {
             get => _targetPoint.Phi;
             set => _targetPoint.Phi = value;
         }
 
-        [Description("Target longitude (rad).")]
-        [JsonProperty(Required = Required.Default)]
+        [Description("Target longitude (rad).")]       
+        [JsonProperty("lambda_target", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
         public double Lambda_Target
         {
             get => _targetPoint.Lambda;
             set => _targetPoint.Lambda = value;
         }
 
-        [Description("Target height coordinate (m).")]
-        [JsonProperty(Required = Required.Default)]
+        [Description("Target height coordinate (m).")]        
+        [JsonProperty("h_target", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
         public double H_Target
         {
             get => _targetPoint.H;
@@ -205,7 +219,7 @@ namespace gridfiles
         }
 
         [Description("Target latitude (deg).")]
-        [JsonProperty(Required = Required.Default)]
+        [JsonProperty("phi_targetdeg", Required = Required.Default, NullValueHandling = NullValueHandling.Include)]
         public double Phi_TargetDeg
         {
             get => Phi_Target * 180d / Math.PI;

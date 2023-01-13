@@ -1,65 +1,129 @@
 {
-    "$id": "https://github.com/himsve/geokassa/tree/master/geokassa/schemas/geocentric-pointlist.schema.json",
-    "$schema": "https://github.com/himsve/geokassa/tree/master/geokassa/schemas",
-    "description": "Schema for Geocentric coordinate list.",
-    "type": "object",
-    "properties": {
-        "file_type": {
-            "type": "string",
-            "enum": [
-                "geocentic_coordinate_list_file"
-            ],
-            "description": "File type. Always \"geocentic_coordinate_list_file\""
-        },
-        "description": {
-            "type": "string",
-            "description": "A text description of the file"
-        },
-        "crs": {
-            "$ref": "#/definitions/crs",
-            "description": "String identifying the CRS of coordinates in the list. Typically \"EPSG:XXXX\"."
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://github.com/himsve/geokassa/tree/master/gridfiles/schemas/geocentric-pointlist.schema.json",
+    "title": "CommonPointList",
+    "description": "Schema for geocentric common point list",
+    "definitions": {
+        "CommonPointXYZ": {
+            "type": [ "object", "null" ],
+            "properties": {
+                "point_name": {
+                    "description": "Point name",
+                    "type": "string"
+                },
+                "x_source": {
+                    "description": "Source geocentric X coordinate (m).",
+                    "type": "number",
+                    "minimum": -7000000.0,
+                    "maximum": 7000000.0
+                },
+                "y_source": {
+                    "description": "Source geocentric Y coordinate (m).",
+                    "type": "number",
+                    "minimum": -7000000.0,
+                    "maximum": 7000000.0
+                },
+                "z_source": {
+                    "description": "Source geocentric Z coordinate (m).",
+                    "type": "number",
+                    "minimum": -7000000.0,
+                    "maximum": 7000000.0
+                },
+                "phi_source": {
+                    "description": "Source latitude (rad).",
+                    "type": "number"
+                },
+                "lambda_source": {
+                    "description": "Source longitude (rad).",
+                    "type": "number"
+                },
+                "h_source": {
+                    "description": "Source height coordinate (m).",
+                    "type": "number"
+                },
+                "phi_sourcedeg": {
+                    "description": "Source latitude (deg).",
+                    "type": "number"
+                },
+                "lambda_sourcedeg": {
+                    "description": "Source longitude (deg).",
+                    "type": "number"
+                },
+                "noise_source": {
+                    "description": "Source noise (m).",
+                    "type": "number"
+                },
+                "epoch": {
+                    "description": "Epoch (year).",
+                    "type": "number",
+                    "minimum": 1950.0,
+                    "maximum": 2050.0
+                },
+                "x_target": {
+                    "description": "Target geocentric X coordinate (m).",
+                    "type": "number",
+                    "minimum": -7000000.0,
+                    "maximum": 7000000.0
+                },
+                "y_target": {
+                    "description": "Target geocentric Y coordinate (m).",
+                    "type": "number",
+                    "minimum": -7000000.0,
+                    "maximum": 7000000.0
+                },
+                "z_target": {
+                    "description": "Target geocentric Z coordinate (m).",
+                    "type": "number",
+                    "minimum": -7000000.0,
+                    "maximum": 7000000.0
+                },
+                "phi_target": {
+                    "description": "Target latitude (rad).",
+                    "type": "number"
+                },
+                "lambda_target": {
+                    "description": "Target longitude (rad).",
+                    "type": "number"
+                },
+                "h_target": {
+                    "description": "Target height coordinate (m).",
+                    "type": "number"
+                },
+                "phi_targetdeg": {
+                    "description": "Target latitude (deg).",
+                    "type": "number"
+                },
+                "lambda_targetdeg": {
+                    "description": "Target longitude (deg).",
+                    "type": "number"
+                },
+                "noise_target": {
+                    "description": "Target noise (m).",
+                    "type": "number"
+                }
+            },
+            "required": [ "point_name", "x_source", "y_source", "z_source", "epoch", "x_target", "y_target", "z_target" ]
         }
     },
-    "definitions": {
-        "crs": {
+    "type": "object",
+    "properties": {
+        "file_name": {
+            "description": "File name of json file.",
+            "type": "string"
+        },
+        "point_list": {
+            "description": "List of common point in source and target crs.",
+            "type": "array",
+            "items": { "$ref": "#/definitions/CommonPointXYZ" }
+        },
+        "source_crs": {
+            "description": "String identifying the CRS of source coordinates in the vertices. Typically \"EPSG:XXXX\"",
+            "type": "string"
+        },
+        "target_crs": {
+            "description": "String identifying the CRS of target coordinates in the vertices. Typically \"EPSG:XXXX\"",
             "type": "string"
         }
     },
-    "coordinate_list": {
-        "type": "array",
-        "items": {
-            "type": "object",
-            "properties": {
-                "Point-id": {
-                    "type": "string"
-                },
-                "X": {
-                    "type": "number",
-                    "minimum": -7000000,
-                    "maximum": 7000000
-                },
-                "Y": {
-                    "type": "number",
-                    "minimum": -7000000,
-                    "maximum": 7000000
-                },
-                "Z": {
-                    "type": "number",
-                    "minimum": -7000000,
-                    "maximum": 7000000
-                },
-                "Epoch": {
-                    "type": "number",
-                    "minimum": 1950,
-                    "maximum": 2050
-                },
-                "Noise": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 10000
-                }
-            },
-            "required": [ "Point-id", "X", "Y", "Z", "Epoch" ]
-        }
-    }
+    "required": [ "file_name", "point_list", "source_crs", "target_crs" ]
 }

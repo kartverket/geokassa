@@ -510,9 +510,9 @@ namespace gridfiles
                     {
                         CommonPointXYZ cpPoint;
 
-                        if (PointList.Any(p => p.Name == name))
+                        if (PointList.Any(p => p.PointName == name))
                         {
-                            cpPoint = PointList.Find(p => p.Name == name);
+                            cpPoint = PointList.Find(p => p.PointName == name);
                             cpPoint.X_Source = lon;
                             cpPoint.Y_Source = lat;
                             cpPoint.Z_Source = h;
@@ -522,7 +522,7 @@ namespace gridfiles
                         {
                             cpPoint = new CommonPointXYZ
                             {
-                                Name = name,
+                                PointName = name,
                                 Lambda_SourceDeg = lon,
                                 Phi_SourceDeg = lat,
                                 H_Source = h,
@@ -569,9 +569,9 @@ namespace gridfiles
                     {
                         CommonPointXYZ cpPoint;
 
-                        if (PointList.Any(p => p.Name == name))
+                        if (PointList.Any(p => p.PointName == name))
                         {
-                            cpPoint = PointList.Find(p => p.Name == name);
+                            cpPoint = PointList.Find(p => p.PointName == name);
                             cpPoint.Lambda_TargetDeg = lon;
                             cpPoint.Phi_TargetDeg = lat;
                             cpPoint.H_Target = h;
@@ -581,7 +581,7 @@ namespace gridfiles
                         {
                             cpPoint = new CommonPointXYZ
                             {
-                                Name = name,
+                                PointName = name,
                                 Lambda_TargetDeg = lon,
                                 Phi_TargetDeg = lat,
                                 H_Target = h,
