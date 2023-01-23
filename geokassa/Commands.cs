@@ -129,6 +129,9 @@ namespace geokassa
                 tiff.DeltaLongitude = (double)par.DeltaLongitude;
                 tiff.CommonPoints.Agl = par.Agl;
 
+                tiff.CommonPoints.CommonPointList.SourceCrs = par.EpsgSource ?? "";
+                tiff.CommonPoints.CommonPointList.TargetCrs = par.EpsgTarget ?? "";
+
                 if (!tiff.ReadSourceFromFile(par.InputSource.FullName))
                 {
                     Console.WriteLine($"Could not read {par.InputSource.Name}.");
@@ -139,6 +142,10 @@ namespace geokassa
                     Console.WriteLine($"Could not read {par.InputTarget.Name}.");
                     return -1;
                 }
+
+                tiff.CommonPoints.CommonPointList.FileName = "test.schema.json";
+                tiff.OutputFileName = "C:\\Temp\\test.schema.json";
+                
                 tiff.CleanNullPoints();
                 if (!tiff.PopulatedGrid(par.C0, par.Cl, par.Sn))
                 {

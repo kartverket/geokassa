@@ -24,8 +24,6 @@ namespace gridfiles
 
         private double _factor = 1000000d;
 
-        private List<CommonPointXYZ> _list;
-
         public CommonPointSet()
         {
             _gridParam = new GridParam();
@@ -830,6 +828,6 @@ namespace gridfiles
             {   
                 throw ex;
             }
-        }     
+        }
     }
 }

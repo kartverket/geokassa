@@ -696,7 +696,7 @@ namespace gridfiles
                 var lon2 = 0d;
                 var lat2 = 0d;
 
-                if (IsInSidePolygons(new NetTopologySuite.Geometries.Point(lon1, lat1)))
+                if (IsInSidePolygons(new Point(lon1, lat1)))
                 {
                     _griEast.Data.Add(0f);
                     _griNorth.Data.Add(0f);

@@ -22,14 +22,26 @@ namespace gridfiles
             inv = 1
         }
    
-        private List<CommonPointXYZ> _list;
+        private CommonPointList _list = null;
 
         public string OutputFileName { get; set; } = "";
 
+        public CommonPointList CommonPointList
+        {
+            get => _list = _list ?? new CommonPointList();
+            set => _list = value;
+        }
+
         public List<CommonPointXYZ> PointList
         {
-            get => _list = _list ?? new List<CommonPointXYZ>();
-            set => _list = value;
+            get
+            {
+                if (_list == null)
+                    _list = new CommonPointList();
+
+                return _list.PointList;
+            }                
+            set => _list.PointList = value;
         }
 
         public List<CommonPointXYZ> ValidPointList => PointList.Where(o => !o.HasNullValues).ToList();
@@ -59,10 +71,23 @@ namespace gridfiles
             return true;
         }
 
+        /*
+        public virtual bool SerializeJsonFile(string jsonFileName)
+        {
+            return true;
+        }
+
+        public virtual bool DeserializeJsonFile(string jsonFileName)
+        {
+            return true;
+        }
+        */
+
         // NOTE: Tests geocentric<>geodetic transformation
         public bool TestTransformationsCommonPointXYZ()
         {
             bool trueOrFalse = false;
+
             if (trueOrFalse)
             {
                 var p = new CommonPointXYZ();

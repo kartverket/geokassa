@@ -78,6 +78,7 @@ namespace gridfiles
 
             _gtxFile = new GtxFile(griUFilename, _gridParam);
             _ct2File = new Ct2File(griNFilename, griEFilename, _gridParam);
+
             _cps = new CommonPointSet(_gridParam);
         }
 
