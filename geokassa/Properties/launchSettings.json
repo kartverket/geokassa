@@ -2,8 +2,8 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "geokassa clip \"C:\\Users\\himsve\\Anaconda3\\Library\\share\\proj\\no_kv_arcgp-2006-sk.tif\" \"c:\\temp\\no_kv_arcgp-2006-sk.tif\" --tilesize 32 --type tiff --bbox -4.000 76.167 38.000 81.167",
-      "workingDirectory": "C:\\Prosjekter\\ED50"
+      "commandLineArgs": "geokassa lsc2geotiff \"c:\\Temp\\test.json\" no_kv_NKGETRF14_EPSG7922_2000.tif --type 3 --gridname no_kv_NKGETRF14_EPSG7922_2000 --email skakar@kartverket.no --area \"Norway - onshore\" --desc \"Geocentric translations from NKG:ETRF14 to EPSG:7922.\" --epsg2d EPSG:9069 --epsgsource NKG:ETRF14 --epsgtarget EPSG:7922 --lle 4.0 --lln 57.0 --de 0.04 --dn 0.02 --agl 400.0 --rows 740 --cols 720 --tilesize 256 --c0 0.0004 --cl 100000 --sn 0.025",
+      "workingDirectory": "C:\\Users\\Administrator\\source\\repos\\transanalyse\\NKG_Accuracy\\Mod_Helmert"
     }
   }
 }

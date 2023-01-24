@@ -74,9 +74,22 @@ namespace geokassa
             Name = name;
             Description = description;
 
+            /*
             AddArgument(new Argument<FileInfo>("inputsource", "Source csv file (ID, X/lon, Y/lat, Z/h, Epoch)"));
             AddArgument(new Argument<FileInfo>("inputtarget", "Target csv file (ID, X/lon, Y/lat, Z/h, Epoch)"));
+            */
+            
+            AddArgument(new Argument<FileInfo>("inputjson", "Input from Json at geocentric-pointlist.schema.json schema"));
             AddArgument(new Argument<FileInfo>("output", "Output geotiff file"));
+
+            /*
+            AddOption(new Option<FileInfo> ("--json", "Input from Json at geocentric-pointlist.schema.json schema")
+            { Argument = new Argument<FileInfo>("json", "Input"), IsRequired = false });
+            AddOption(new Option<FileInfo>("--csvsource", "Input source csv file (ID, X/lon, Y/lat, Z/h, Epoch)")
+            { Argument = new Argument<FileInfo>("csvsource", "Input source"), IsRequired = false });
+            AddOption(new Option<FileInfo>("--csvtarget", "Input target csv file (ID, X/lon, Y/lat, Z/h, Epoch)")
+            { Argument = new Argument<FileInfo>("csvtarget", "Input target"), IsRequired = false });
+            */
 
             AddOption(new Option<GeoTiffFile.TiffOutputTypeshort>("--type", "TiffOutputType") { Argument = new Argument<GeoTiffFile.TiffOutputTypeshort>("type") });
             AddOption(new Option("--gridname", "Grid name") { Argument = new Argument<string>("gridname"), IsRequired = true });
@@ -129,23 +142,44 @@ namespace geokassa
                 tiff.DeltaLongitude = (double)par.DeltaLongitude;
                 tiff.CommonPoints.Agl = par.Agl;
 
-                tiff.CommonPoints.CommonPointList.SourceCrs = par.EpsgSource ?? "";
-                tiff.CommonPoints.CommonPointList.TargetCrs = par.EpsgTarget ?? "";
+                tiff.CommonPointList.SourceCrs = par.EpsgSource ?? "";
+                tiff.CommonPointList.TargetCrs = par.EpsgTarget ?? "";
 
-                if (!tiff.ReadSourceFromFile(par.InputSource.FullName))
+                if (!(par.InputSource is null))
                 {
-                    Console.WriteLine($"Could not read {par.InputSource.Name}.");
-                    return -1;
+                    if (!tiff.ReadSourceFromFile(par.InputSource.FullName))
+                    {
+                        Console.WriteLine($"Could not read {par.InputSource.Name}.");
+                        return -1;
+                    }
                 }
-                if (!tiff.ReadTargetFromFile(par.InputTarget.FullName))
+                if (!(par.InputTarget is null))
                 {
-                    Console.WriteLine($"Could not read {par.InputTarget.Name}.");
-                    return -1;
+                    if (!tiff.ReadTargetFromFile(par.InputTarget.FullName))
+                    {
+                        Console.WriteLine($"Could not read {par.InputTarget.Name}.");
+                        return -1;
+                    }
                 }
+                if (!(par.InputJson is null))
+                {
+                    tiff.CommonPointList =
+                        (CommonPointList)JsonGenerator.ReadFromJsonFile<CommonPointList>(tiff.CommonPointList, par.InputJson.FullName);
+                }
+                // TODO: Remove this!
+                if (false)
+                {
+                    tiff.OutputFileName = "C:\\Temp\\test.schema.json";
 
-                tiff.CommonPoints.CommonPointList.FileName = "test.schema.json";
-                tiff.OutputFileName = "C:\\Temp\\test.schema.json";
-                
+                    if (!JsonGenerator.GenerateSchema<CommonPointList>(
+                        "C:\\Temp\\test.schema.json",
+                        "https://github.com/himsve/geokassa/tree/master/gridfiles/schemas/geocentric-pointlist.schema.json",
+                        "http://json-schema.org/draft-07/schema#"))
+                        return -1;
+
+                    tiff.CommonPointList.FileName = "geocentric-pointlist.schema.json";
+                    JsonGenerator.WriteToJsonFile(tiff.CommonPointList, "C:\\Temp\\test.json");
+                }
                 tiff.CleanNullPoints();
                 if (!tiff.PopulatedGrid(par.C0, par.Cl, par.Sn))
                 {

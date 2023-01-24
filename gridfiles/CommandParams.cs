@@ -20,6 +20,7 @@ namespace gridfiles
     {
         public FileInfo InputSource { get; set; }
         public FileInfo InputTarget { get; set; }
+        public FileInfo InputJson { get; set; }
         public int Dim { get; set; }
         public string Epsg2d { get; set; }
         public string EpsgSource { get; set; }

@@ -34,10 +34,6 @@ namespace gridfiles
             DateParseHandling = DateParseHandling.None,
             Converters =
             {
-                //TypeEnumConverter.Singleton,
-                //FileTypeConverter.Singleton,
-                //FormatVersionConverter.Singleton,
-                //TransformedComponentConverter.Singleton,
                 ArrayConverter.Singleton,
                 new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
             },
@@ -197,8 +193,6 @@ namespace gridfiles
 
     internal class ArrayConverter : JsonConverter
     {
-        private Type _objectType;
-
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var token = JToken.Load(reader);
@@ -249,7 +243,6 @@ namespace gridfiles
 
         public override bool CanConvert(Type objectType)
         {
-            _objectType = objectType;
             return objectType.IsGenericType && (objectType.GetGenericTypeDefinition() == typeof(List<>));
         }
 
@@ -273,11 +266,6 @@ namespace gridfiles
                 writer.WriteRawValue(JsonConvert.SerializeObject(token));
                 token = token.Next;
             }
-            /*
-            foreach (var v in (List<T>)value)
-            {
-                writer.WriteRawValue(JsonConvert.SerializeObject(v));
-            }*/
             writer.WriteEndArray();
         }
 

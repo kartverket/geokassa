@@ -99,18 +99,25 @@ namespace gridfiles
 
         public override bool ValidateJson(string jsonString)
         {
-            JObject jsonObject = JObject.Parse(jsonString);
+            try
+            {
+                JObject jsonObject = JObject.Parse(jsonString);
 
-            string jsonSchemaString = JSchemaString;
-            var schema = JSchema.Parse(jsonSchemaString);
+                string jsonSchemaString = JSchemaString;
+                var schema = JSchema.Parse(jsonSchemaString);
 
-            IList<string> message;
-            bool valid = jsonObject.IsValid(schema, out message);
+                IList<string> message;
+                bool valid = jsonObject.IsValid(schema, out message);
 
-            if (!valid)
-                return false;
+                if (!valid)
+                    return false;
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;                
+            }
         }
     }
 
@@ -177,9 +184,9 @@ namespace gridfiles
                     validatingReader.ValidationEventHandler += (o, a) => messages.Add(a.Message);
 
                     JsonSerializer serializer = new JsonSerializer();
-                    T p = serializer.Deserialize<T>(validatingReader);
+                    T serializedObject = serializer.Deserialize<T>(validatingReader);
 
-                    return p;
+                    return serializedObject;
                 }
                 else
                 {
@@ -192,27 +199,7 @@ namespace gridfiles
             }
             finally
             {
-            }
-            /*
-            string jsonSchemaString = @CommonPointList.JSchema.ToString();
-            var schema = JSchema.Parse(jsonSchemaString);
-            
-            IList<string> message;
-            bool valid = jsonObject.IsValid(schema, out message);
-
-            if (!valid)
-                return false;
-            
-            JsonTextReader reader = new JsonTextReader(new StringReader(jsonString));
-            JSchemaValidatingReader validatingReader = new JSchemaValidatingReader(reader);
-            validatingReader.Schema = JSchema.Parse(CommonPointList.JSchema.ToString());
-
-            IList<string> messages = new List<string>();
-            validatingReader.ValidationEventHandler += (o, a) => messages.Add(a.Message);
-
-            JsonSerializer serializer = new JsonSerializer();
-            T p = serializer.Deserialize<T>(validatingReader);
-            */             
+            }           
         }
     }
      
