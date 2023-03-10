@@ -195,7 +195,7 @@ namespace gridfiles
 
         public RasterTypeEnum RasterType { get; set; } = RasterTypeEnum.RasterPixelIsPoint;
 
-        public ModelTypeEnum ModelType { get; set; } = ModelTypeEnum.ModelTypeProjected;
+        public ModelTypeEnum ModelType { get; set; } = ModelTypeEnum.ModelTypeGeographic;
 
         public string Email { get; set; }
 
