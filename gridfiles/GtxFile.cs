@@ -59,7 +59,7 @@ namespace gridfiles
             set => _griFile = value;
         }     
 
-        public List<CommonPoint> CommonPointList
+        public new List<CommonPoint> CommonPointList
         {
             get => _cptFile.CommonPointList;
             set => _cptFile.CommonPointList = value;

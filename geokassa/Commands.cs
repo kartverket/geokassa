@@ -73,23 +73,9 @@ namespace geokassa
         {
             Name = name;
             Description = description;
-
-            /*
-            AddArgument(new Argument<FileInfo>("inputsource", "Source csv file (ID, X/lon, Y/lat, Z/h, Epoch)"));
-            AddArgument(new Argument<FileInfo>("inputtarget", "Target csv file (ID, X/lon, Y/lat, Z/h, Epoch)"));
-            */
             
             AddArgument(new Argument<FileInfo>("inputjson", "Input from Json at geocentric-pointlist.schema.json schema"));
             AddArgument(new Argument<FileInfo>("output", "Output geotiff file"));
-
-            /*
-            AddOption(new Option<FileInfo> ("--json", "Input from Json at geocentric-pointlist.schema.json schema")
-            { Argument = new Argument<FileInfo>("json", "Input"), IsRequired = false });
-            AddOption(new Option<FileInfo>("--csvsource", "Input source csv file (ID, X/lon, Y/lat, Z/h, Epoch)")
-            { Argument = new Argument<FileInfo>("csvsource", "Input source"), IsRequired = false });
-            AddOption(new Option<FileInfo>("--csvtarget", "Input target csv file (ID, X/lon, Y/lat, Z/h, Epoch)")
-            { Argument = new Argument<FileInfo>("csvtarget", "Input target"), IsRequired = false });
-            */
 
             AddOption(new Option<GeoTiffFile.TiffOutputTypeshort>("--type", "TiffOutputType") { Argument = new Argument<GeoTiffFile.TiffOutputTypeshort>("type") });
             AddOption(new Option("--gridname", "Grid name") { Argument = new Argument<string>("gridname"), IsRequired = true });

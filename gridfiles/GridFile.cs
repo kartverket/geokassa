@@ -71,18 +71,6 @@ namespace gridfiles
             return true;
         }
 
-        /*
-        public virtual bool SerializeJsonFile(string jsonFileName)
-        {
-            return true;
-        }
-
-        public virtual bool DeserializeJsonFile(string jsonFileName)
-        {
-            return true;
-        }
-        */
-
         // NOTE: Tests geocentric<>geodetic transformation
         public bool TestTransformationsCommonPointXYZ()
         {
@@ -122,25 +110,6 @@ namespace gridfiles
                 Console.WriteLine($"X: {p.X_Source} Y: {p.Y_Source} Z: {p.Z_Source} Lat: {p.Phi_SourceDeg} Lon: {p.Lambda_SourceDeg} H: {p.H_Source }");
             }
             return trueOrFalse;
-        }
-    }
-
-    public static class DoubleEx
-    {
-        public static double GetPrecision(this double value, int fractionRound)
-        {
-            double factor = Math.Pow(10, fractionRound);
-            return Math.Truncate(value * factor) / factor;
-        }
-
-        public static double ToArcSec(this double value)
-        {
-            return value * 648000d / Math.PI;
-        }
-
-        public static double ToPpm(this double value)
-        {
-            return 1000000d * (value - 1d);
         }
     }
 }

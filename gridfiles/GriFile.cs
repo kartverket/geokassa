@@ -26,7 +26,7 @@ namespace gridfiles
             _gridParam = gridParam;
         }
 
-        internal string InputFileName { get; set; } = "";       
+        internal string InputFileName { get; set; } = "";
 
         public virtual double LowerLeftLatitude
         {

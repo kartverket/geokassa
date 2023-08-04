@@ -18,8 +18,8 @@ namespace gridfiles
             _fileName = fileName;
         }
 
-        public decimal LowerLeftNorth { get; set; } = 0m;      
-        public decimal LowerLeftEast { get; set; } = 0m;        
+        public decimal LowerLeftNorth { get; set; } = 0m;
+        public decimal LowerLeftEast { get; set; } = 0m;
         public decimal DeltaNorth { get; set; } = 0m;
         public decimal DeltaEast { get; set; } = 0m;
         public Int32 NRows { get; set; } = 0;

@@ -533,4 +533,13 @@ namespace gridfiles
         public double Height { get; set; }
         public float Time { get; set; }
     }
+
+    public class VelocityPoint
+    {
+        public double Lat { get; set; }
+        public double Lon { get; set; }
+        public double EastVelocity { get; set; }
+        public double NorthVelocity { get; set; }
+        public double UpVelocity { get; set; }
+    }
 }

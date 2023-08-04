@@ -164,11 +164,11 @@ namespace gridfiles
 
     public class CommonPoint
     {
+        private const double Ro = Math.PI / 180;
+
         internal CommonPoint()
         {
         }
-
-        private const double Ro = Math.PI / 180;
 
         internal string Name { get; set; }
         internal double Lon1 { get; set; }
