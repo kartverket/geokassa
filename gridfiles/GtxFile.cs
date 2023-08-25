@@ -487,6 +487,9 @@ namespace gridfiles
         {
             try
             {
+                if (!File.Exists(inputFile))
+                    return false;
+
                 var reader = new StreamReader(File.OpenRead(inputFile));
 
                 while (!reader.EndOfStream)
@@ -501,10 +504,13 @@ namespace gridfiles
                     }
 
                     var name = values[0];
-                    if (!double.TryParse(values[1], out double lon) ||
-                        !double.TryParse(values[2], out double lat) ||
-                        !double.TryParse(values[3], out double h) ||
-                        !double.TryParse(values[4], out double epoch))
+                    if (!double.TryParse(values[1], out double lon))
+                        continue;
+                    if (!double.TryParse(values[2], out double lat))
+                        continue;
+                    if (!double.TryParse(values[3], out double h))
+                        continue;
+                    if (!double.TryParse(values[4], out double epoch))
                         continue;
                     else
                     {
@@ -547,6 +553,9 @@ namespace gridfiles
         {
             try
             {
+                if (!File.Exists(inputFile))
+                    return false;
+
                 var reader = new StreamReader(File.OpenRead(inputFile));
 
                 while (!reader.EndOfStream)

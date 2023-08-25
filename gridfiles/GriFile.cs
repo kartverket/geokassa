@@ -13,6 +13,7 @@ namespace gridfiles
   
         public GriFile()
         {
+            _gridParam = new GridParam();
         }
 
         public GriFile(GridParam gridParam)
@@ -100,16 +101,17 @@ namespace gridfiles
                                 var lowerLeftLongitude = 0d;
                                 var deltaLatitude = 0d;
                                 var deltaLongitude = 0d;
+
                                 headerIsFound = false;
                               
                                 if (!double.TryParse(linearray[0], out lowerLeftLatitude))
-                                    return false;                               
+                                    return false;
 
                                 if (!double.TryParse(linearray[1], out upperRightLatitude))
                                     return false;
                                
                                 if (!double.TryParse(linearray[2], out lowerLeftLongitude))
-                                    return false;                               
+                                    return false;
 
                                 if (!double.TryParse(linearray[3], out upperRightLongitude))
                                     return false;
@@ -144,6 +146,37 @@ namespace gridfiles
                             }
                         }
                         streamReader.Close();
+                    }
+                    fileStream.Close();
+                }
+                return true;
+            }
+            catch
+            {
+                Data.Clear();
+                return false;
+            }
+        }
+
+        public bool ReadCsvFile()
+        {
+            try
+            {
+                if (!File.Exists(InputFileName))
+                    return false;
+
+                Data.Clear();
+
+                using (var fileStream = new FileStream(InputFileName, FileMode.Open, FileAccess.Read))
+                {
+                    using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+                    {
+                        string line;
+
+                        while ((line = streamReader.ReadLine()) != null)
+                        {
+                            string[] linearray = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        }
                     }
                     fileStream.Close();
                 }

@@ -25,13 +25,17 @@ namespace gridfiles
             set => _lowerLeftLongitude = value;
         }
 
-        public double UpperLeftLatitude => _lowerLeftLatitude + (NRows - 1) * _deltaLatitude;
+        public virtual double LowerRightLatitude => _lowerLeftLatitude;
+        
+        public virtual double LowerRightLongitude => _lowerLeftLongitude + (NColumns - 1) * _deltaLongitude;
 
-        public double UpperLeftLongitude => _lowerLeftLongitude;
+        public virtual double UpperLeftLatitude => _lowerLeftLatitude + (NRows - 1) * _deltaLatitude;
 
-        public double UpperRightLatitude => _lowerLeftLatitude + (NRows - 1) * _deltaLatitude;
+        public virtual double UpperLeftLongitude => _lowerLeftLongitude;
 
-        public double UpperRightLongitude => _lowerLeftLongitude + (NColumns - 1) * _deltaLongitude;
+        public virtual double UpperRightLatitude => _lowerLeftLatitude + (NRows - 1) * _deltaLatitude;
+
+        public virtual double UpperRightLongitude => _lowerLeftLongitude + (NColumns - 1) * _deltaLongitude;
 
         public virtual double DeltaLatitude
         {

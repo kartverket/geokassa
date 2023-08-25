@@ -49,6 +49,7 @@ namespace gridfiles
         private GtxFile _gtxFile;
         private Ct2File _ct2File;
         private CommonPointSet _cps;
+        private VelocityFile _velocityFile;
 
         private GDALMetadata _gdalMetadata = new GDALMetadata();
         private const int byteDepth = 4;
@@ -70,6 +71,7 @@ namespace gridfiles
             _gtxFile = new GtxFile(_gridParam);
             _ct2File = new Ct2File(_gridParam);
             _cps = new CommonPointSet(_gridParam);
+            _velocityFile = new VelocityFile(_gridParam);
         }
 
         public GeoTiffFile(string griEFilename, string griNFilename, string griUFilename)
@@ -78,7 +80,6 @@ namespace gridfiles
 
             _gtxFile = new GtxFile(griUFilename, _gridParam);
             _ct2File = new Ct2File(griNFilename, griEFilename, _gridParam);
-
             _cps = new CommonPointSet(_gridParam);
         }
 
@@ -104,7 +105,6 @@ namespace gridfiles
         {
             get => _cps.CommonPointList;
             set => _cps.CommonPointList = value;
-
         }
 
         public TiffOutputType TiffOutput { get; set; }
@@ -142,6 +142,10 @@ namespace gridfiles
         public double UpperRightLatitude => _gridParam.UpperRightLatitude;
 
         public double UpperRightLongitude => _gridParam.UpperRightLongitude;
+
+        public double LowerRightLatitude => _gridParam.LowerRightLatitude;
+
+        public double LowerRightLongitude => _gridParam.LowerRightLongitude;
 
         public double DeltaLatitude
         {
@@ -273,6 +277,19 @@ namespace gridfiles
                 if (!_gtxFile.GriHeight.ReadGridFile())
                     return false;
  
+            return true;
+        }
+
+        public bool ReadVelocityFile(string inputFileName)
+        {
+            if (!File.Exists(inputFileName))
+                return false;
+
+            if (Dimensions == 3)
+            {
+                if (!_velocityFile.ReadVelocityFile(inputFileName))
+                    return false;
+            }
             return true;
         }
 
@@ -796,19 +813,33 @@ namespace gridfiles
                     }
                     else if (TiffOutput == TiffOutputType.VELOCITY)
                     {
-                        if (Dimensions == 3 || Dimensions == 2)
+                        if (_velocityFile != null && _velocityFile.GridData != null && _velocityFile.GridData.VelocityGridData.Any())
                         {
-                            if (!WriteBand(tiff, _ct2File.GriEast.Data))
+                           if (!WriteBand(tiff, _velocityFile.GridData.EastVelocityData))
                                 return false;
 
-                            if (!WriteBand(tiff, _ct2File.GriNorth.Data))
+                            if (!WriteBand(tiff, _velocityFile.GridData.NorthVelocityData))
+                                return false;
+
+                            if (!WriteBand(tiff, _velocityFile.GridData.UpVelocityData))
                                 return false;
                         }
-                        if (Dimensions == 3 || Dimensions == 1)
+                        else
                         {
-                            if (!WriteBand(tiff, _gtxFile.GriHeight.Data))
-                                return false;
-                        }
+                            if (Dimensions == 3 || Dimensions == 2)
+                            {
+                                if (!WriteBand(tiff, _ct2File.GriEast.Data))
+                                    return false;
+                                
+                                if (!WriteBand(tiff, _ct2File.GriNorth.Data))
+                                    return false;
+                            }
+                            if (Dimensions == 3 || Dimensions == 1)
+                            {
+                                if (!WriteBand(tiff, _gtxFile.GriHeight.Data))
+                                    return false;
+                            }
+                        }                     
                     }
                     else if (TiffOutput == TiffOutputType.GEOCENTRIC_TRANSLATION)
                     {
@@ -835,6 +866,7 @@ namespace gridfiles
             }
         }
 
+        // TODO: Type as template (etc. float, double...)
         internal bool WriteBand(Tiff tiff, List<float> bandList)
         {
             var myDictionary = BandListToTiledDictionary(bandList);

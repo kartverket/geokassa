@@ -7,120 +7,126 @@ using System.Threading.Tasks;
 
 namespace gridfiles
 {
-    public class VelocityFile : GridParam
-    {   
-        private List<VelocityPoint> _list = null;
+    public class VelocityFile
+    {
+        private VelocityGrid _velocityGrid = null;
+        private GridParam _gridParam;       
 
-        public VelocityFile()
+        public VelocityFile(GridParam gridParam)
         {
+            _gridParam = gridParam;
         }
-         
+
         internal string OutputFileName { get; set; } = "";
 
-        public override double LowerLeftLatitude
+        public double LowerLeftLatitude
         {
             get
             {
-                if (base.LowerLeftLatitude == 0d)
-                    LowerLeftLatitude = GridData.Min(x => x.Lat);
+                if (_gridParam.LowerLeftLatitude == 0d)
+                    LowerLeftLatitude = GridData.VelocityGridData.Min(x => x.Lat);
 
-                return base.LowerLeftLatitude;
+                return _gridParam.LowerLeftLatitude;
             }   
-            set => base.LowerLeftLatitude = value;
+            set => _gridParam.LowerLeftLatitude = value;
         }
 
-        public override double LowerLeftLongitude
+        public double LowerLeftLongitude
         {
             get
             {
-                if (base.LowerLeftLongitude == 0d)
-                    LowerLeftLongitude = GridData.Min(x => x.Lon);
+                if (_gridParam.LowerLeftLongitude == 0d)
+                    LowerLeftLongitude = GridData.VelocityGridData.Min(x => x.Lon);
 
-                return base.LowerLeftLongitude;
+                return _gridParam.LowerLeftLongitude;
             }
-            set => base.LowerLeftLongitude = value;
+            set => _gridParam.LowerLeftLongitude = value;
         }
 
-        /*
-        public override double UpperLeftLatitude
+        public double LowerRightLatitude
+        {
+            get => _gridParam.LowerRightLatitude;
+        }
+
+        public double LowerRightLongitude
+        {
+            get => _gridParam.LowerRightLongitude;
+        }
+
+        public double UpperLeftLatitude
         { 
-            get => 0d;
-           // set;
+            get => _gridParam.UpperLeftLatitude;                         
         }
 
-        public override double UpperLeftLongitude
+        public double UpperLeftLongitude
         {
-            get => 0d;
-           // set;
+            get => _gridParam.UpperLeftLongitude;
         }
 
-        public override double UpperRightLatitude
+        public double UpperRightLatitude
         {
-            get => 0d;
-           // set;
+            get => _gridParam.UpperRightLatitude;
+        }
+ 
+        public double UpperRightLongitude
+        {
+            get => _gridParam.UpperRightLongitude;           
         }
 
-        public override double UpperRightLongitude
-        {
-            get => 0d;
-           // set;
-        }*/
-
-        public override double DeltaLatitude
+        public double DeltaLatitude
         {
             get
             {
-                if (base.DeltaLatitude == 0)                
-                    base.DeltaLatitude = GridData.GroupBy(p => new { p.Lat }).Max(x => x.Key.Lat) - GridData.GroupBy(p => new { p.Lat }).SkipLast(1).Max(x => x.Key.Lat);
+                if (_gridParam.DeltaLatitude == 0d)
+                    _gridParam.DeltaLatitude = GridData.VelocityGridData.GroupBy(p => new { p.Lat }).Max(x => x.Key.Lat) - GridData.VelocityGridData.GroupBy(p => new { p.Lat }).SkipLast(1).Max(x => x.Key.Lat);
                 
-                return base.DeltaLatitude;
+                return _gridParam.DeltaLatitude;
             }
-            set => base.DeltaLatitude = value;
+            set => _gridParam.DeltaLatitude = value;
         }
 
-        public override double DeltaLongitude
+        public double DeltaLongitude
         {
             get
             {
-                if (base.DeltaLongitude == 0)                
-                    base.DeltaLongitude = GridData.GroupBy(p => new { p.Lon }).Max(x => x.Key.Lon) - GridData.GroupBy(p => new { p.Lon }).SkipLast(1).Max(x => x.Key.Lon);
+                if (_gridParam.DeltaLongitude == 0d)
+                    _gridParam.DeltaLongitude = GridData.VelocityGridData.GroupBy(p => new { p.Lon }).Max(x => x.Key.Lon) - GridData.VelocityGridData.GroupBy(p => new { p.Lon }).SkipLast(1).Max(x => x.Key.Lon);
                 
-                return base.DeltaLongitude;
+                return _gridParam.DeltaLongitude;
             }
-            set => base.DeltaLongitude = value;
+            set => _gridParam.DeltaLongitude = value;
         }
         
-
-        public override Int32 NRows
+        public Int32 NRows
         { 
             get
             {
-                if (base.NRows == 0)                
-                    base.NRows = (Int32)GridData.GroupBy(p => new { p.Lat }).Count();
+                if (_gridParam.NRows == 0)
+                    _gridParam.NRows = (Int32)GridData.VelocityGridData.GroupBy(p => new { p.Lat }).Count();
                 
-                return base.NRows;
+                return _gridParam.NRows;
             } 
-            set => base.NRows = value;
+            set => _gridParam.NRows = value;
         }
 
-        public override Int32 NColumns
+        public Int32 NColumns
         {
             get
             {
-                if (base.NColumns == 0)
-                    base.NColumns = (Int32)GridData.GroupBy(p => new { p.Lon }).Count();
+                if (_gridParam.NColumns == 0)
+                    _gridParam.NColumns = (Int32)GridData.VelocityGridData.GroupBy(p => new { p.Lon }).Count();
                
-                return base.NColumns;
+                return _gridParam.NColumns;
             }
-            set => base.NColumns = value;
+            set => _gridParam.NColumns = value;
         }
 
-        public List<VelocityPoint> GridData
+        public VelocityGrid GridData
         {
-            get => _list = _list ?? new List<VelocityPoint>();
-            set => _list = value;
+            get => _velocityGrid = _velocityGrid ?? new VelocityGrid(_gridParam);
+            set => _velocityGrid = value;
         }
-
+        
         public bool ReadVelocityFile(string inputFileName)
         {
             if (!File.Exists(inputFileName))
@@ -134,12 +140,8 @@ namespace gridfiles
 
                 var values = line.Split(new char[] { ',', ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (values.Count() != 5)
-                {
+                if (values.Count() != 5)                
                     continue;
-                    reader.Close();
-                    return false;
-                }
 
                 if (!double.TryParse(values[0], out double lat))
                     return false;
@@ -147,13 +149,13 @@ namespace gridfiles
                 if (!double.TryParse(values[1], out double lon))
                     return false;
 
-                if (!double.TryParse(values[2], out double vE))
+                if (!float.TryParse(values[2], out float vE))
                     return false;
 
-                if (!double.TryParse(values[3], out double vN))
+                if (!float.TryParse(values[3], out float vN))
                     return false;
 
-                if (!double.TryParse(values[4], out double vUp))
+                if (!float.TryParse(values[4], out float vUp))
                     return false;
 
                 var vPoint = new VelocityPoint()
@@ -164,7 +166,7 @@ namespace gridfiles
                     NorthVelocity = vN,
                     UpVelocity = vUp
                 };
-                GridData.Add(vPoint);
+                GridData.VelocityGridData.Add(vPoint);
             }
             return true;
         }

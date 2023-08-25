@@ -37,6 +37,11 @@ namespace gridfiles
         public double Sn { get; set; }
     }
 
+    public class Csv2GeoTiffCommandParams : Bin2GeoTiffCommandParams
+    {   
+
+    }
+
     public class Bin2GeoTiffCommandParams : CommandParams
     {
         public FileInfo Input { get; set; }

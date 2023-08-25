@@ -534,12 +534,43 @@ namespace gridfiles
         public float Time { get; set; }
     }
 
-    public class VelocityPoint
+    public class VelocityPoint : IComparable
     {
+        public VelocityPoint()
+        {
+        }
+
         public double Lat { get; set; }
         public double Lon { get; set; }
-        public double EastVelocity { get; set; }
-        public double NorthVelocity { get; set; }
-        public double UpVelocity { get; set; }
+        public float EastVelocity { get; set; }
+        public float NorthVelocity { get; set; }
+        public float UpVelocity { get; set; }
+
+        public int CompareTo(object other)
+        {
+            if (object.ReferenceEquals(this, other))
+                return 0;
+
+            if (other == null)
+                return 1;
+
+            VelocityPoint o = (VelocityPoint)other;
+
+            if (Lat > o.Lat)
+                return -1;
+            
+            if (Lat < o.Lat)
+                return 1;
+
+            if (Lat == o.Lat)
+            {
+                if (Lon > o.Lon)
+                    return 1;
+
+                if (Lon <= o.Lon)
+                    return -1;
+            }
+            return 0;
+        }
     }
 }
