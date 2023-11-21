@@ -2,8 +2,8 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "geokassa csv2geotiff Uplift_Svalbard_pdim_pgs_tot.dat output.tiff --type vel --gridname \"Test\" --area \"Norway including Svalbard - onshore and offshore.\" --epsg2d EPSG:4258 --epsg3d EPSG:4258 --epsgsource EPSG:4258 --epsgtarget EPSG:9755 --version 1.0 --email \"sveinung.himle@kartverket.no\" --tilesize 32 --desc \"Velocity model Svalbard\"",
-      "workingDirectory": "C:\\SkTrans\\TransBib\\Init"
+      "commandLineArgs": "bin2geotiff C:\\Prosjekter\\Høgde\\Sjø\\ChartDatum_above_Ellipsoid_EUREF89_v2023b.bin C:\\Prosjekter\\Høgde\\Sjø\\no_kv_CD_above_Ell_ETRS89_v2023b.tif --sdfile C:\\Prosjekter\\Høgde\\Sjø\\ChartDatum_above_Ellipsoid_EUREF89_v2023b_standarddeviation.bin --gridname no_kv_CD_above_Ell_ETRS89_v2023b --epsg3d EPSG:4937 --epsgtarget EPSG:9672 --tilesize 64 --type vsep --epsg2d EPSG:4258 --desc \"ETRS89 height (EPSG:4937) to CD Norway height (EPSG:9672). Converted from ChartDatum_above_Ellipsoid_EUREF89_v2023b.bin.\" --email vesola@kartverket.no --area \"Norway - inshore and nearshore\"",
+      "workingDirectory": "C:\\Prosjekter\\Høgde\\Sjø"
     }
   }
 }
