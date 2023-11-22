@@ -47,7 +47,9 @@ namespace gridfiles
         private GridParam _gridParam;
 
         private GtxFile _gtxFile;
+        private GtxFile _gtxSdFile;
         private Ct2File _ct2File;
+        private Ct2File _ct2SdFile;
         private CommonPointSet _cps;
         private VelocityFile _velocityFile;
 
@@ -67,10 +69,7 @@ namespace gridfiles
         public GeoTiffFile()
         {
             _gridParam = new GridParam();
-
-            _gtxFile = new GtxFile(_gridParam);
-            _ct2File = new Ct2File(_gridParam);
-            _cps = new CommonPointSet(_gridParam);
+             
             _velocityFile = new VelocityFile(_gridParam);
         }
 
@@ -80,36 +79,57 @@ namespace gridfiles
 
             _gtxFile = new GtxFile(griUFilename, _gridParam);
             _ct2File = new Ct2File(griNFilename, griEFilename, _gridParam);
-            _cps = new CommonPointSet(_gridParam);
         }
 
         public GtxFile Gtx
         {
-            get => _gtxFile;
+            get => _gtxFile = _gtxFile ?? new GtxFile(_gridParam);
             set => _gtxFile = value;
         }
 
+        public GtxFile GtxSdFile
+        {
+            get => _gtxSdFile = _gtxSdFile ?? new GtxFile(_gridParam);
+            set => _gtxSdFile = value;
+        }         
+
         public Ct2File Ct2
         {
-            get => _ct2File;
+            get => _ct2File = _ct2File ?? new Ct2File(_gridParam);
             set => _ct2File = value;
+        }
+
+        public Ct2File Ct2SdFile
+        {
+            get => _ct2SdFile = _ct2SdFile ?? new Ct2File(_gridParam);
+            set => _ct2SdFile = value;
         }
 
         public CommonPointSet CommonPoints
         {
-            get => _cps;
+            get => _cps = _cps ?? new CommonPointSet(_gridParam);
             set => _cps = value;
         }
 
         public new CommonPointList CommonPointList
         {
-            get => _cps.CommonPointList;
-            set => _cps.CommonPointList = value;
+            get => CommonPoints.CommonPointList;
+            set => CommonPoints.CommonPointList = value;
         }
 
         public TiffOutputType TiffOutput { get; set; }
 
         public int Dimensions { get; set; } = 1;
+
+        public int AccuracyBands
+        {
+            get
+            {
+                return (GtxSdFile.Data.Any() ? 1 : 0) +
+                    (Ct2SdFile.GriEast.Data.Any() ? 1 : 0) +
+                    (Ct2SdFile.GriNorth.Data.Any() ? 1 : 0);
+            }
+        }
 
         public CrsCode Epsg2d { get; set; } = new CrsCode();
 
@@ -193,7 +213,7 @@ namespace gridfiles
 
         public string ImageDescription
         {
-            get => _imageDescription + _cps.HelmertResult + _cps.LscParameters;
+            get => _imageDescription + CommonPoints.HelmertResult + CommonPoints.LscParameters;
             set => _imageDescription = value;
         }
 
@@ -252,12 +272,12 @@ namespace gridfiles
         {
             if (Dimensions == 1 || Dimensions == 3)
             {
-                if (!_gtxFile.CptFile.ReadCptFile(inputFileName))
+                if (!Gtx.CptFile.ReadCptFile(inputFileName))
                     return false;
             }
             if (Dimensions == 3 || Dimensions == 2)
             {
-                if (!_ct2File.CptFile.ReadCptFile(inputFileName))
+                if (!Ct2.CptFile.ReadCptFile(inputFileName))
                     return false;
             }
             return true;
@@ -267,14 +287,14 @@ namespace gridfiles
         {
             if (Dimensions > 1)
             {
-                if (!_ct2File.GriEast.ReadGridFile())
+                if (!Ct2.GriEast.ReadGridFile())
                     return false;
 
-                if (!_ct2File.GriNorth.ReadGridFile())
+                if (!Ct2.GriNorth.ReadGridFile())
                     return false;
             }
             if (Dimensions != 2)
-                if (!_gtxFile.GriHeight.ReadGridFile())
+                if (!Gtx.GriHeight.ReadGridFile())
                     return false;
  
             return true;
@@ -296,13 +316,13 @@ namespace gridfiles
         public override bool PopulatedGrid(double k, double c, double sn)
         {
             if (Dimensions == 1)
-                return _gtxFile.PopulatedGrid(k, c, sn);
+                return Gtx.PopulatedGrid(k, c, sn);
 
             if (Dimensions == 2)
-                return _ct2File.PopulateGrid(k, c, sn);
+                return Ct2.PopulateGrid(k, c, sn);
 
             if (Dimensions == 3)
-                return _cps.PopulatedGrid(k, c, sn);
+                return CommonPoints.PopulatedGrid(k, c, sn);
 
             return false;
         }
@@ -310,13 +330,13 @@ namespace gridfiles
         public override bool ReadSourceFromFile(string inputFileName)
         {
             if (Dimensions == 1)
-                return _gtxFile.ReadSourceFromFile(inputFileName);
+                return Gtx.ReadSourceFromFile(inputFileName);
 
             if (Dimensions == 2)
-                return _ct2File.ReadSourceFromFile(inputFileName);
+                return Ct2.ReadSourceFromFile(inputFileName);
 
             if (Dimensions == 3)
-                return _cps.ReadSourceFromFile(inputFileName);
+                return CommonPoints.ReadSourceFromFile(inputFileName);
 
             return false;
         }
@@ -324,13 +344,13 @@ namespace gridfiles
         public override bool ReadTargetFromFile(string inputFileName)
         {
             if (Dimensions == 1)
-                return _gtxFile.ReadTargetFromFile(inputFileName);
+                return Gtx.ReadTargetFromFile(inputFileName);
 
             if (Dimensions == 2)
-                return _ct2File.ReadTargetFromFile(inputFileName);
+                return Ct2.ReadTargetFromFile(inputFileName);
 
             if (Dimensions == 3)
-                return _cps.ReadTargetFromFile(inputFileName);
+                return CommonPoints.ReadTargetFromFile(inputFileName);
 
             return false;
         }
@@ -449,10 +469,10 @@ namespace gridfiles
                                 
                                 var arrayIndex = j + i * NColumns + rowTile * size * NColumns + colTile * size;
 
-                                while (arrayIndex >= _gtxFile.Data.Count())
-                                    _gtxFile.Data.Add(0f);
-                                
-                                _gtxFile.Data[arrayIndex] = value;
+                                while (arrayIndex >= Gtx.Data.Count())
+                                    Gtx.Data.Add(0f);
+
+                                Gtx.Data[arrayIndex] = value;
                             }
                         }
                         colSize = size;
@@ -559,9 +579,9 @@ namespace gridfiles
 
         public void CleanNullPoints()
         {
-            _cps.CleanNullPoints();
-            _ct2File.CleanNullPoints();
-            _gtxFile.CleanNullPoints();
+            CommonPoints.CleanNullPoints();
+            Ct2.CleanNullPoints();
+            Gtx.CleanNullPoints();
         }
 
         public bool GenerateMetadata(Tiff tiff)
@@ -584,24 +604,24 @@ namespace gridfiles
             if (!tiff.SetField(TiffTag.IMAGELENGTH, NRows))
                 return false;
 
-            if (!tiff.SetField(TiffTag.SAMPLESPERPIXEL, Dimensions))
+            if (!tiff.SetField(TiffTag.SAMPLESPERPIXEL, Dimensions + AccuracyBands))
                 return false;
             
-            if (Dimensions > 1)
+            if (Dimensions + AccuracyBands > 1)
             {
-                short[] a = new short[Dimensions - 1];
+                short[] a = new short[Dimensions + AccuracyBands - 1];
 
                 for (int i = 0; i < a.Length; i++)
                     a[i] = (short)ExtraSample.UNSPECIFIED;
 
-                if (!tiff.SetField(TiffTag.EXTRASAMPLES, Dimensions - 1, a))
+                if (!tiff.SetField(TiffTag.EXTRASAMPLES, Dimensions + AccuracyBands - 1, a))
                     return false;
             }
 
             if (!tiff.SetField(TiffTag.PHOTOMETRIC, Photometric.MINISBLACK))
                 return false;
 
-            if (!tiff.SetField(TiffTag.PLANARCONFIG, Dimensions > 1 ? PlanarConfig.SEPARATE : PlanarConfig.CONTIG))
+            if (!tiff.SetField(TiffTag.PLANARCONFIG, Dimensions + AccuracyBands > 1 ? PlanarConfig.SEPARATE : PlanarConfig.CONTIG))
                 return false;
 
             if (!tiff.SetField(TiffTag.BITSPERSAMPLE, 8 * byteDepth))
@@ -709,10 +729,19 @@ namespace gridfiles
                 {
                     _gdalMetadata.AddItem(new Item() { Name = Item.NameType.UNITTYPE, Sample = bandNo.ToString(), MyString = "radian" });
                     _gdalMetadata.AddItem(new Item() { Name = Item.NameType.DESCRIPTION, Sample = (bandNo++).ToString(), MyString = "latitude_offset" });
-                    _gdalMetadata.AddItem(new Item() { Name = Item.NameType.positive_value, Sample = bandNo.ToString(), MyString = "west" }); // "west" has the same sign as ct2
+                    _gdalMetadata.AddItem(new Item() { Name = Item.NameType.positive_value, Sample = bandNo.ToString(), MyString = "west" }); // "west" has same sign as ct2
 
                     _gdalMetadata.AddItem(new Item() { Name = Item.NameType.UNITTYPE, Sample = bandNo.ToString(), MyString = "radian" });
                     _gdalMetadata.AddItem(new Item() { Name = Item.NameType.DESCRIPTION, Sample = (bandNo++).ToString(), MyString = "longitude_offset" });
+
+                    if (Ct2SdFile.GriNorth.Data.Any() && Ct2SdFile.GriEast.Data.Any())
+                    {
+                        _gdalMetadata.AddItem(new Item() { Name = Item.NameType.UNITTYPE, Sample = bandNo.ToString(), MyString = "radian" });
+                        _gdalMetadata.AddItem(new Item() { Name = Item.NameType.DESCRIPTION, Sample = (bandNo++).ToString(), MyString = "latitude_offset_accuracy" });
+
+                        _gdalMetadata.AddItem(new Item() { Name = Item.NameType.UNITTYPE, Sample = bandNo.ToString(), MyString = "radian" });
+                        _gdalMetadata.AddItem(new Item() { Name = Item.NameType.DESCRIPTION, Sample = (bandNo++).ToString(), MyString = "longitude_offset_accuracy" });
+                    }
                 }
             }
             else if (TiffOutput == TiffOutputType.VERTICAL_OFFSET_VERTICAL_TO_VERTICAL)
@@ -721,12 +750,26 @@ namespace gridfiles
                 {
                     _gdalMetadata.AddItem(new Item() { Name = Item.NameType.UNITTYPE, Sample = bandNo.ToString(), MyString = "metre" });
                     _gdalMetadata.AddItem(new Item() { Name = Item.NameType.DESCRIPTION, Sample = (bandNo++).ToString(), MyString = "vertical_offset" });
+
+                    if (GtxSdFile.Data.Any())
+                    {
+                        _gdalMetadata.AddItem(new Item() { Name = Item.NameType.UNITTYPE, Sample = bandNo.ToString(), MyString = "metre" });
+                        _gdalMetadata.AddItem(new Item() { Name = Item.NameType.DESCRIPTION, Sample = (bandNo++).ToString(), MyString = "vertical_offset_accuracy" });
+                    }
                 }
             }
             else if (TiffOutput == TiffOutputType.VERTICAL_OFFSET_GEOGRAPHIC_TO_VERTICAL)
             {
-                _gdalMetadata.AddItem(new Item() { Name = Item.NameType.UNITTYPE, Sample = bandNo.ToString(), MyString = "metre" });
-                _gdalMetadata.AddItem(new Item() { Name = Item.NameType.DESCRIPTION, Sample = (bandNo++).ToString(), MyString = "geoid_undulation" });
+                if (Dimensions == 1)
+                {
+                    _gdalMetadata.AddItem(new Item() { Name = Item.NameType.UNITTYPE, Sample = bandNo.ToString(), MyString = "metre" });
+                    _gdalMetadata.AddItem(new Item() { Name = Item.NameType.DESCRIPTION, Sample = (bandNo++).ToString(), MyString = "geoid_undulation" });
+                }
+                if (GtxSdFile.Data.Any())
+                {
+                    _gdalMetadata.AddItem(new Item() { Name = Item.NameType.UNITTYPE, Sample = bandNo.ToString(), MyString = "metre" });
+                    _gdalMetadata.AddItem(new Item() { Name = Item.NameType.DESCRIPTION, Sample = (bandNo++).ToString(), MyString = "vertical_offset_accuracy" });
+                }
             }
             else if (TiffOutput == TiffOutputType.GEOCENTRIC_TRANSLATION)
             {
@@ -788,34 +831,51 @@ namespace gridfiles
                     {
                         if (Dimensions == 3 || Dimensions == 2)
                         {
-                            if (!WriteBand(tiff, _ct2File.GriNorth.Data))
+                            if (!WriteBand(tiff, Ct2.GriNorth.Data))
                                 return false;
 
-                            if (!WriteBand(tiff, _ct2File.GriEast.Data))
+                            if (!WriteBand(tiff, Ct2.GriEast.Data))
                                 return false;
+
+                            if (Ct2SdFile.GriNorth.Data.Any() && Ct2SdFile.GriEast.Data.Any())
+                            {
+                                if (!WriteBand(tiff, Ct2SdFile.GriNorth.Data))
+                                    return false;
+
+                                if (!WriteBand(tiff, Ct2SdFile.GriEast.Data))
+                                    return false;
+                            }
                         }
                     }
                     else if (TiffOutput == TiffOutputType.VERTICAL_OFFSET_VERTICAL_TO_VERTICAL)
                     {
                         if (Dimensions == 3 || Dimensions == 1)
                         {
-                            if (!WriteBand(tiff, _gtxFile.GriHeight.Data))
+                            if (!WriteBand(tiff, Gtx.GriHeight.Data))
                                 return false;
+
+                            if (GtxSdFile.GriHeight.Data.Any())
+                                if (!WriteBand(tiff, GtxSdFile.GriHeight.Data))
+                                    return false;
                         }
                     }
                     else if (TiffOutput == TiffOutputType.VERTICAL_OFFSET_GEOGRAPHIC_TO_VERTICAL)
                     {
                         if (Dimensions == 1)
                         {
-                            if (!WriteBand(tiff, _gtxFile.GriHeight.Data))
+                            if (!WriteBand(tiff, Gtx.GriHeight.Data))
                                 return false;
+
+                            if (GtxSdFile.GriHeight.Data.Any())
+                                if (!WriteBand(tiff, GtxSdFile.GriHeight.Data))
+                                    return false;
                         }
                     }
                     else if (TiffOutput == TiffOutputType.VELOCITY)
                     {
                         if (_velocityFile != null && _velocityFile.GridData != null && _velocityFile.GridData.VelocityGridData.Any())
                         {
-                           if (!WriteBand(tiff, _velocityFile.GridData.EastVelocityData))
+                            if (!WriteBand(tiff, _velocityFile.GridData.EastVelocityData))
                                 return false;
 
                             if (!WriteBand(tiff, _velocityFile.GridData.NorthVelocityData))
@@ -828,28 +888,28 @@ namespace gridfiles
                         {
                             if (Dimensions == 3 || Dimensions == 2)
                             {
-                                if (!WriteBand(tiff, _ct2File.GriEast.Data))
+                                if (!WriteBand(tiff, Ct2.GriEast.Data))
                                     return false;
                                 
-                                if (!WriteBand(tiff, _ct2File.GriNorth.Data))
+                                if (!WriteBand(tiff, Ct2.GriNorth.Data))
                                     return false;
                             }
                             if (Dimensions == 3 || Dimensions == 1)
                             {
-                                if (!WriteBand(tiff, _gtxFile.GriHeight.Data))
+                                if (!WriteBand(tiff, Gtx.GriHeight.Data))
                                     return false;
                             }
-                        }                     
+                        }
                     }
                     else if (TiffOutput == TiffOutputType.GEOCENTRIC_TRANSLATION)
                     {
-                        if (!WriteBand(tiff, _cps.GriX.Data))
+                        if (!WriteBand(tiff, CommonPoints.GriX.Data))
                             return false;
 
-                        if (!WriteBand(tiff, _cps.GriY.Data))
+                        if (!WriteBand(tiff, CommonPoints.GriY.Data))
                             return false;
 
-                        if (!WriteBand(tiff, _cps.GriZ.Data))
+                        if (!WriteBand(tiff, CommonPoints.GriZ.Data))
                             return false;
                     }
 
@@ -948,9 +1008,9 @@ namespace gridfiles
                 return false;
 
             if (Dimensions == 3 || Dimensions == 2)
-                return _ct2File.ClipGrid(west_long, south_lat, east_long, north_lat) && _gtxFile.ClipGrid(west_long, south_lat, east_long, north_lat);
+                return Ct2.ClipGrid(west_long, south_lat, east_long, north_lat) && Gtx.ClipGrid(west_long, south_lat, east_long, north_lat);
             
-            return _gtxFile.ClipGrid(west_long, south_lat, east_long, north_lat);
+            return Gtx.ClipGrid(west_long, south_lat, east_long, north_lat);
         }
 
         public void TestGdalMetadata()
@@ -1011,7 +1071,7 @@ namespace gridfiles
                             {
                                 ModelType = (ModelTypeEnum) roci;
                                 break;
-                            }                            
+                            }
                         case 1025:
                             {
                                 RasterType =  (RasterTypeEnum) roci;

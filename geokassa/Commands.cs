@@ -265,6 +265,8 @@ namespace geokassa
             AddArgument(new Argument<FileInfo>("input", "Input bin file"));
             AddArgument(new Argument<FileInfo>("output", "Output GeoTiff file"));
 
+            AddOption(new Option<FileInfo>("--sdfile", "Input standard deviation bin file"));
+
             AddOption(new Option<GeoTiffFile.TiffOutputTypeshort>("--type", "TiffOutputType") { Argument = new Argument<GeoTiffFile.TiffOutputTypeshort>("type"), IsRequired = true });
             AddOption(new Option("--gridname", "Grid name") { Argument = new Argument<string>("gridname"), IsRequired = true });
             AddOption(new Option("--email", "Product manager") { Argument = new Argument<string>("email") });
@@ -305,6 +307,14 @@ namespace geokassa
                 {
                     Console.WriteLine($"Importing of bin file {par.Input.Name} failed.");
                     return -1;
+                }
+                if (par.SdFile != null)
+                {
+                    if (!tiff.GtxSdFile.ReadBin(par.SdFile.FullName))
+                    {
+                        Console.WriteLine($"Importing of sd bin file {par.SdFile.Name} failed.");
+                        return -1;
+                    }
                 }
                 if (!tiff.GenerateGridFile(par.Output.FullName))
                 {

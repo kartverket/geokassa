@@ -45,6 +45,7 @@ namespace gridfiles
     public class Bin2GeoTiffCommandParams : CommandParams
     {
         public FileInfo Input { get; set; }
+        public FileInfo SdFile { get; set; }
         public string Epsg2d { get; set; }
         public string Epsg3d { get; set; }
         public string EpsgSource { get; set; }
