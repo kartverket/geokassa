@@ -309,6 +309,19 @@ namespace gridfiles
             {
                 if (!_velocityFile.ReadVelocityFile(inputFileName))
                     return false;
+
+                Console.WriteLine($"NRows: {_velocityFile.NRows}");
+                Console.WriteLine($"NColumns: {_velocityFile.NColumns}");
+                Console.WriteLine($"DeltaLatitude: {_velocityFile.DeltaLatitude}");
+                Console.WriteLine($"DeltaLongitude: {_velocityFile.DeltaLongitude}");
+                Console.WriteLine($"LowerLeftLatitude: {_velocityFile.LowerLeftLatitude}");
+                Console.WriteLine($"LowerLeftLongitude: {_velocityFile.LowerLeftLongitude}");
+                Console.WriteLine($"LowerRightLatitude: {_velocityFile.LowerRightLatitude}");
+                Console.WriteLine($"LowerRightLongitude: {_velocityFile.LowerRightLongitude}");
+                Console.WriteLine($"UpperLeftLatitude: {_velocityFile.UpperLeftLatitude}");
+                Console.WriteLine($"UpperLeftLongitude: {_velocityFile.UpperLeftLongitude}");
+                Console.WriteLine($"UpperRightLatitude: {_velocityFile.UpperRightLatitude}");
+                Console.WriteLine($"UpperRightLongitude: {_velocityFile.UpperRightLongitude}");
             }
             return true;
         }
@@ -929,6 +942,7 @@ namespace gridfiles
         // TODO: Type as template (etc. float, double...)
         internal bool WriteBand(Tiff tiff, List<float> bandList)
         {
+            // TODO: Tiled vs. tiled
             var myDictionary = BandListToTiledDictionary(bandList);
 
             if (myDictionary is null)
@@ -1074,7 +1088,7 @@ namespace gridfiles
                             }
                         case 1025:
                             {
-                                RasterType =  (RasterTypeEnum) roci;
+                                RasterType = (RasterTypeEnum) roci;
                                 break;
                             }
                         case 2048:
