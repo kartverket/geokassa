@@ -224,3 +224,4 @@ gridfiles/bin/
 geokassa/bin/
 x64/Release/netcoreapp2.1/
 x64/Release/netcoreapp3.1/
+x64/Release/net8.0/
