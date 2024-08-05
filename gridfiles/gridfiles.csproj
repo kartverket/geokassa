@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
     <AssemblyName>gridfiles</AssemblyName>
     <RootNamespace>gridfiles</RootNamespace>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
     <Company>Kartverket</Company>
     <Copyright>Kartverket</Copyright>
     <Platforms>AnyCPU;x64</Platforms>
