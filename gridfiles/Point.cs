@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using MathNet.Numerics.LinearAlgebra;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Converters;
@@ -536,6 +537,8 @@ namespace gridfiles
 
     public class VelocityPoint : IComparable
     {
+        private Matrix<double> _m = null;
+
         public VelocityPoint()
         {
         }
@@ -545,6 +548,45 @@ namespace gridfiles
         public float EastVelocity { get; set; }
         public float NorthVelocity { get; set; }
         public float UpVelocity { get; set; }
+
+        public Matrix<double> M
+        {
+            get
+            {
+                if (_m == null)
+                {
+                    _m = Matrix<double>.Build.Dense(3, 3);
+
+                    _m[0, 0] = -Math.Sin(Lon * double.Pi / 180d);
+                    _m[1, 0] = -Math.Cos(Lon * double.Pi / 180d) * Math.Sin(Lat * double.Pi / 180d);
+                    _m[2, 0] = Math.Cos(Lon * double.Pi / 180d) * Math.Cos(Lat * double.Pi / 180d);
+
+                    _m[0, 1] = Math.Cos(Lon * double.Pi / 180d); 
+                    _m[1, 1] = -Math.Sin(Lon * double.Pi / 180d) * Math.Sin(Lat * double.Pi / 180d);
+                    _m[2, 1] = Math.Sin(Lon * double.Pi / 180d) * Math.Cos(Lat * double.Pi / 180d);
+
+                    _m[0, 2] = 0d;
+                    _m[1, 2] = Math.Cos(Lat * double.Pi / 180d);
+                    _m[2, 2] = Math.Sin(Lat * double.Pi / 180d); 
+                }
+              
+                return _m;
+            }
+        }
+
+        public Matrix<double> ENU
+        {
+            get 
+            {
+                var v = Matrix<double>.Build;
+                double[,] x = { 
+                    { EastVelocity }, 
+                    { NorthVelocity }, 
+                    { UpVelocity } }; 
+
+                return M * v.DenseOfArray(x); 
+            }
+        }
 
         public int CompareTo(object other)
         {

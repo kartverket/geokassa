@@ -218,6 +218,7 @@ geokassa/bin/x64/Debug/netcoreapp2.1/geokassa.runtimeconfig.dev.json
 geokassa/bin/x64/Debug/netcoreapp2.1/geokassa.runtimeconfig.json
 geokassa/bin/x64/Debug/netcoreapp2.1/gridfiles.dll
 geokassa/bin/x64/Debug/netcoreapp2.1/gridfiles.pdb
+geokassa/geokassa/Properties/launchSettings.json
 geokassatest/bin/
 gridfiles/bin/
 .vs/

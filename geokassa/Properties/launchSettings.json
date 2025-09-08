@@ -1,9 +1,9 @@
 {
   "profiles": {
     "geokassa": {
-        "commandName": "Project",
-        "commandLineArgs": "bin2geotiff C:\\Prosjekter\\Høgde\\Sjø\\ChartDatum_above_Ellipsoid_EUREF89_v2023b.bin C:\\Prosjekter\\Høgde\\Sjø\\no_kv_CD_above_Ell_ETRS89_v2023b.tif --sdfile C:\\Prosjekter\\Høgde\\Sjø\\ChartDatum_above_Ellipsoid_EUREF89_v2023b_standarddeviation.bin --gridname no_kv_CD_above_Ell_ETRS89_v2023b --epsg3d EPSG:4937 --epsgtarget EPSG:9672 --tilesize 64 --type geoid --epsg2d EPSG:4258 --desc \"ETRS89 height (EPSG:4937) to CD Norway height (EPSG:9672). Converted from ChartDatum_above_Ellipsoid_EUREF89_v2023b.bin.\" --email vesola@kartverket.no --area \"Norway - inshore and nearshore\"",
-        "workingDirectory": "C:\\Prosjekter\\Høgde\\Sjø"
+      "commandName": "Project",
+      "commandLineArgs": "bin2geotiff \"C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\EPSG\\Svalbard\\Href_Svalbard_EUREF89_EGG2015_2024.bin\" \"C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\EPSG\\Svalbard\\no_kv_Svalbard_EUREF89_SVD2024.tif\" --gridname no_kv_Svalbard_EUREF89_SVD2024 --epsg3d EPSG:4937 --epsgtarget EPSG:10999 --tilesize 64 --type geoid --epsg2d EPSG:4258 --desc \"ETRS89 height (EPSG:4937) to SVD2024 height (EPSG:10999). Converted from Href_Svalbard_EUREF89_EGG2015_2024.bin\" --email himsve@kartverket.no --area \"Svalbard\"",
+      "workingDirectory": "C:\\Users\\himsve\\OneDrive - Statens Kartverk\\Prosjekter\\EPSG\\Svalbard"
     }
   }
 }

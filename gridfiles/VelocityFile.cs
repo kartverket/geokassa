@@ -166,6 +166,7 @@ namespace gridfiles
                     NorthVelocity = vN,
                     UpVelocity = vUp
                 };
+                var ENU = vPoint.ENU;
                 GridData.VelocityGridData.Add(vPoint);
             }
             return true;
