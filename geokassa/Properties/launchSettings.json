@@ -2,8 +2,8 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "bin2geotiff \"C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\EPSG\\Svalbard\\Href_Svalbard_EUREF89_EGG2015_2024.bin\" \"C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\EPSG\\Svalbard\\no_kv_Svalbard_EUREF89_SVD2024.tif\" --gridname no_kv_Svalbard_EUREF89_SVD2024 --epsg3d EPSG:4937 --epsgtarget EPSG:10999 --tilesize 64 --type geoid --epsg2d EPSG:4258 --desc \"ETRS89 height (EPSG:4937) to SVD2024 height (EPSG:10999). Converted from Href_Svalbard_EUREF89_EGG2015_2024.bin\" --email himsve@kartverket.no --area \"Svalbard\"",
-      "workingDirectory": "C:\\Users\\himsve\\OneDrive - Statens Kartverk\\Prosjekter\\EPSG\\Svalbard"
+      "commandLineArgs": "gtx2geotiff \"C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\NNTrans2018B\\NNTrans2018B.gtx\" \"C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\NNTrans2018B\\no_kv_HREF2018B_NN54_NN2000.tif\" --gridname no_kv_HREF2018B_NN54_NN2000 --epsg3d EPSG:4937 --epsgsource EPSG:5776 --epsgtarget EPSG:5941 --tilesize 64 --type vsep --epsg2d EPSG:4258 --desc \"NN54 height (EPSG:5776) to NN2000 height (EPSG:5941). Converted from NNTrans2018B.gtx\" --email himsve@kartverket.no --area \"Norway - inshore and nearshore\"",
+      "workingDirectory": "C:\\Users\\himsve\\OneDrive - Statens Kartverk\\Prosjekter\\NNTrans2018B"
     }
   }
 }

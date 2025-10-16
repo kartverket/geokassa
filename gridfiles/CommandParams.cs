@@ -72,6 +72,7 @@ namespace gridfiles
         public FileInfo Input { get; set; }
         public string Epsg2d { get; set; }
         public string Epsg3d { get; set; }
+        public string EpsgSource { get; set; }
         public string EpsgTarget { get; set; }
     }
 

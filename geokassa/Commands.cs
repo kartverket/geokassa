@@ -465,7 +465,8 @@ namespace geokassa
             AddOption(new Option("--email", "Product manager") { Argument = new Argument<string>("email") });
             AddOption(new Option("--epsg2d", "Source EPSG interpolation CRS ('autority:XXXX')") { Argument = new Argument<string>("epsg2d"), IsRequired = true });
             AddOption(new Option("--epsg3d", "Source EPSG 3D CRS ('autority:XXXX')") { Argument = new Argument<string>("epsg3d"), IsRequired = true });
-            AddOption(new Option("--epsgtarget", "Target EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgtarget"), IsRequired = true });
+            AddOption(new Option("--epsgsource", "Source EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgsource"), IsRequired = false });
+            AddOption(new Option("--epsgtarget", "Target EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgtarget"), IsRequired = false });
             AddOption(new Option("--tilesize", "Tile size (multiple of 16)") { Argument = new Argument<int>("tilesize"), IsRequired = true });
 
             Handler = CommandHandler.Create((Gtx2GeoTiffCommandParams pars) =>
@@ -488,6 +489,7 @@ namespace geokassa
                 tiff.Dimensions = 1;
                 tiff.Epsg2d.CodeString = parameters.Epsg2d;
                 tiff.Epsg3d.CodeString = parameters.Epsg3d;
+                tiff.EpsgSource.CodeString = parameters.EpsgSource;
                 tiff.EpsgTarget.CodeString = parameters.EpsgTarget;
                 tiff.TiffOutput = (GeoTiffFile.TiffOutputType)parameters.Type;
 
