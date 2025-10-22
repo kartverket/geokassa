@@ -7,7 +7,7 @@
     <StartupObject />
     <AssemblyName>gridfiles</AssemblyName>
     <RootNamespace>gridfiles</RootNamespace>
-    <Version>1.6.0</Version>
+    <Version>1.7.0</Version>
     <Company>Kartverket</Company>
     <Copyright>Kartverket</Copyright>
     <Platforms>AnyCPU;x64</Platforms>
