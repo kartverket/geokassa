@@ -5,7 +5,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <StartupObject>geokassa.Program</StartupObject>
     <Authors>Sveinung Himle</Authors>
-    <Version>1.6.0</Version>
+    <Version>1.7.0</Version>
     <Company>Kartverket</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -16,6 +16,8 @@
     <Platforms>AnyCPU;x64</Platforms>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Description>geokassa - Kartverket's geodetic utility package</Description>
+    <AssemblyVersion>1.7.0.0</AssemblyVersion>
+    <FileVersion>1.7.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
