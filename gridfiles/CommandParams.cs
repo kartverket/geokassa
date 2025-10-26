@@ -37,9 +37,24 @@ namespace gridfiles
         public double Sn { get; set; }
     }
 
-    public class Csv2GeoTiffCommandParams : Bin2GeoTiffCommandParams
-    {   
+    public class TextLsc2GeoTiffCommandParams : CommandParams
+    {
+        public FileInfo InputTextFile { get; set; }
+        public int Dim { get; set; }
+        public double LowerLeftLongitude { get; set; }
+        public double LowerLeftLatitude { get; set; }
+        public double DeltaLongitude { get; set; }
+        public double DeltaLatitude { get; set; }
+        public int Rows { get; set; }
+        public int Cols { get; set; }
+        public double Agl { get; set; } = 0;
+        public double C0 { get; set; }
+        public double Cl { get; set; }
+        public double Sn { get; set; }
+    }
 
+    public class Csv2GeoTiffCommandParams : Bin2GeoTiffCommandParams
+    {
     }
 
     public class Bin2GeoTiffCommandParams : CommandParams

@@ -140,7 +140,7 @@ namespace geokassa
         {
             Name = name;
             Description = description;
-            
+
             AddArgument(new Argument<FileInfo>("inputjson", "Input from Json at geocentric-pointlist.schema.json schema"));
             AddArgument(new Argument<FileInfo>("output", "Output geotiff file"));
 
@@ -244,6 +244,37 @@ namespace geokassa
                     Console.WriteLine($"Generation of tiff file {par.Output.Name} failed.");
                     return -1;
                 }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+                return -1;
+                throw ex;
+            }
+        }
+    }
+
+    public class TextLsc2GeoTiffCommand : Command
+    {
+        public TextLsc2GeoTiffCommand(string name, string description = null) : base(name, description)
+        {
+            Name = name;
+            Description = description;
+
+            AddArgument(new Argument<FileInfo>("inputtextfile", "Input from column separated inputfile"));
+            AddArgument(new Argument<FileInfo>("output", "Output geotiff file"));
+
+            Handler = CommandHandler.Create((TextLsc2GeoTiffCommandParams pars) =>
+            {
+                return HandleCommand(pars);
+            });
+
+        }
+        private int HandleCommand(TextLsc2GeoTiffCommandParams par)
+        {
+            try
+            {
                 return 0;
             }
             catch (Exception ex)
