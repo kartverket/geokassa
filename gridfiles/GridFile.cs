@@ -66,7 +66,17 @@ namespace gridfiles
             return true;
         }
 
+        public virtual bool ReadPointsFromCsv(string inputFileName)
+        {
+            return true;
+        }
+
         public virtual bool ClipGrid(double west_long, double south_lat, double east_long, double north_lat)
+        {
+            return true;
+        }
+
+        public virtual bool Helmert(double k, double c, double sn, bool runAsLs = false)
         {
             return true;
         }

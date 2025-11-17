@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -62,17 +63,17 @@ namespace gridfiles
         
         public double X0
         {
-            get => 0d;// PointList.Average(x => x.X1);
+            get => 0d;
         }
 
         public double Y0
         {
-            get => 0d;// PointList.Average(x => x.Y1);
+            get => 0d;
         }
 
         public double Z0
         {
-            get => 0d;// PointList.Average(x => x.Z1);
+            get => 0d;
         }
 
         public double LowerLeftLatitude
@@ -119,6 +120,60 @@ namespace gridfiles
         {
             get => _gridParam.NColumns;
             set => _gridParam.NColumns = value;
+        }
+     
+        public Int32 XPixels
+        {
+            get => _gridParam.XPixels;
+            set => _gridParam.XPixels = value;
+        }
+
+        public Int32 YPixels
+        {
+            get => _gridParam.YPixels;
+            set => _gridParam.YPixels = value;
+        }
+
+        public Int32 ZPixels
+        {
+            get => _gridParam.ZPixels;
+            set => _gridParam.ZPixels = value;
+        }
+
+        public double XLower
+        {
+            get => _gridParam.XLower;
+            set => _gridParam.XLower = value;
+        }
+
+        public double YLower
+        {
+            get => _gridParam.YLower;
+            set => _gridParam.YLower = value;
+        }
+
+        public double ZLower
+        {
+            get => _gridParam.ZLower;
+            set => _gridParam.ZLower = value;
+        }
+
+        public double XRes
+        {
+            get => _gridParam.XRes;
+            set => _gridParam.XRes = value;
+        }
+
+        public double YRes
+        {
+            get => _gridParam.YRes;
+            set => _gridParam.YRes = value;
+        }
+
+        public double ZRes
+        {
+            get => _gridParam.ZRes;
+            set => _gridParam.ZRes = value;
         }
 
         // Average Ground Level
@@ -406,7 +461,9 @@ namespace gridfiles
         /// This is a math function I found <see href="http://www.ipublishing.co.in/jggsarticles/volseven/EIJGGS7021.pdf">HERE</see>
         /// https://core.ac.uk/download/pdf/85211743.pdf
         /// https://core.ac.uk/download/pdf/81178247.pdf
+        /// https://www.asprs.org/wp-content/uploads/pers/1976journal/may/1976_may_659-669.pdf
         /// https://www.mdpi.com/2227-7390/8/4/591/htm
+        /// https://www.mdpi.com/2076-3263/15/8/322
         /// https://www.mdpi.com/2072-4292/11/22/2692/pdf
         /// https://www.redalyc.org/pdf/3939/393946272009.pdf
         /// https://www.topo.auth.gr/greek/ORG_DOMI/EMERITUS/TOMOS_ASTERIADI/files/1-11%20Kotsakis.pdf       
@@ -414,11 +471,11 @@ namespace gridfiles
         /// https://journal.geo.sav.sk/cgg/article/download/83/78/
         /// https://www.researchgate.net/publication/227127968_Least-squares_collocation_with_covariance-matching_constraints
         /// https://www.fig.net/resources/proceedings/fig_proceedings/athens/papers/ts07/ts07_2_mitsakaki.pdf
-        /// https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6832662/
-        /// https://www.researchgate.net/publication/227127968_Least-squares_collocation_with_covariance-matching_constraints
+        /// https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6832662/       
         /// https://www.lantmateriet.se/contentassets/ff12c6e07463427691d8bd432fc08ef6/steffen-etal-egu2019.pdf
+        /// https://www.researchgate.net/profile/Andrew-Ruffhead/publication/270633312_An_introduction_to_least-squares_collocation/links/5839b87b08ae3d91723f62c2/An-introduction-to-least-squares-collocation.pdf
         ///</Summary>
-        public bool Helmert(double k, double c, double sn, bool runAsLs = false)
+        public override bool Helmert(double k, double c, double sn, bool runAsLs = false)
         {
             try
             {
@@ -446,16 +503,18 @@ namespace gridfiles
                 } while (!X.ForAll(x => Math.Abs(x) < 1E-8) && iterations < 10);
 
                 SignalNoise = (L - A * X);
-                
+
+                if (HelmertIsComputed)
+                    PrintResiduals();
+
                 // TODO: Correct method:
                 // SignalNoise = CovNn(k, c) * CovNn_D_Inv(k, c, sn) * (L - A * X);
 
                 return true;
-            } 
-            catch (Exception ex)
+            }
+            catch
             {
                 return false;
-                throw ex;
             }
         }
 
@@ -605,7 +664,7 @@ namespace gridfiles
             pin[1, 0] = y;
             pin[2, 0] = z;
 
-            // NOTE: Alternative transformation notation:           
+            // NOTE: Alternative transformation notation:
             /* var Ai = Matrix<double>.Build.Dense(3, 7);
             Ai[0, 0] = 0d; Ai[0, 1] =  z; Ai[0, 2] = -y; Ai[0, 3] = x; Ai[0, 4] = 1d; Ai[0, 5] = 0d; Ai[0, 6] = 0d;
             Ai[1, 0] = -z; Ai[1, 1] = 0d; Ai[1, 2] =  x; Ai[1, 3] = y; Ai[1, 4] = 0d; Ai[1, 5] = 1d; Ai[1, 6] = 0d;
@@ -619,10 +678,10 @@ namespace gridfiles
             */
             return t + S * r * pin;
         }
-        
-        // TODO: Refactorize architectur
+
         public override bool PopulatedGrid(double k, double c, double sn)
         {
+            // TODO: Flytte disse...
             C0 = k;
             Cl = c;
             Sn = sn;
@@ -630,19 +689,13 @@ namespace gridfiles
             _griX.Data.Clear();
             _griY.Data.Clear();
             _griZ.Data.Clear();
-
-            // TODO: Move to virtual method
-            if (!Helmert(k, c, sn))
-                return false;
-
-            if (HelmertIsComputed)
-                PrintResiduals();
             
             var count = 0;
           
             for (var i = NRows - 1; i >= 0; i--)
             {
                 var lat = LowerLeftLatitude + DeltaLatitude * i;
+
                 for (var j = 0; j < NColumns; j++)
                 {
                     var lon = LowerLeftLongitude + DeltaLongitude * j;
@@ -668,10 +721,56 @@ namespace gridfiles
                     count++;
                 }
                 Console.Clear();
-                Console.Write($"Processing grid...  { (int)(100 * count / (NRows * NColumns))} %");             
+                Console.Write($"Processing grid...  { (int)(100 * count / (NRows * NColumns))} %");
             }
             
             // TestAutoCorr(k, c, sn);
+            return true;
+        }
+
+        public bool PopulationGridFromCsv(double k, double c, double sn)
+        {
+            C0 = k;
+            Cl = c;
+            Sn = sn;
+
+            _griX.Data.Clear();
+            _griY.Data.Clear();
+            _griZ.Data.Clear();
+
+            var count = 0;
+
+            for (var i = 0; i < XPixels; i++)
+            {
+                var x = XLower + XRes * i;
+
+                for (var j = 0; j < YPixels; j++)
+                {
+                    var y = YLower + YRes * j;
+
+                    for (var l = 0; l < XPixels; l++)
+                    {
+                        var z = ZLower + ZRes * l;
+
+                        var p = new PointXYZ()
+                        {
+                            X = x,
+                            Y = y,
+                            Z = z
+                        };
+
+                        var pos = PredictedPosition(k, c, sn, p.X, p.Y, p.Z);
+
+                        _griX.Data.Add((float)pos.Item1);
+                        _griY.Data.Add((float)pos.Item2);
+                        _griZ.Data.Add((float)pos.Item3);
+
+                        count++;
+                    }
+                    Console.Clear();
+                    Console.Write($"Processing grid...  {(int)(100 * count / (XPixels * YPixels * ZPixels))} %");
+                }
+            }                
             return true;
         }
 
@@ -758,10 +857,9 @@ namespace gridfiles
                 
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
-                return false;
-                throw ex;
+                return false;               
             }
         }
 
@@ -824,10 +922,64 @@ namespace gridfiles
 
                 return true;
             }
-            catch (Exception ex)
-            {   
-                throw ex;
+            catch
+            {
+                return false;
             }
+        }
+
+        public override bool ReadPointsFromCsv(string inputFile)
+        {
+            try
+            {
+                var reader = new StreamReader(File.OpenRead(inputFile));
+
+                if (!reader.EndOfStream)
+                    reader.ReadLine();
+
+                int noOfPoints = 0;
+
+                while (!reader.EndOfStream) 
+                {
+                    var line = reader.ReadLine();
+                    var values = line.Split(new char[] { ',', ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (values.Count() < 6)
+                    {
+                        reader.Close();
+                        return false;
+                    }
+
+                    if (!double.TryParse(values[0], out double xSource) ||
+                        !double.TryParse(values[1], out double ySource) ||
+                        !double.TryParse(values[2], out double zSource) ||
+                        !double.TryParse(values[3], out double xTarget) ||
+                        !double.TryParse(values[4], out double yTarget) ||
+                        !double.TryParse(values[5], out double zTarget) )
+
+                        continue;
+
+                    CommonPointXYZ cpPoint = new CommonPointXYZ
+                    {
+                        PointName = (noOfPoints++).ToString(),
+                        X_Source = xSource,
+                        Y_Source = ySource,
+                        Z_Source = zSource,
+                        X_Target = xTarget,
+                        Y_Target = yTarget,
+                        Z_Target = zTarget
+                    };
+                    PointList.Add(cpPoint);
+
+                }
+                reader.Close();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            } 
         }
     }
 }

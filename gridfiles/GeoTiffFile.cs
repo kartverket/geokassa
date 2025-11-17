@@ -191,6 +191,60 @@ namespace gridfiles
             set => _gridParam.NColumns = value;
         }
 
+        public Int32 XPixels
+        {
+            get => _gridParam.XPixels;
+            set => _gridParam.XPixels = value;
+        }
+
+        public Int32 YPixels
+        {
+            get => _gridParam.YPixels;
+            set => _gridParam.YPixels = value;
+        }
+
+        public Int32 ZPixels
+        {
+            get => _gridParam.ZPixels;
+            set => _gridParam.ZPixels = value;
+        }
+
+        public double XLower
+        {
+            get => _gridParam.XLower;
+            set => _gridParam.XLower = value;
+        }
+
+        public double YLower
+        {
+            get => _gridParam.YLower;
+            set => _gridParam.YLower = value;
+        }
+
+        public double ZLower
+        {
+            get => _gridParam.ZLower;
+            set => _gridParam.ZLower = value;
+        }
+
+        public double XRes
+        {
+            get => _gridParam.XRes;
+            set => _gridParam.XRes = value;
+        }
+
+        public double YRes
+        {
+            get => _gridParam.YRes;
+            set => _gridParam.YRes = value;
+        }
+
+        public double ZRes
+        {
+            get => _gridParam.ZRes;
+            set => _gridParam.ZRes = value;
+        }
+
         public int TileSize
         {
             get => _tileSize;
@@ -364,6 +418,14 @@ namespace gridfiles
 
             if (Dimensions == 3)
                 return CommonPoints.ReadTargetFromFile(inputFileName);
+
+            return false;
+        }
+
+        public override bool ReadPointsFromCsv(string inputFileName)
+        {
+            if (Dimensions == 3)
+                return CommonPoints.ReadPointsFromCsv(inputFileName);
 
             return false;
         }
@@ -939,7 +1001,6 @@ namespace gridfiles
             }
         }
 
-        // TODO: Type as template (etc. float, double...)
         internal bool WriteBand(Tiff tiff, List<float> bandList)
         {
             // TODO: Tiled vs. tiled

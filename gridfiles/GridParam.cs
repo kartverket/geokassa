@@ -8,6 +8,12 @@ namespace gridfiles
         private double _lowerLeftLongitude = 0d;
         private double _deltaLatitude = 0d;
         private double _deltaLongitude = 0d;
+        private double _xLower = 0d;
+        private double _yLower = 0d;
+        private double _zLower = 0d;
+        private double _xRes = 0d;
+        private double _yRes = 0d;
+        private double _zRes = 0d;
 
         public GridParam()
         {
@@ -49,7 +55,46 @@ namespace gridfiles
             set => _deltaLongitude = value;
         }
 
+        public virtual double XRes
+        {
+            get => _xRes;
+            set => _xRes = value;
+        }
+
+        public virtual double YRes
+        {
+            get => _yRes;
+            set => _yRes = value;
+        }
+
+        public virtual double ZRes
+        {
+            get => _zRes;
+            set => _zRes = value;
+        }
+
         public virtual Int32 NRows { get; set; } = 0;
         public virtual Int32 NColumns { get; set; } = 0;
+        public virtual Int32 XPixels { get; set; } = 0;
+        public virtual Int32 YPixels { get; set; } = 0;
+        public virtual Int32 ZPixels { get; set; } = 0;
+
+        public virtual double XLower
+        {
+            get => _xLower;
+            set => _xLower = value;
+        }
+
+        public virtual double YLower
+        {
+            get => _yLower;
+            set => _yLower = value;
+        }
+
+        public virtual double ZLower
+        {
+            get => _zLower;
+            set => _zLower = value;
+        }      
     }
 }
