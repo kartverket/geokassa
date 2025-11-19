@@ -1,37 +1,10 @@
-# nonk8s
-apiVersion: "backstage.io/v1alpha1"
-kind: "Component"
+apiVersion: backstage.io/v1alpha1
+kind: Component
 metadata:
-  name: "geokassa"
+  name: geokassa
   tags:
-  - "private"
+    - private
 spec:
-  type: "service"
-  lifecycle: "production"
-  owner: "nye_referanserammer"
----
-apiVersion: "backstage.io/v1alpha1"
-kind: "Group"
-metadata:
-  name: "security_champion_geokassa"
-  title: "Security Champion geokassa"
-spec:
-  type: "security_champion"
-  parent: "geodesi_security_champions"
-  members:
-  - "himsve"
-  children:
-  - "resource:geokassa"
----
-apiVersion: "backstage.io/v1alpha1"
-kind: "Resource"
-metadata:
-  name: "geokassa"
-  links:
-  - url: "https://github.com/kartverket/geokassa"
-    title: "geokassa på GitHub"
-spec:
-  type: "repo"
-  owner: "security_champion_geokassa"
-  dependencyOf:
-  - "component:geokassa"
+  type: service
+  lifecycle: production
+  owner: nye_referanserammer
