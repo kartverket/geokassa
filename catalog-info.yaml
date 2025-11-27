@@ -1,11 +1,10 @@
-# nonk8s
-apiVersion: "backstage.io/v1alpha1"
-kind: "Component"
+apiVersion: backstage.io/v1alpha1
+kind: Component
 metadata:
-  name: "geokassa"
+  name: geokassa
   tags:
-  - "private"
+    - private
 spec:
-  type: "service"
-  lifecycle: "production"
-  owner: "nye_referanserammer"
+  type: service
+  lifecycle: production
+  owner: nye_referanserammer
