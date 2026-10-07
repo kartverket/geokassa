@@ -12,8 +12,8 @@
     <Copyright>Kartverket</Copyright>
     <Platforms>AnyCPU;x64</Platforms>
     <Authors>Sveinung Himle</Authors>
-    <AssemblyVersion>1.7.0.0</AssemblyVersion>
-    <FileVersion>1.7.0.0</FileVersion>
+    <AssemblyVersion>1.8.0.0</AssemblyVersion>
+    <FileVersion>1.8.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
