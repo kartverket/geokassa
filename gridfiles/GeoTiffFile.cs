@@ -922,7 +922,7 @@ namespace gridfiles
                             }
                         }
                     }
-                    else if (TiffOutput == TiffOutputType.VERTICAL_OFFSET_VERTICAL_TO_VERTICAL)
+                    else  if (TiffOutput == TiffOutputType.VERTICAL_OFFSET_VERTICAL_TO_VERTICAL)
                     {
                         if (Dimensions == 3 || Dimensions == 1)
                         {

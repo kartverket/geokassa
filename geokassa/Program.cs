@@ -14,7 +14,7 @@ namespace geokassa
          {
             var rootCommand = new RootCommand()
             { 
-               // new TextLsc2GeoTiffCommand("textlsc2geotiff", "Converts GeoTiff translations based on Helmert + Least Squares Collocation"),
+                // new TextLsc2GeoTiffCommand("textlsc2geotiff", "Converts GeoTiff translations based on Helmert + Least Squares Collocation"),
                 new Lsc2GeoTiffCommand("lsc2geotiff", "Converts GeoTiff translations based on Helmert + Least Squares Collocation"),
                 new Csv2GeoTiffCommand("csv2geotiff","Converts column separated files to GeoTiff"),
                 new JsonTinCommand("jsontin", "Makes triangulated TIN from point clouds"),                        

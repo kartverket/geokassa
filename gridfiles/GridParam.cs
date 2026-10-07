@@ -78,6 +78,7 @@ namespace gridfiles
         public virtual Int32 XPixels { get; set; } = 0;
         public virtual Int32 YPixels { get; set; } = 0;
         public virtual Int32 ZPixels { get; set; } = 0;
+        public virtual Int32 NumberOfPixels => NRows * NColumns;
 
         public virtual double XLower
         {

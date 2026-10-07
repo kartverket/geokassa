@@ -2,8 +2,8 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "textlsc2geotiff \"C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\Kollokasjon\\Input.txt\"  \"C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\Kollokasjon\\out.tif\" --gridname out --tilesize 16 --dim 3 --email himsve@kartverket.no --type goffset --xpixels 10 --ypixels 10 --zpixels 10 --xres 5 --yres 5 --zres 5 --xlower -50 --ylower -50 --zlower -50 --desc \"Ivar Oveland rules\" --c0 2 --cl 5 --sn 5",
-      "workingDirectory": "C:\\Users\\himsve\\OneDrive - Statens Kartverk\\Prosjekter\\NNTrans2018B"
+      "commandLineArgs": "bin2geotiff C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\Høgde\\Ny_HREF\\HREF2025A_NN2000_EUREF89.bin C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\Høgde\\Ny_HREF\\no_kv_HREF2025A_NN2000_EUREF89.tif --gridname no_kv_HREF2025A_NN2000_EUREF89 --epsg3d EPSG:10874 --epsgsource EPSG:10874 --epsgtarget EPSG:11394 --tilesize 32 --type geoid --epsg2d EPSG:10875 --desc \"ETRS89 height (EPSG:10874) to NN2000:2025 height (EPSG:11394). Converted from HREF2025A_NN2000_EUREF89.bin.\" --email himsve@kartverket.no --area \"Norway - onshore\"",
+      "workingDirectory": "C:\\Users\\himsve\\Onedrive - Statens Kartverk\\Prosjekter\\Høgde\\Ny_HREF"
     }
   }
 }
