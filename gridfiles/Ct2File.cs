@@ -294,10 +294,9 @@ namespace gridfiles
 
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
-                throw ex;
             }
         }
 

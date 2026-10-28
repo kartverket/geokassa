@@ -87,7 +87,7 @@ namespace geokassatest
                 X_Source = 3116663.05249d, Y_Source = 350851.90199d, Z_Source = 5535247.35347d,
                 X_Target = 3116663.5447d, Y_Target = 350851.5402d, Z_Target = 5535247.0068d
             });
-            var result = cps.Helmert(0.1d, 100000d, 0.05d);
+            var result = cps.Helmert(0.1d, 100000d, 0.05d, printResults: false);
 
             Assert.True(result);
             Assert.Equal(-0.041216971276516953, cps.Rx.ToArcSec(), 8);

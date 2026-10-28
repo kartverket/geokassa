@@ -2,8 +2,8 @@
   "profiles": {
     "geokassa": {
       "commandName": "Project",
-      "commandLineArgs": "gtx2geotiff \"C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\NNTrans2018B\\NNTrans2018B.gtx\" \"C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\NNTrans2018B\\no_kv_HREF2018B_NN54_NN2000.tif\" --gridname no_kv_HREF2018B_NN54_NN2000 --epsg3d EPSG:4937 --epsgsource EPSG:5776 --epsgtarget EPSG:5941 --tilesize 64 --type vsep --epsg2d EPSG:4258 --desc \"NN54 height (EPSG:5776) to NN2000 height (EPSG:5941). Converted from NNTrans2018B.gtx\" --email himsve@kartverket.no --area \"Norway - inshore and nearshore\"",
-      "workingDirectory": "C:\\Users\\himsve\\OneDrive - Statens Kartverk\\Prosjekter\\NNTrans2018B"
+      "commandLineArgs": "bin2geotiff C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\Høgde\\Ny_HREF\\HREF2025A_NN2000_EUREF89.bin C:\\Users\\himsve\\ONEDRI~1\\PROSJE~1\\Høgde\\Ny_HREF\\no_kv_HREF2025A_NN2000_EUREF89.tif --gridname no_kv_HREF2025A_NN2000_EUREF89 --epsg3d EPSG:10874 --epsgsource EPSG:10874 --epsgtarget EPSG:11394 --tilesize 32 --type geoid --epsg2d EPSG:10875 --desc \"ETRS89 height (EPSG:10874) to NN2000:2025 height (EPSG:11394). Converted from HREF2025A_NN2000_EUREF89.bin.\" --email himsve@kartverket.no --area \"Norway - onshore\"",
+      "workingDirectory": "C:\\Users\\himsve\\Onedrive - Statens Kartverk\\Prosjekter\\Høgde\\Ny_HREF"
     }
   }
 }

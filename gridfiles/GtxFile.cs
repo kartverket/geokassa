@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
+using Newtonsoft.Json.Linq;
 
 namespace gridfiles
 {
@@ -386,7 +390,7 @@ namespace gridfiles
 
                         if (h == 9999f)
                         {
-                            // h = -88.8888f;                    
+                            // h = -88.8888f;
                             h = -32768;
                         }
 
@@ -443,33 +447,41 @@ namespace gridfiles
                         _gridParam.DeltaLatitude = br.ReadDouble();
                         _gridParam.DeltaLongitude = br.ReadDouble();
 
-                        _gridParam.NColumns = (int)((upperlon - _gridParam.LowerLeftLongitude) / _gridParam.DeltaLongitude) + 1;
                         _gridParam.NRows = (int)((upperlat - _gridParam.LowerLeftLatitude) / _gridParam.DeltaLatitude) + 1;
+                        _gridParam.NColumns = (int)((upperlon - _gridParam.LowerLeftLongitude) / _gridParam.DeltaLongitude) + 1;
 
-                        var emptyBytes = br.ReadBytes(12);                     
-
+                        var dummyCol = _gridParam.NColumns + 16 - _gridParam.NColumns % 16;
+ 
+                        var emptyBytes = br.ReadBytes(12);
+                        
                         while (br.BaseStream.Position < br.BaseStream.Length)
                         {
                             var data = br.ReadSingle();
 
-                            if (col == _gridParam.NColumns)
+                            //Logger.Log($"{data} ");
+
+                            if (col == dummyCol - 1)
                             {
-                                if (data == 0f)
-                                    continue;
-                                else
-                                    col = 0;
+                                col = 0;
+                                continue;
                             }
-                            
+                            if (col >= _gridParam.NColumns)
+                            {
+                                col++;
+                                continue;
+                                //Logger.Log("nylinje\n");
+                            }
+
                             // Note: Max/min filter
                             if (data > 100f || data < -100f)
                                 data = -88.8888f;
 
                             if (data == 9999f || data == 9999.999f)
                                 data = -88.8888f;
- 
+
                             col++;
 
-                            Data.Insert(index++, data); 
+                            Data.Insert(index++, data);
                         }
                         br.Close();
                     }

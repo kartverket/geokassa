@@ -136,7 +136,7 @@ namespace gridfiles
                                 continue;
                             }
                             foreach (var value in linearray)
-                            {                                
+                            {
                                 var v = 0f;
                                 
                                 if (!float.TryParse(value, out v))
