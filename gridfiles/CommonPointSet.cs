@@ -502,10 +502,10 @@ namespace gridfiles
                     iterations++;
                 } while (!X.ForAll(x => Math.Abs(x) < 1E-8) && iterations < 10);
 
-                SignalNoise = (L - A * X);
+                SignalNoise = (L - A * X);                 
 
                 if (HelmertIsComputed)
-                    PrintResiduals();
+                    //PrintResiduals();
 
                 // TODO: Correct method:
                 // SignalNoise = CovNn(k, c) * CovNn_D_Inv(k, c, sn) * (L - A * X);
