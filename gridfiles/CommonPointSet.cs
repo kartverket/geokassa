@@ -475,7 +475,7 @@ namespace gridfiles
         /// https://www.lantmateriet.se/contentassets/ff12c6e07463427691d8bd432fc08ef6/steffen-etal-egu2019.pdf
         /// https://www.researchgate.net/profile/Andrew-Ruffhead/publication/270633312_An_introduction_to_least-squares_collocation/links/5839b87b08ae3d91723f62c2/An-introduction-to-least-squares-collocation.pdf
         ///</Summary>
-        public override bool Helmert(double k, double c, double sn, bool runAsLs = false)
+        public override bool Helmert(double k, double c, double sn, bool runAsLs = false, bool printResults = true)
         {
             try
             {
@@ -504,9 +504,9 @@ namespace gridfiles
 
                 SignalNoise = (L - A * X);
 
-                if (HelmertIsComputed)
+                if (HelmertIsComputed && printResults)
                 {
-                    //PrintResiduals();
+                    PrintResiduals();
                 }
 
                 // TODO: Correct method:

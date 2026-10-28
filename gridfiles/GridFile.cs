@@ -76,7 +76,7 @@ namespace gridfiles
             return true;
         }
 
-        public virtual bool Helmert(double k, double c, double sn, bool runAsLs = false)
+        public virtual bool Helmert(double k, double c, double sn, bool runAsLs = false, bool printResults = true)
         {
             return true;
         }
