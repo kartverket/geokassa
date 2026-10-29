@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 
 namespace gridfiles
 {
-    public class GridFile
+    public class 
+        GridFile
     {
         public enum GridType
         {
             bin = 0,
             ct2 = 1,
             gtx = 2,
-            tiff = 3
+            tiff = 3,
+            gsb = 4
         }
 
         public enum Direction
@@ -70,6 +72,12 @@ namespace gridfiles
         {
             return true;
         }
+
+        public virtual bool Read(string inputFileName)
+        {
+            return true;
+        }
+
 
         public virtual bool ClipGrid(double west_long, double south_lat, double east_long, double north_lat)
         {

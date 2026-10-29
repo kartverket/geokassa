@@ -1,10 +1,12 @@
-﻿using System;
+﻿using geokassa;
+using gridfiles;
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Builder;
-using System.Text; 
-using geokassa;
-using gridfiles;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace geokassatests
@@ -52,6 +54,28 @@ namespace geokassatests
                  */
 
                  rootCommand.InvokeAsync(args).Wait();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        [Theory]
+        [InlineData(
+          "test.bin",
+          "test.gsb"
+        )]
+        public async Task Bin2GsbTest(params string[] args)
+        {
+            try
+            {
+                var rootCommand = new Bin2GsbCommand("bin2gsb", "Converts bin file to gsb file");
+
+                var exitCode = await rootCommand.InvokeAsync(args);
+
+                Assert.Equal(0, exitCode);
             }
             catch (Exception ex)
             {
