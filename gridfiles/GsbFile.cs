@@ -151,6 +151,11 @@ namespace gridfiles
         public int GS_COUNT { get; set; }
     }
 
+    public class EndBlock
+    {
+        public int END { get; set; }
+    }
+
     public class GsbFile : GridFile
     {
         private GridParam _gridParam;
@@ -212,10 +217,12 @@ namespace gridfiles
             foreach (var property in obj.GetType().GetProperties())
             {
                 var attr = property.GetCustomAttribute<BinaryOffsetAttribute>();
-                if (attr is null)
-                    continue;
 
-                writer.BaseStream.Position = attr.Offset;
+                if (attr is null)
+                    // continue;
+                    writer.BaseStream.Position = writer.BaseStream.Position;
+                else
+                    writer.BaseStream.Position = attr.Offset;
 
                 // Write the property name first, then its value.
                 WriteFixedAscii(writer, property.Name);
@@ -290,6 +297,7 @@ namespace gridfiles
             };
 
             var subFileHeader = new SubFileHeader();
+            var endBlock = new EndBlock(); 
 
             using var fs1 = File.Create(outputFileName);
             using var bw1 = new BinaryWriter(fs1);
@@ -299,6 +307,8 @@ namespace gridfiles
 
             foreach (var v in Data)
                 bw1.Write(v);
+
+            WriteObject(bw1, endBlock);
 
             bw1.Flush();
             bw1.Close();
