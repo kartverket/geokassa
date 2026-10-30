@@ -32,7 +32,9 @@ namespace geokassa
                 }
 
                 var gsb = new GsbFile(output.FullName);
-                 
+
+                gsb.Data = gtx.Data;
+
                 if (!gsb.GenerateGridFile(output.FullName))
                 {
                     Console.WriteLine($"Importing of bin file {input.Name} failed.");

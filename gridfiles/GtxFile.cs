@@ -160,7 +160,7 @@ namespace gridfiles
           
             return predictedHeight[0, 0];
         }
-           
+        
         public List<CommonPoint> ClosestCommonPointList(int numberOfPoints, double lat, double lon)
         { 
             return CommonPointList.OrderBy(x => x.GetDistance(lat, lon)).Take(numberOfPoints).ToList();
@@ -413,7 +413,7 @@ namespace gridfiles
         }
 
         public bool ReadBin(string binFileName)
-        {          
+        {
             var index = 0;
             var col = 0;
 

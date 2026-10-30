@@ -19,6 +19,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace gridfiles
 {
+    // https://scispace.com/pdf/use-of-ntv2-transformation-grids-in-engineering-applications-5tdrxu6sv4.pdf
     /*
     ┌────────────────────────────────────────────────────────┐
     │ Overview Header (11 records x 16 bytes = 176 bytes)    │
@@ -59,7 +60,7 @@ namespace gridfiles
     W_LONG	Double	Western boundary limit (Note: Positive West / Negative East)
     LAT_INC	Double	Grid step spacing along the Latitude axis 
     */
-         
+
     public enum GS_TYPE
     { 
         SECONDS,
@@ -96,10 +97,10 @@ namespace gridfiles
         public string VERSION { get; set; } = "NTv2.0";
 
         [BinaryOffset(80)]
-        public string SYSTEM_F { get; set; } = "EPSG:11022";
+        public string SYSTEM_F { get; set; } = "11022";
 
         [BinaryOffset(96)]
-        public string SYSTEM_T { get; set; } = "EPSG:5972";
+        public string SYSTEM_T { get; set; } = "5972";
 
         [BinaryOffset(112)]
         public double MAJOR_F { get; set; }
@@ -117,16 +118,16 @@ namespace gridfiles
     public class SubFileHeader
     {
         [BinaryOffset(176)]
-        public string SUB_NAME { get; set; }
+        public string SUB_NAME { get; set; } = string.Empty;
 
         [BinaryOffset(192)]
-        public string PARENT { get; set; }
+        public string PARENT { get; set; } = "NONE";
 
         [BinaryOffset(208)]
-        public string CREATED { get; set; }
+        public string CREATED { get; set; } = string.Empty;
 
         [BinaryOffset(224)]
-        public string UPDATED { get; set; }
+        public string UPDATED { get; set; } = string.Empty;
 
         [BinaryOffset(240)]
         public double S_LAT { get; set; }
@@ -154,6 +155,7 @@ namespace gridfiles
     {
         private GridParam _gridParam;
 
+        private GriFile _griFile;
         private const int _NUM_OREC = 11;
         private const int _NUM_SREC = 11;
         private const int _NUM_FILE = 1;
@@ -180,66 +182,97 @@ namespace gridfiles
 
         public GsbFile() 
         {   
-            _gridParam = new GridParam(); 
+            _gridParam = new GridParam();
+            _griFile = new GriFile(_gridParam);
         }
 
         public GsbFile(string outputFileName) : base()
         {
             OutputFileName = outputFileName;
             _gridParam = new GridParam();
+            _griFile = new GriFile(_gridParam);
         }
-        
+
+        public List<float> Data
+        {
+            get => _griFile.Data;
+            set => _griFile.Data = value;
+        }
+
         public override bool Read(string inputFileName)
         {
-             throw new NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public static void WriteObject(BinaryWriter writer, object obj)
         {
+            ArgumentNullException.ThrowIfNull(writer);
+            ArgumentNullException.ThrowIfNull(obj);
+
             foreach (var property in obj.GetType().GetProperties())
             {
                 var attr = property.GetCustomAttribute<BinaryOffsetAttribute>();
-                if (attr == null)
+                if (attr is null)
                     continue;
 
                 writer.BaseStream.Position = attr.Offset;
-                object value = property.GetValue(obj)!;
+
+                // Write the property name first, then its value.
+                WriteFixedAscii(writer, property.Name);
+
+                object? value = property.GetValue(obj);
+                if (value is null)
+                    throw new InvalidDataException($"Property {property.Name} has a null value.");
+
+                long valueStart = writer.BaseStream.Position;
 
                 switch (value)
                 {
                     case int i:
                         writer.Write(i);
                         break;
-
                     case long l:
                         writer.Write(l);
                         break;
-
                     case double d:
                         writer.Write(d);
                         break;
-
                     case float f:
                         writer.Write(f);
                         break;
-
                     case bool b:
                         writer.Write(b);
                         break;
-
                     case string s:
-                        writer.Write(s);
+                        WriteFixedAscii(writer, s);
                         break;
-
                     case GS_TYPE t:
-                        writer.Write(t.ToString());
+                        WriteFixedAscii(writer, t.ToString());
                         break;
-
                     default:
                         throw new NotSupportedException(
-                                $"Type {value.GetType()} is not supported");
+                            $"Type {value.GetType()} is not supported.");
                 }
+
+                long bytesWritten = writer.BaseStream.Position - valueStart;
+                if (bytesWritten > 8)
+                    throw new InvalidDataException(
+                        $"Value for {property.Name} exceeds its 8-byte field.");
+
+                for (long i = bytesWritten; i < 8; i++)
+                    writer.Write((byte)0);
             }
+        }
+
+        private static void WriteFixedAscii(BinaryWriter writer, string value)
+        {
+            byte[] bytes = Encoding.ASCII.GetBytes(value);
+            if (bytes.Length > 8)
+                throw new InvalidDataException($"'{value}' exceeds the 8-byte field.");
+
+            writer.Write(bytes);
+            for (int i = bytes.Length; i < 8; i++)
+                writer.Write((byte)' ');
         }
 
         public override bool GenerateGridFile(string outputFileName, bool isRandom = false)
@@ -256,10 +289,19 @@ namespace gridfiles
                 MINOR_T = 232332
             };
 
+            var subFileHeader = new SubFileHeader();
+
             using var fs1 = File.Create(outputFileName);
             using var bw1 = new BinaryWriter(fs1);
 
             WriteObject(bw1, header);
+            WriteObject(bw1, subFileHeader);
+
+            foreach (var v in Data)
+                bw1.Write(v);
+
+            bw1.Flush();
+            bw1.Close();
 
             return true;
 
