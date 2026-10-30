@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace gridfiles
 {
-    public class 
-        GridFile
+    public class GridFile
     {
         public enum GridType
         {
@@ -42,7 +41,7 @@ namespace gridfiles
                     _list = new CommonPointList();
 
                 return _list.PointList;
-            }                
+            }
             set => _list.PointList = value;
         }
 
@@ -54,7 +53,7 @@ namespace gridfiles
         }
 
         public virtual bool PopulatedGrid(double k, double c, double sn)
-        {
+        {   
             return true;
         }
 
@@ -77,7 +76,6 @@ namespace gridfiles
         {
             return true;
         }
-
 
         public virtual bool ClipGrid(double west_long, double south_lat, double east_long, double north_lat)
         {

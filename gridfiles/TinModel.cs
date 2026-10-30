@@ -392,7 +392,7 @@ namespace gridfiles
     [JsonConverter(typeof(StringEnumConverter))]
     public enum TransformedComponent
     {
-        [JsonProperty("Horizontal")]        
+        [JsonProperty("Horizontal")]
         horizontal,         
         [JsonProperty("Vertical")]
         vertical

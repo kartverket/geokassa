@@ -61,11 +61,10 @@ namespace geokassatests
             }
         }
 
-
         [Theory]
         [InlineData(
-          "test.bin",
-          "test.gsb"
+          "C:\\Users\\himsve\\Onedrive - Statens Kartverk\\Prosjekter\\Høgde\\Ny_HREF\\HREF2025A_NN2000_EUREF89.bin",
+          "C:\\Users\\himsve\\Onedrive - Statens Kartverk\\Prosjekter\\Høgde\\Ny_HREF\\HREF2025A_NN2000_EUREF89.gsb"
         )]
         public async Task Bin2GsbTest(params string[] args)
         {

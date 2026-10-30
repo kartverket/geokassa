@@ -6,21 +6,6 @@ using System.IO;
 
 namespace geokassa
 {
-
-    /*
-    ┌────────────────────────────────────────────────────────┐
-    │ Overview Header (11 records x 16 bytes = 176 bytes)    │
-    ├────────────────────────────────────────────────────────┤
-    │ Sub-File Header (11 records x 16 bytes = 176 bytes)   │
-    ├────────────────────────────────────────────────────────┤
-    │ Grid Nodes (Lat/Lon/Accuracy data... variable size)   │
-    ├────────────────────────────────────────────────────────┤
-    │ ... (More Sub-Files & Grid Nodes can follow)           │
-    ├────────────────────────────────────────────────────────┤
-    │ End Record                                             │
-    └────────────────────────────────────────────────────────┘
-    */
-
     public class Bin2GsbCommand : Command
     {
         public Bin2GsbCommand(string name, string description = null) : base(name, description)
@@ -38,9 +23,17 @@ namespace geokassa
         { 
             try
             {
-                var gsb = new GsbFile();
+                var gtx = new GtxFile(input.FullName);
 
-                if (!gsb.Read(input.FullName))
+                if (!gtx.ReadBin(input.FullName))
+                {
+                    Console.WriteLine($"Importing of bin file {input.Name} failed.");
+                    return -1;
+                }
+
+                var gsb = new GsbFile(output.FullName);
+                 
+                if (!gsb.GenerateGridFile(output.FullName))
                 {
                     Console.WriteLine($"Importing of bin file {input.Name} failed.");
                     return -1;
