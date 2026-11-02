@@ -103,16 +103,16 @@ namespace gridfiles
         public string SYSTEM_T { get; set; } = "5972";
 
         [BinaryOffset(112)]
-        public double MAJOR_F { get; set; }
+        public double MAJOR_F { get; set; } = 9999d;
 
         [BinaryOffset(128)]
-        public double MINOR_F { get; set; }
+        public double MINOR_F { get; set; } = 9999d;
 
         [BinaryOffset(144)]
-        public double MAJOR_T { get; set; }
+        public double MAJOR_T { get; set; } = 9999d;
 
         [BinaryOffset(160)]
-        public double MINOR_T { get; set; }
+        public double MINOR_T { get; set; } = 9999d;
     }
 
     public class SubFileHeader
@@ -163,7 +163,7 @@ namespace gridfiles
         private Header _header;
         private SubFileHeader _subFileHeader;
 
-        public GsbFile() 
+        public GsbFile() : base()
         {   
             _gridParam = new GridParam();
             _griFile = new GriFile(_gridParam);
@@ -171,11 +171,13 @@ namespace gridfiles
             _subFileHeader = new SubFileHeader();
         }
 
-        public GsbFile(string inputFileName) : base()
+        public GsbFile(string inputFileName) : base() 
         {
             InputFileName = inputFileName;
             _gridParam = new GridParam();
             _griFile = new GriFile(_gridParam);
+            _header = new Header();
+            _subFileHeader = new SubFileHeader();
         }
 
         public string InputFileName { get; set; }
@@ -185,6 +187,11 @@ namespace gridfiles
             get => _griFile.Data;
             set => _griFile.Data = value;
         }
+        
+        public int NUM_OREC { get => _header.NUM_OREC; }
+
+        public int NUM_SREC { get => _header.NUM_SREC; }
+
 
         public override bool Read(string inputFileName)
         {
@@ -204,17 +211,16 @@ namespace gridfiles
                 {
                     using (BinaryReader br = new BinaryReader(fs))
                     {
-                        if (br.BaseStream.Length < 64)
+                        if (br.BaseStream.Length < 352)
                         {
                             br.Close();
                             fs.Close();
 
                             return false;
                         }
-                         
-                        // var NUM_OREC = br.ReadInt32();
-                        var recordName = Encoding.ASCII.GetString(br.ReadBytes(8));
 
+                        ReadObject(br, _header);
+                        ReadObject(br, _subFileHeader);
 
                     }
                 }
@@ -228,7 +234,51 @@ namespace gridfiles
             throw new NotImplementedException();
         }
 
-        public static void WriteObject(BinaryWriter writer, object obj)
+        private static void ReadObject(BinaryReader reader, object obj)
+        {
+            foreach (var property in obj.GetType().GetProperties())
+            {
+                var attribute = property.GetCustomAttribute<BinaryOffsetAttribute>();
+                if (attribute is null)
+                    continue;
+
+                reader.BaseStream.Position = attribute.Offset;
+
+                var nameBytes = reader.ReadBytes(8);
+                if (nameBytes.Length != 8)
+                    throw new InvalidDataException("Unexpected end of file.");
+
+                var recordName = Encoding.ASCII.GetString(nameBytes).Trim();
+                if (!string.Equals(recordName, property.Name, StringComparison.Ordinal))
+                    throw new InvalidDataException($"Expected record '{property.Name}', found '{recordName}'.");
+
+                var valueBytes = reader.ReadBytes(8);
+                if (valueBytes.Length != 8)
+                    throw new InvalidDataException("Unexpected end of file.");
+
+                object value = property.PropertyType switch
+                {
+                    _ when property.PropertyType == typeof(int) =>
+                        BitConverter.ToInt32(valueBytes, 0),
+                    _ when property.PropertyType == typeof(double) =>
+                        BitConverter.ToDouble(valueBytes, 0),
+                    _ when property.PropertyType == typeof(string) =>
+                        Encoding.ASCII.GetString(valueBytes).Trim(),
+                    _ when property.PropertyType == typeof(GS_TYPE) =>
+                        Enum.Parse(typeof(GS_TYPE), Encoding.ASCII.GetString(valueBytes).Trim(), true),
+                    _ => throw new NotSupportedException(
+                        $"Type {property.PropertyType} is not supported.")
+                };
+
+                if (property.CanWrite)
+                    property.SetValue(obj, value);
+                else if (!Equals(property.GetValue(obj), value))
+                    throw new InvalidDataException(
+                        $"Record '{property.Name}' has an unexpected value.");
+            }
+        }
+
+        private static void WriteObject(BinaryWriter writer, object obj)
         {
             ArgumentNullException.ThrowIfNull(writer);
             ArgumentNullException.ThrowIfNull(obj);
@@ -306,23 +356,13 @@ namespace gridfiles
             if (OutputFileName == "")
                 return false;
 
-            var header = new Header
-            {
-                VERSION = "NTv2.0",
-                MAJOR_F = 232332,
-                MINOR_F = 232332,
-                MAJOR_T = 232332,
-                MINOR_T = 232332
-            };
-
-            var subFileHeader = new SubFileHeader();
             var endBlock = new EndBlock(); 
 
             using var fs1 = File.Create(outputFileName);
             using var bw1 = new BinaryWriter(fs1);
 
-            WriteObject(bw1, header);
-            WriteObject(bw1, subFileHeader);
+            WriteObject(bw1, _header);
+            WriteObject(bw1, _subFileHeader);
 
             foreach (var v in Data)
                 bw1.Write(v);
