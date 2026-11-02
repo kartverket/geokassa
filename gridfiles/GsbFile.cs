@@ -159,44 +159,26 @@ namespace gridfiles
     public class GsbFile : GridFile
     {
         private GridParam _gridParam;
-
         private GriFile _griFile;
-        private const int _NUM_OREC = 11;
-        private const int _NUM_SREC = 11;
-        private const int _NUM_FILE = 1;
-        private GS_TYPE _GS_TYPE = GS_TYPE.SECONDS;
-        private string _VERSION = "NTv2.0";
-        private string _SYSTEM_F = "EPSG:11022";
-        private string _SYSTEM_T = "EPSG:5972";
-        private double _MAJOR_F;
-        private double _MINOR_F;
-        private double _MAJOR_T;
-        private double _MINOR_T;
-
-        private string _subName = string.Empty;
-        private string _parent = "NONE";
-        private string _created = string.Empty;
-        private string _updated = string.Empty;
-        private double _southLatitude;
-        private double _northLatitude;
-        private double _eastLongitude;
-        private double _westLongitude;
-        private double _latitudeIncrement;
-        private double _longitudeIncrement;
-        private int _gridNodeCount;
+        private Header _header;
+        private SubFileHeader _subFileHeader;
 
         public GsbFile() 
         {   
             _gridParam = new GridParam();
             _griFile = new GriFile(_gridParam);
+            _header = new Header();
+            _subFileHeader = new SubFileHeader();
         }
 
-        public GsbFile(string outputFileName) : base()
+        public GsbFile(string inputFileName) : base()
         {
-            OutputFileName = outputFileName;
+            InputFileName = inputFileName;
             _gridParam = new GridParam();
             _griFile = new GriFile(_gridParam);
         }
+
+        public string InputFileName { get; set; }
 
         public List<float> Data
         {
@@ -206,6 +188,43 @@ namespace gridfiles
 
         public override bool Read(string inputFileName)
         {
+            inputFileName = inputFileName.ToLower();
+
+            var index = 0;
+            var col = 0;
+
+            Data.Clear();
+
+            if (!File.Exists(inputFileName))
+                return false;
+
+            try
+            {
+                using (FileStream fs = new FileStream(inputFileName, FileMode.Open))
+                {
+                    using (BinaryReader br = new BinaryReader(fs))
+                    {
+                        if (br.BaseStream.Length < 64)
+                        {
+                            br.Close();
+                            fs.Close();
+
+                            return false;
+                        }
+                         
+                        // var NUM_OREC = br.ReadInt32();
+                        var recordName = Encoding.ASCII.GetString(br.ReadBytes(8));
+
+
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
             throw new NotImplementedException();
         }
 
@@ -319,16 +338,6 @@ namespace gridfiles
             {
                 using (BinaryWriter bw = new BinaryWriter(fs))
                 {
-                    bw.Seek(0, SeekOrigin.Begin);
-                    bw.Write(_NUM_OREC);
-                    bw.Seek(16, SeekOrigin.Begin);
-                    bw.Write(_NUM_SREC);
-                    bw.Write(_NUM_FILE);
-                    bw.Write(_GS_TYPE.ToString());
-                    //bw.Write(Version);
-                    bw.Write(_SYSTEM_F);
-                    bw.Write(_SYSTEM_T);
-
                     bw.Close();
                 }
                 fs.Close();

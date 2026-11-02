@@ -81,5 +81,24 @@ namespace geokassatests
                 throw ex;
             }
         }
+        [Theory]
+        [InlineData(
+        "C:\\Users\\himsve\\Onedrive - Statens Kartverk\\Prosjekter\\Høgde\\Ny_HREF\\ntf_r93.gsb"
+        )]
+        public async Task GsbImportTest(params string[] args)
+        {
+            try
+            {
+                var rootCommand = new GsbImportCommand("gsbimport", "Imports gsb file");
+
+                var exitCode = await rootCommand.InvokeAsync(args);
+
+                Assert.Equal(0, exitCode);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

@@ -31,7 +31,8 @@ namespace geokassa
                     return -1;
                 }
 
-                var gsb = new GsbFile(output.FullName);
+                var gsb = new GsbFile();
+                gsb.OutputFileName = output.FullName;
 
                 gsb.Data = gtx.Data;
 
