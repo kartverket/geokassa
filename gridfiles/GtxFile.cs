@@ -51,9 +51,15 @@ namespace gridfiles
             _griFile = new GriFile(inputFilename, _gridParam);            
         }
 
+        public GridParam GridParam
+        {
+            get => _gridParam ??= new GridParam();            
+            set => _gridParam = value;
+        }
+
         public CptFile CptFile
         {
-            get => _cptFile;
+            get => _cptFile ??= new CptFile();            
             set => _cptFile = value;
         }
         

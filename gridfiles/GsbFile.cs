@@ -168,18 +168,15 @@ namespace gridfiles
         private EndBlock _endBlock;
 
         public GsbFile() : base()
-        {   
+        {
             _gridParam = new GridParam();
             _griFileField1 = new GriFile(_gridParam);
             _griFileField2 = new GriFile(_gridParam);
             _griFileField3 = new GriFile(_gridParam);
-            _griFileField4 = new GriFile(_gridParam);
-            _header = new Header();
-            _subFileHeader = new SubFileHeader();
-            _endBlock = new EndBlock();
+            _griFileField4 = new GriFile(_gridParam); 
         }
 
-        public GsbFile(string inputFileName) : base() 
+        public GsbFile(string inputFileName) : base()
         {
             InputFileName = inputFileName;            
 
@@ -188,12 +185,33 @@ namespace gridfiles
             _griFileField2 = new GriFile(_gridParam);
             _griFileField3 = new GriFile(_gridParam);
             _griFileField4 = new GriFile(_gridParam);
-            _header = new Header();
-            _subFileHeader = new SubFileHeader();
-            _endBlock = new EndBlock();
         }
 
-        public string InputFileName { get; set; }
+        public string InputFileName { get; set; } = string.Empty;
+
+        public Header Header
+        { 
+            get => _header ??= new Header();
+            set => _header = value;
+        }
+
+        public SubFileHeader SubFileHeader
+        { 
+            get => _subFileHeader ??= new SubFileHeader();
+            set => _subFileHeader = value;
+        }
+
+        public EndBlock EndBlock
+        {
+            get => _endBlock ??= new EndBlock();
+            set => _endBlock = value;
+        }
+
+        public GridParam GridParam
+        {
+            get => _gridParam ??= new GridParam();
+            set => _gridParam = value;
+        }
 
         public List<float> DataField1
         {
@@ -218,10 +236,6 @@ namespace gridfiles
             get => _griFileField4.Data;
             set => _griFileField4.Data = value;
         }
-
-        public int NUM_OREC { get => _header.NUM_OREC; }
-
-        public int NUM_SREC { get => _header.NUM_SREC; }
 
         public override bool Read(string inputFileName)
         {
@@ -252,8 +266,8 @@ namespace gridfiles
                             return false;
                         }
 
-                        ReadObject(br, _header);
-                        ReadObject(br, _subFileHeader);
+                        ReadObject(br, Header);
+                        ReadObject(br, SubFileHeader);
 
                         while (br.BaseStream.Position + 16 < br.BaseStream.Length)
                         {
@@ -267,9 +281,8 @@ namespace gridfiles
 
                         if (recordName == "END")
                         {
-
                             var valueBytes = br.ReadBytes(8);
-                            _endBlock.END = BitConverter.ToInt32(valueBytes, 0);
+                            EndBlock.END = BitConverter.ToInt32(valueBytes, 0);
                         }
                     }
                 }
@@ -405,9 +418,26 @@ namespace gridfiles
             if (OutputFileName == "")
                 return false;
 
-            var endBlock = new EndBlock();
+            using (FileStream fs = new FileStream(OutputFileName, FileMode.Create))
+            {
+                using (BinaryWriter bw = new BinaryWriter(fs))
+                {
+                    WriteObject(bw, Header);
+                    WriteObject(bw, SubFileHeader);
 
-            using var fs1 = File.Create(outputFileName);
+                    foreach (var v in DataField1)
+                        bw.Write(v);
+
+                    WriteObject(bw, EndBlock);
+
+                    bw.Flush();
+                    bw.Close();
+                }
+                fs.Close();
+
+                return true;
+            }
+            /*
             using var bw1 = new BinaryWriter(fs1);
 
             WriteObject(bw1, _header);
@@ -422,7 +452,7 @@ namespace gridfiles
             bw1.Close();
 
             return true;
-
+            */
             using (FileStream fs = new FileStream(OutputFileName, FileMode.Create))
             {
                 using (BinaryWriter bw = new BinaryWriter(fs))
