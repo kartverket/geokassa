@@ -159,39 +159,69 @@ namespace gridfiles
     public class GsbFile : GridFile
     {
         private GridParam _gridParam;
-        private GriFile _griFile;
+        private GriFile _griFileField1;
+        private GriFile _griFileField2;
+        private GriFile _griFileField3;
+        private GriFile _griFileField4;
         private Header _header;
         private SubFileHeader _subFileHeader;
+        private EndBlock _endBlock;
 
         public GsbFile() : base()
         {   
             _gridParam = new GridParam();
-            _griFile = new GriFile(_gridParam);
+            _griFileField1 = new GriFile(_gridParam);
+            _griFileField2 = new GriFile(_gridParam);
+            _griFileField3 = new GriFile(_gridParam);
+            _griFileField4 = new GriFile(_gridParam);
             _header = new Header();
             _subFileHeader = new SubFileHeader();
+            _endBlock = new EndBlock();
         }
 
         public GsbFile(string inputFileName) : base() 
         {
-            InputFileName = inputFileName;
+            InputFileName = inputFileName;            
+
             _gridParam = new GridParam();
-            _griFile = new GriFile(_gridParam);
+            _griFileField1 = new GriFile(_gridParam);
+            _griFileField2 = new GriFile(_gridParam);
+            _griFileField3 = new GriFile(_gridParam);
+            _griFileField4 = new GriFile(_gridParam);
             _header = new Header();
             _subFileHeader = new SubFileHeader();
+            _endBlock = new EndBlock();
         }
 
         public string InputFileName { get; set; }
 
-        public List<float> Data
+        public List<float> DataField1
         {
-            get => _griFile.Data;
-            set => _griFile.Data = value;
+            get => _griFileField1.Data;
+            set => _griFileField1.Data = value;
         }
-        
+
+        public List<float> DataField2
+        {
+            get => _griFileField2.Data;
+            set => _griFileField2.Data = value;
+        }
+
+        public List<float> DataField3
+        {
+            get => _griFileField3.Data;
+            set => _griFileField3.Data = value;
+        }
+
+        public List<float> DataField4
+        {
+            get => _griFileField4.Data;
+            set => _griFileField4.Data = value;
+        }
+
         public int NUM_OREC { get => _header.NUM_OREC; }
 
         public int NUM_SREC { get => _header.NUM_SREC; }
-
 
         public override bool Read(string inputFileName)
         {
@@ -199,11 +229,14 @@ namespace gridfiles
 
             var index = 0;
             var col = 0;
-
-            Data.Clear();
-
+           
             if (!File.Exists(inputFileName))
                 return false;
+
+            DataField1.Clear();
+            DataField2.Clear();
+            DataField3.Clear();
+            DataField4.Clear();
 
             try
             {
@@ -222,6 +255,22 @@ namespace gridfiles
                         ReadObject(br, _header);
                         ReadObject(br, _subFileHeader);
 
+                        while (br.BaseStream.Position + 16 < br.BaseStream.Length)
+                        {
+                            DataField1.Add(br.ReadSingle());
+                            DataField2.Add(br.ReadSingle());
+                            DataField3.Add(br.ReadSingle());
+                            DataField4.Add(br.ReadSingle());
+                        }
+                        var nameBytes = br.ReadBytes(8);
+                        var recordName = Encoding.ASCII.GetString(nameBytes).Trim();
+
+                        if (recordName == "END")
+                        {
+
+                            var valueBytes = br.ReadBytes(8);
+                            _endBlock.END = BitConverter.ToInt32(valueBytes, 0);
+                        }
                     }
                 }
                 return true;
@@ -265,7 +314,7 @@ namespace gridfiles
                     _ when property.PropertyType == typeof(string) =>
                         Encoding.ASCII.GetString(valueBytes).Trim(),
                     _ when property.PropertyType == typeof(GS_TYPE) =>
-                        Enum.Parse(typeof(GS_TYPE), Encoding.ASCII.GetString(valueBytes).Trim(), true),
+                        Enum.Parse(typeof(GS_TYPE), Encoding.ASCII.GetString(valueBytes).Trim().Trim('\0'), true),
                     _ => throw new NotSupportedException(
                         $"Type {property.PropertyType} is not supported.")
                 };
@@ -356,7 +405,7 @@ namespace gridfiles
             if (OutputFileName == "")
                 return false;
 
-            var endBlock = new EndBlock(); 
+            var endBlock = new EndBlock();
 
             using var fs1 = File.Create(outputFileName);
             using var bw1 = new BinaryWriter(fs1);
@@ -364,7 +413,7 @@ namespace gridfiles
             WriteObject(bw1, _header);
             WriteObject(bw1, _subFileHeader);
 
-            foreach (var v in Data)
+            foreach (var v in DataField1)
                 bw1.Write(v);
 
             WriteObject(bw1, endBlock);

@@ -34,7 +34,7 @@ namespace geokassa
                 var gsb = new GsbFile();
                 gsb.OutputFileName = output.FullName;
 
-                gsb.Data = gtx.Data;
+                gsb.DataField1 = gtx.Data;
 
                 if (!gsb.GenerateGridFile(output.FullName))
                 {

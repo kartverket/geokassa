@@ -82,9 +82,8 @@ namespace geokassatests
             }
         }
         [Theory]
-        [InlineData(
-        "C:\\Users\\himsve\\Onedrive - Statens Kartverk\\Prosjekter\\Høgde\\Ny_HREF\\ntf_r93.gsb"
-        )]
+        //[InlineData("C:\\Users\\himsve\\Downloads\\AUSGeoid2020_20180201.gsb")]
+        [InlineData("C:\\Users\\himsve\\source\\repos\\PROJ\\data\\tests\\BETA2007.gsb")]        
         public async Task GsbImportTest(params string[] args)
         {
             try
