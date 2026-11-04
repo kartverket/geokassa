@@ -16,6 +16,13 @@ namespace gridfiles
         public GeoTiffFile.TiffOutputTypeshort Type { get; set; }
     }
 
+    public class Bin2GsbCommandParams : CommandParams
+    {
+        public FileInfo Input { get; set; }
+        public string EpsgSource { get; set; } = "";
+        public string EpsgTarget { get; set; } = "";
+    }
+
     public class Lsc2GeoTiffCommandParams : CommandParams
     {
         public FileInfo InputSource { get; set; }

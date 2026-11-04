@@ -15,31 +15,39 @@ namespace geokassa
 
             AddArgument(new Argument<FileInfo>("input", "Input bin file") { ArgumentType = typeof(FileInfo) });
             AddArgument(new Argument<FileInfo>("output", "Output gsb file") { ArgumentType = typeof(FileInfo) });
+            
+            AddOption(new Option("--epsgsource", "Source EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgsource"), IsRequired = false });
+            AddOption(new Option("--epsgtarget", "Target EPSG CRS ('autority:XXXX')") { Argument = new Argument<string>("epsgtarget"), IsRequired = true });
 
-            Handler = CommandHandler.Create<FileInfo, FileInfo>((FileInfo input, FileInfo output) => HandleCommand(input, output));
+            Handler = CommandHandler.Create((Bin2GsbCommandParams pars) =>
+            {
+                return HandleCommand(pars);
+            });
+
         }
 
-        private int HandleCommand(FileInfo input, FileInfo output)
+        private int HandleCommand(Bin2GsbCommandParams pars)
         { 
             try
             {
-                var gtx = new GtxFile(input.FullName);
+                var gtx = new GtxFile(pars.Input.FullName);
 
-                if (!gtx.ReadBin(input.FullName))
+                if (!gtx.ReadBin(pars.Input.FullName))
                 {
-                    Console.WriteLine($"Importing of bin file {input.Name} failed.");
+                    Console.WriteLine($"Importing of bin file {pars.Input.Name} failed.");
                     return -1;
                 }
 
-                var gsb = new GsbFile();
-
-                gsb.OutputFileName = output.FullName;
-                gsb.DataField1 = gtx.Data;
-                gsb.GridParam = gtx.GridParam;
-
-                if (!gsb.GenerateGridFile(output.FullName))
+                var gsb = new GsbFile
                 {
-                    Console.WriteLine($"Importing of bin file {input.Name} failed.");
+                    OutputFileName = pars.Output.FullName,
+                    DataField1 = gtx.Data,
+                    GridParam = gtx.GridParam
+                };
+
+                if (!gsb.GenerateGridFile(pars.Output.FullName))
+                {
+                    Console.WriteLine($"Importing of gsb file {pars.Output.Name} failed.");
                     return -1;
                 }
                 return 0;

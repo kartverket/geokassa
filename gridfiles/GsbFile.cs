@@ -97,22 +97,22 @@ namespace gridfiles
         public string VERSION { get; set; } = "NTv2.0";
 
         [BinaryOffset(80)]
-        public string SYSTEM_F { get; set; } = "11022";
+        public string SYSTEM_F { get; set; } = "";
 
         [BinaryOffset(96)]
-        public string SYSTEM_T { get; set; } = "5972";
+        public string SYSTEM_T { get; set; } = "";
 
         [BinaryOffset(112)]
-        public double MAJOR_F { get; set; } = 9999d;
+        public double MAJOR_F { get; set; } = 0d;
 
         [BinaryOffset(128)]
-        public double MINOR_F { get; set; } = 9999d;
+        public double MINOR_F { get; set; } = 0d;
 
         [BinaryOffset(144)]
-        public double MAJOR_T { get; set; } = 9999d;
+        public double MAJOR_T { get; set; } = 0d;
 
         [BinaryOffset(160)]
-        public double MINOR_T { get; set; } = 9999d;
+        public double MINOR_T { get; set; } = 0d;
     }
 
     public class SubFileHeader
@@ -168,26 +168,44 @@ namespace gridfiles
         private EndBlock _endBlock;
 
         public GsbFile() : base()
-        {
-            _gridParam = new GridParam();
-            _griFileField1 = new GriFile(_gridParam);
-            _griFileField2 = new GriFile(_gridParam);
-            _griFileField3 = new GriFile(_gridParam);
-            _griFileField4 = new GriFile(_gridParam); 
+        {           
         }
 
         public GsbFile(string inputFileName) : base()
         {
-            InputFileName = inputFileName;            
-
-            _gridParam = new GridParam();
-            _griFileField1 = new GriFile(_gridParam);
-            _griFileField2 = new GriFile(_gridParam);
-            _griFileField3 = new GriFile(_gridParam);
-            _griFileField4 = new GriFile(_gridParam);
+            InputFileName = inputFileName;          
         }
 
         public string InputFileName { get; set; } = string.Empty;
+
+        public GridParam GridParam
+        {
+            get => _gridParam ??= new GridParam();
+            set
+            {
+                 if (value is null)
+                    throw new ArgumentNullException(nameof(value), "GridParam cannot be null.");
+
+                _gridParam = value;
+                
+                /*
+                Header.MAJOR_F = value.MajorF;
+                Header.MINOR_F = value.MinorF;
+                Header.SYSTEM_F = value.SystemF;
+                */
+
+                SubFileHeader.CREATED = DateTime.Now.ToString("yy-MM-dd");
+                SubFileHeader.UPDATED = DateTime.Now.ToString("yy-MM-dd");
+                SubFileHeader.SUB_NAME = $"SUB_{value.LowerLeftLatitude}_{value.LowerLeftLongitude}";
+                SubFileHeader.S_LAT = value.LowerLeftLatitude;
+                SubFileHeader.N_LAT = value.UpperLeftLatitude;
+                SubFileHeader.W_LONG = value.LowerLeftLongitude;
+                SubFileHeader.E_LONG = value.UpperLeftLongitude;
+                SubFileHeader.LAT_INC = value.DeltaLatitude;
+                SubFileHeader.LONG_INC = value.DeltaLongitude;
+                SubFileHeader.GS_COUNT = value.NRows * value.NColumns;
+            }
+        }
 
         public Header Header
         { 
@@ -207,35 +225,60 @@ namespace gridfiles
             set => _endBlock = value;
         }
 
-        public GridParam GridParam
+        public GriFile GriFileField1
         {
-            get => _gridParam ??= new GridParam();
-            set => _gridParam = value;
+            get => _griFileField1 ??= new GriFile(GridParam);
+            set => _griFileField1 = value;
+        }
+
+        public GriFile GriFileField2
+        {
+            get => _griFileField2 ??= new GriFile(GridParam);
+            set => _griFileField2 = value;
+        }
+
+        public GriFile GriFileField3
+        {
+            get => _griFileField3 ??= new GriFile(GridParam);
+            set => _griFileField3 = value;
+        }
+
+        public GriFile GriFileField4
+        {
+            get => _griFileField4 ??= new GriFile(GridParam);
+            set => _griFileField4 = value;
         }
 
         public List<float> DataField1
         {
-            get => _griFileField1.Data;
-            set => _griFileField1.Data = value;
+            get => GriFileField1.Data;
+            set => GriFileField1.Data = value;
         }
 
         public List<float> DataField2
         {
-            get => _griFileField2.Data;
-            set => _griFileField2.Data = value;
+            get => GriFileField2.Data;
+            set => GriFileField2.Data = value;
         }
 
         public List<float> DataField3
         {
-            get => _griFileField3.Data;
-            set => _griFileField3.Data = value;
+            get => GriFileField3.Data;
+            set => GriFileField3.Data = value;
         }
 
         public List<float> DataField4
         {
-            get => _griFileField4.Data;
-            set => _griFileField4.Data = value;
+            get => GriFileField4.Data;
+            set => GriFileField4.Data = value;
         }
+
+        /*
+        public double S_LAT
+        { 
+            get => SubFileHeader.S_LAT; set => SubFileHeader.S_LAT = value;
+        }
+        */
 
         public override bool Read(string inputFileName)
         {
@@ -291,6 +334,60 @@ namespace gridfiles
             catch (Exception ex)
             {
                 throw ex;
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public override bool GenerateGridFile(string outputFileName, bool isRandom = false)
+        {
+            if (OutputFileName == "")
+                return false;
+
+            using (FileStream fs = new FileStream(OutputFileName, FileMode.Create))
+            {
+                using (BinaryWriter bw = new BinaryWriter(fs))
+                {
+                    WriteObject(bw, Header);
+                    WriteObject(bw, SubFileHeader);
+
+                    foreach (var v in DataField1)
+                        bw.Write(v);
+
+                    WriteObject(bw, EndBlock);
+
+                    bw.Flush();
+                    bw.Close();
+                }
+                fs.Close();
+
+                return true;
+            }
+            /*
+            using var bw1 = new BinaryWriter(fs1);
+
+            WriteObject(bw1, _header);
+            WriteObject(bw1, _subFileHeader);
+
+            foreach (var v in DataField1)
+                bw1.Write(v);
+
+            WriteObject(bw1, endBlock);
+
+            bw1.Flush();
+            bw1.Close();
+
+            return true;
+            */
+            using (FileStream fs = new FileStream(OutputFileName, FileMode.Create))
+            {
+                using (BinaryWriter bw = new BinaryWriter(fs))
+                {
+                    bw.Close();
+                }
+                fs.Close();
+
+                return true;
             }
 
             throw new NotImplementedException();
@@ -411,60 +508,6 @@ namespace gridfiles
             writer.Write(bytes);
             for (int i = bytes.Length; i < 8; i++)
                 writer.Write((byte)' ');
-        }
-
-        public override bool GenerateGridFile(string outputFileName, bool isRandom = false)
-        {
-            if (OutputFileName == "")
-                return false;
-
-            using (FileStream fs = new FileStream(OutputFileName, FileMode.Create))
-            {
-                using (BinaryWriter bw = new BinaryWriter(fs))
-                {
-                    WriteObject(bw, Header);
-                    WriteObject(bw, SubFileHeader);
-
-                    foreach (var v in DataField1)
-                        bw.Write(v);
-
-                    WriteObject(bw, EndBlock);
-
-                    bw.Flush();
-                    bw.Close();
-                }
-                fs.Close();
-
-                return true;
-            }
-            /*
-            using var bw1 = new BinaryWriter(fs1);
-
-            WriteObject(bw1, _header);
-            WriteObject(bw1, _subFileHeader);
-
-            foreach (var v in DataField1)
-                bw1.Write(v);
-
-            WriteObject(bw1, endBlock);
-
-            bw1.Flush();
-            bw1.Close();
-
-            return true;
-            */
-            using (FileStream fs = new FileStream(OutputFileName, FileMode.Create))
-            {
-                using (BinaryWriter bw = new BinaryWriter(fs))
-                {
-                    bw.Close();
-                }
-                fs.Close();
-
-                return true;
-            }
-
-            throw new NotImplementedException();
         }
     }
 }

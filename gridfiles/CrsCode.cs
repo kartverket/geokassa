@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace gridfiles
@@ -48,19 +49,22 @@ namespace gridfiles
             }
         }
 
+
+
         public string GetWktString()
         {
             var cmd = new Process();
-            var startInfo = new ProcessStartInfo();
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "projinfo.exe",
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = " " + this.CodeString + " -o WKT2:2019"
+            };
 
-            startInfo.FileName = "projinfo.exe";
-            startInfo.CreateNoWindow = true;
-            startInfo.UseShellExecute = false;
-            startInfo.RedirectStandardInput = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.Arguments = " " + this.CodeString + " -o WKT2:2019";
-         
             cmd.StartInfo = startInfo;
             cmd.Start();
 
@@ -75,30 +79,96 @@ namespace gridfiles
 
             return trimmedRestult;
         }
-        
-        /*
-        public string GetWktBoundaryBox()
+
+        public EllipsoidParameters? GetEllipsoidParameters()
         {
-            var cmd = new Process();
-            var startInfo = new ProcessStartInfo();
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "projinfo.exe",
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
 
-            startInfo.FileName = "projinfo.exe";
-            startInfo.CreateNoWindow = true;
-            startInfo.UseShellExecute = false;
-            startInfo.RedirectStandardInput = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.Arguments = "-k crs " + this.CodeString;
+            startInfo.ArgumentList.Add("-q");
+            startInfo.ArgumentList.Add("-k");
+            startInfo.ArgumentList.Add("crs");
+            startInfo.ArgumentList.Add(CodeString);
+            startInfo.ArgumentList.Add("-o");
+            startInfo.ArgumentList.Add("PROJJSON");
 
-            cmd.StartInfo = startInfo;
-            cmd.Start();
+            using var process = new Process
+            {
+                StartInfo = startInfo
+            };
 
-            cmd.WaitForExit();
+            process.Start();
 
-            var result = cmd.StandardOutput.ReadToEnd();
+            var output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
 
-            return "";
+            if (process.ExitCode != 0)
+                return null;
+
+            var jsonStart = output.IndexOf('{');
+
+            if (jsonStart < 0)
+                return null;
+
+            var json = output[jsonStart..];
+
+            using var document = JsonDocument.Parse(json);
+
+            return TryFindEllipsoid(document.RootElement, out var parameters)
+                ? parameters
+                : null;
         }
-        */
+
+        private static bool TryFindEllipsoid(
+            JsonElement element,
+            out EllipsoidParameters? parameters)
+        {
+            parameters = null;
+
+            if (element.ValueKind == JsonValueKind.Object)
+            {
+                if (element.TryGetProperty("ellipsoid", out var ellipsoid))
+                {
+                    if (ellipsoid.TryGetProperty("semi_major_axis", out var semiMajorAxis) &&
+                        ellipsoid.TryGetProperty("inverse_flattening", out var inverseFlattening) &&
+                        semiMajorAxis.TryGetDouble(out var semiMajorAxisValue) &&
+                        inverseFlattening.TryGetDouble(out var inverseFlatteningValue))
+                    {
+                        parameters = new EllipsoidParameters(
+                            semiMajorAxisValue,
+                            inverseFlatteningValue);
+
+                        return true;
+                    }
+                }
+
+                foreach (var property in element.EnumerateObject())
+                {
+                    if (TryFindEllipsoid(property.Value, out parameters))
+                        return true;
+                }
+            }
+            else if (element.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var item in element.EnumerateArray())
+                {
+                    if (TryFindEllipsoid(item, out parameters))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        public sealed record EllipsoidParameters(
+            double SemiMajorAxis,
+            double InverseFlattening);
     }
 }
