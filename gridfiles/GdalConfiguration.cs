@@ -179,8 +179,6 @@ namespace gridfiles
         {
             try
             {
-                _usable = true;
-
                 if (!_usable)
                     return;
 

@@ -24,7 +24,6 @@ namespace geokassa
             {
                 return HandleCommand(pars);
             });
-
         }
 
         private int HandleCommand(Bin2GsbCommandParams pars)
@@ -47,7 +46,9 @@ namespace geokassa
                 };
                 var epsgSource = new CrsCode(pars.EpsgSource ?? "");
                 gsb.EpsgSource = epsgSource;
-                gsb.EpsgTarget.CodeString = pars.EpsgTarget ?? "";
+
+                var epsgTarget = new CrsCode(pars.EpsgTarget?? "");
+                gsb.EpsgTarget = epsgTarget;
 
                 if (!gsb.GenerateGridFile(pars.Output.FullName))
                 {

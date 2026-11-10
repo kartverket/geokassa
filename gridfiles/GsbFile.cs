@@ -1,11 +1,4 @@
-﻿using NetTopologySuite.Densify;
-using NetTopologySuite.Operation;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-//using OSGeo.GDAL;
-using OSGeo.OGR;
-using OSGeo.OSR;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
@@ -17,7 +10,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using ThinkGeo.Core;
+using NetTopologySuite.Densify;
+using NetTopologySuite.Operation;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+//using OSGeo.GDAL;
+using OSGeo.OGR;
+using OSGeo.OSR;
 using static gridfiles.CrsCode;
 using static NetTopologySuite.Geometries.Utilities.GeometryMapper;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -165,6 +164,7 @@ namespace gridfiles
     {
         private GridParam _gridParam;
         private CrsCode _epsgSource = null;
+        private CrsCode _epsgTarget = null;
         private GriFile _griFileField1;
         private GriFile _griFileField2;
         private GriFile _griFileField3;
@@ -192,18 +192,37 @@ namespace gridfiles
                 return _epsgSource;
             }
             set
-            { 
+            {
                 gridfiles.GdalConfiguration.ConfigureGdal();
 
                 var ell = GdalEllipsoid.FromEpsg(value.CodeNumber);
 
-                var ell2 = GdalEllipsoid.FromEpsg(value.CodeNumber);
+                Header.MAJOR_F = ell.SemiMajorAxisMeters;
+                Header.MINOR_F = ell.SemiMinorAxisMeters;
 
-                value.CodeString = "dwe";
+                _epsgSource = value;
             }
         }
 
-        public CrsCode EpsgTarget { get; set; } = new CrsCode();
+        public CrsCode EpsgTarget 
+        {
+            get
+            {
+                _epsgTarget ??= new CrsCode();
+                return _epsgTarget;
+            }
+            set
+            {
+                gridfiles.GdalConfiguration.ConfigureGdal();
+
+                var ell = GdalEllipsoid.FromEpsg(value.CodeNumber);
+
+                Header.MAJOR_T = ell.SemiMajorAxisMeters;
+                Header.MINOR_T = ell.SemiMinorAxisMeters;
+
+                _epsgSource = value;
+            }
+        }
 
         public GridParam GridParam
         {
