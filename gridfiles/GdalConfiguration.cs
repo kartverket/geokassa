@@ -35,13 +35,13 @@ using System.Runtime.InteropServices;
 using Gdal = OSGeo.GDAL.Gdal;
 using Ogr = OSGeo.OGR.Ogr;
 
-namespace gdalwrapper
+namespace gridfiles
 {
     public static partial class GdalConfiguration
     {
-        private static volatile bool _configuredOgr;
-        private static volatile bool _configuredGdal;
-        private static volatile bool _usable;
+        private static volatile bool _configuredOgr = false;
+        private static volatile bool _configuredGdal = false;
+        private static volatile bool _usable = true;
 
         [DllImport("kernel32", CharSet = CharSet.Auto, SetLastError = true)]
         static extern bool SetDefaultDllDirectories(uint directoryFlags);
@@ -105,7 +105,7 @@ namespace gdalwrapper
                 Environment.SetEnvironmentVariable("GEOTIFF_CSV", gdalData);
                 Gdal.SetConfigOption("GEOTIFF_CSV", gdalData);
 
-                string projSharePath = Path.Combine(gdalPath, "share");
+                string projSharePath = Path.Combine(gdalPath, "share");              
 
                 var projDataPath = Environment.GetEnvironmentVariable("PROJ_DATA");
                 if (projDataPath != null)
@@ -179,6 +179,8 @@ namespace gdalwrapper
         {
             try
             {
+                _usable = true;
+
                 if (!_usable)
                     return;
 

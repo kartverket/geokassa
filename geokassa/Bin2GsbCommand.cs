@@ -1,4 +1,5 @@
-﻿using gridfiles;
+﻿using BitMiracle.LibTiff.Classic;
+using gridfiles;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -44,6 +45,9 @@ namespace geokassa
                     DataField1 = gtx.Data,
                     GridParam = gtx.GridParam
                 };
+                var epsgSource = new CrsCode(pars.EpsgSource ?? "");
+                gsb.EpsgSource = epsgSource;
+                gsb.EpsgTarget.CodeString = pars.EpsgTarget ?? "";
 
                 if (!gsb.GenerateGridFile(pars.Output.FullName))
                 {

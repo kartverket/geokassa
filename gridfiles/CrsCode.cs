@@ -1,10 +1,12 @@
-﻿using System;
+﻿using OSGeo.OSR;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using OSGeo.OSR;
 
 namespace gridfiles
 {
@@ -12,10 +14,17 @@ namespace gridfiles
     {
         private string _codeString = "";
 
+        public CrsCode()
+        {
+        }
+
+        public CrsCode(string codeString)
+        {
+            _codeString = codeString;
+        }
+
         public string CodeString { get => _codeString; set => _codeString = value; }
-
-        public void SetCodeString(string value) => CodeString = value;
-
+       
         public string AutorityName
         {
             get
@@ -49,7 +58,7 @@ namespace gridfiles
             }
         }
 
-
+        public void SetCodeString(string value) => CodeString = value;
 
         public string GetWktString()
         {
@@ -78,97 +87,39 @@ namespace gridfiles
             var trimmedRestult = result.Remove(0, 19);
 
             return trimmedRestult;
-        }
+        }    
 
-        public EllipsoidParameters? GetEllipsoidParameters()
+        public readonly record struct EllipsoidParameters(
+        double SemiMajorAxisMeters,
+        double SemiMinorAxisMeters,
+        double InverseFlattening);
+
+        public static class GdalEllipsoid
         {
-            var startInfo = new ProcessStartInfo
+            public static EllipsoidParameters FromEpsg(int epsgCode)
             {
-                FileName = "projinfo.exe",
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                WindowStyle = ProcessWindowStyle.Hidden
-            };
+                if (epsgCode <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(epsgCode), "EPSG code must be positive.");
 
-            startInfo.ArgumentList.Add("-q");
-            startInfo.ArgumentList.Add("-k");
-            startInfo.ArgumentList.Add("crs");
-            startInfo.ArgumentList.Add(CodeString);
-            startInfo.ArgumentList.Add("-o");
-            startInfo.ArgumentList.Add("PROJJSON");
+                gridfiles.GdalConfiguration.ConfigureGdal();
 
-            using var process = new Process
-            {
-                StartInfo = startInfo
-            };
+                if (!GdalConfiguration.Usable)
+                    throw new InvalidOperationException("GDAL is not configured or usable.");
 
-            process.Start();
+                using var spatialReference = new SpatialReference("");
+                var result = spatialReference.ImportFromEPSG(epsgCode);
 
-            var output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
+                //if (result != OGRErr.OGRERR_NONE)
+                 //   throw new ArgumentException($"Could not load EPSG:{epsgCode}.", nameof(epsgCode));
 
-            if (process.ExitCode != 0)
-                return null;
+                double semiMajorAxis = spatialReference.GetSemiMajor();
+                double inverseFlattening = spatialReference.GetInvFlattening();
+                double semiMinorAxis = inverseFlattening == 0
+                    ? semiMajorAxis
+                    : semiMajorAxis * (1 - 1 / inverseFlattening);
 
-            var jsonStart = output.IndexOf('{');
-
-            if (jsonStart < 0)
-                return null;
-
-            var json = output[jsonStart..];
-
-            using var document = JsonDocument.Parse(json);
-
-            return TryFindEllipsoid(document.RootElement, out var parameters)
-                ? parameters
-                : null;
-        }
-
-        private static bool TryFindEllipsoid(
-            JsonElement element,
-            out EllipsoidParameters? parameters)
-        {
-            parameters = null;
-
-            if (element.ValueKind == JsonValueKind.Object)
-            {
-                if (element.TryGetProperty("ellipsoid", out var ellipsoid))
-                {
-                    if (ellipsoid.TryGetProperty("semi_major_axis", out var semiMajorAxis) &&
-                        ellipsoid.TryGetProperty("inverse_flattening", out var inverseFlattening) &&
-                        semiMajorAxis.TryGetDouble(out var semiMajorAxisValue) &&
-                        inverseFlattening.TryGetDouble(out var inverseFlatteningValue))
-                    {
-                        parameters = new EllipsoidParameters(
-                            semiMajorAxisValue,
-                            inverseFlatteningValue);
-
-                        return true;
-                    }
-                }
-
-                foreach (var property in element.EnumerateObject())
-                {
-                    if (TryFindEllipsoid(property.Value, out parameters))
-                        return true;
-                }
+                return new EllipsoidParameters(semiMajorAxis, semiMinorAxis, inverseFlattening);
             }
-            else if (element.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var item in element.EnumerateArray())
-                {
-                    if (TryFindEllipsoid(item, out parameters))
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        public sealed record EllipsoidParameters(
-            double SemiMajorAxis,
-            double InverseFlattening);
+        }      
     }
 }

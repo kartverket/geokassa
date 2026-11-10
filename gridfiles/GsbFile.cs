@@ -2,6 +2,9 @@
 using NetTopologySuite.Operation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+//using OSGeo.GDAL;
+using OSGeo.OGR;
+using OSGeo.OSR;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +17,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using ThinkGeo.Core;
+using static gridfiles.CrsCode;
 using static NetTopologySuite.Geometries.Utilities.GeometryMapper;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -159,6 +164,7 @@ namespace gridfiles
     public class GsbFile : GridFile
     {
         private GridParam _gridParam;
+        private CrsCode _epsgSource = null;
         private GriFile _griFileField1;
         private GriFile _griFileField2;
         private GriFile _griFileField3;
@@ -178,6 +184,27 @@ namespace gridfiles
 
         public string InputFileName { get; set; } = string.Empty;
 
+        public CrsCode EpsgSource 
+        {
+            get
+            {
+                _epsgSource ??= new CrsCode();
+                return _epsgSource;
+            }
+            set
+            { 
+                gridfiles.GdalConfiguration.ConfigureGdal();
+
+                var ell = GdalEllipsoid.FromEpsg(value.CodeNumber);
+
+                var ell2 = GdalEllipsoid.FromEpsg(value.CodeNumber);
+
+                value.CodeString = "dwe";
+            }
+        }
+
+        public CrsCode EpsgTarget { get; set; } = new CrsCode();
+
         public GridParam GridParam
         {
             get => _gridParam ??= new GridParam();
@@ -187,7 +214,7 @@ namespace gridfiles
                     throw new ArgumentNullException(nameof(value), "GridParam cannot be null.");
 
                 _gridParam = value;
-                
+
                 /*
                 Header.MAJOR_F = value.MajorF;
                 Header.MINOR_F = value.MinorF;
@@ -196,7 +223,7 @@ namespace gridfiles
 
                 SubFileHeader.CREATED = DateTime.Now.ToString("yy-MM-dd");
                 SubFileHeader.UPDATED = DateTime.Now.ToString("yy-MM-dd");
-                SubFileHeader.SUB_NAME = $"SUB_{value.LowerLeftLatitude}_{value.LowerLeftLongitude}";
+                SubFileHeader.SUB_NAME = "TEST"; // $"SUB_{value.LowerLeftLatitude}_{value.LowerLeftLongitude}";
                 SubFileHeader.S_LAT = value.LowerLeftLatitude;
                 SubFileHeader.N_LAT = value.UpperLeftLatitude;
                 SubFileHeader.W_LONG = value.LowerLeftLongitude;
@@ -272,13 +299,6 @@ namespace gridfiles
             get => GriFileField4.Data;
             set => GriFileField4.Data = value;
         }
-
-        /*
-        public double S_LAT
-        { 
-            get => SubFileHeader.S_LAT; set => SubFileHeader.S_LAT = value;
-        }
-        */
 
         public override bool Read(string inputFileName)
         {
