@@ -7,4 +7,4 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: nye_referanserammer
+  owner: reftrans
