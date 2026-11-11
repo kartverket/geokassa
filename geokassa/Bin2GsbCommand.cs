@@ -50,6 +50,8 @@ namespace geokassa
                 var epsgTarget = new CrsCode(pars.EpsgTarget?? "");
                 gsb.EpsgTarget = epsgTarget;
 
+                gsb.Header.GS_TYPE = GS_TYPE.DEGREES;
+
                 if (!gsb.GenerateGridFile(pars.Output.FullName))
                 {
                     Console.WriteLine($"Importing of gsb file {pars.Output.Name} failed.");

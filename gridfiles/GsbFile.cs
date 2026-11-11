@@ -98,13 +98,13 @@ namespace gridfiles
         public GS_TYPE GS_TYPE { get; set; } = GS_TYPE.SECONDS;
 
         [BinaryOffset(64)]
-        public string VERSION { get; set; } = "NTv2.0";
+        public string VERSION { get; set; } = "1.0.0.1";
 
         [BinaryOffset(80)]
-        public string SYSTEM_F { get; set; } = "";
+        public string SYSTEM_F { get; set; } = "ETRS89"; // TODO: Fix
 
         [BinaryOffset(96)]
-        public string SYSTEM_T { get; set; } = "";
+        public string SYSTEM_T { get; set; } = "NN2000"; // TODO: Fix
 
         [BinaryOffset(112)]
         public double MAJOR_F { get; set; } = 0d;
@@ -234,19 +234,13 @@ namespace gridfiles
 
                 _gridParam = value;
 
-                /*
-                Header.MAJOR_F = value.MajorF;
-                Header.MINOR_F = value.MinorF;
-                Header.SYSTEM_F = value.SystemF;
-                */
-
-                SubFileHeader.CREATED = DateTime.Now.ToString("yy-MM-dd");
-                SubFileHeader.UPDATED = DateTime.Now.ToString("yy-MM-dd");
+                SubFileHeader.CREATED = DateTime.Now.ToString("ddMMyyyy");
+                SubFileHeader.UPDATED = DateTime.Now.ToString("ddMMyyyy");
                 SubFileHeader.SUB_NAME = "TEST"; // $"SUB_{value.LowerLeftLatitude}_{value.LowerLeftLongitude}";
                 SubFileHeader.S_LAT = value.LowerLeftLatitude;
                 SubFileHeader.N_LAT = value.UpperLeftLatitude;
                 SubFileHeader.W_LONG = value.LowerLeftLongitude;
-                SubFileHeader.E_LONG = value.UpperLeftLongitude;
+                SubFileHeader.E_LONG = value.UpperRightLongitude;
                 SubFileHeader.LAT_INC = value.DeltaLatitude;
                 SubFileHeader.LONG_INC = value.DeltaLongitude;
                 SubFileHeader.GS_COUNT = value.NRows * value.NColumns;
@@ -323,6 +317,7 @@ namespace gridfiles
         {
             inputFileName = inputFileName.ToLower();
 
+            // TODO: Fjern!
             var index = 0;
             var col = 0;
            
@@ -396,32 +391,6 @@ namespace gridfiles
                     WriteObject(bw, EndBlock);
 
                     bw.Flush();
-                    bw.Close();
-                }
-                fs.Close();
-
-                return true;
-            }
-            /*
-            using var bw1 = new BinaryWriter(fs1);
-
-            WriteObject(bw1, _header);
-            WriteObject(bw1, _subFileHeader);
-
-            foreach (var v in DataField1)
-                bw1.Write(v);
-
-            WriteObject(bw1, endBlock);
-
-            bw1.Flush();
-            bw1.Close();
-
-            return true;
-            */
-            using (FileStream fs = new FileStream(OutputFileName, FileMode.Create))
-            {
-                using (BinaryWriter bw = new BinaryWriter(fs))
-                {
                     bw.Close();
                 }
                 fs.Close();

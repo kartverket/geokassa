@@ -88,7 +88,9 @@ namespace geokassatests
 
         [Theory]
         //[InlineData("C:\\Users\\himsve\\Downloads\\AUSGeoid2020_20180201.gsb")]
-        [InlineData("C:\\Users\\himsve\\source\\repos\\PROJ\\data\\tests\\BETA2007.gsb")]        
+        //[InlineData("C:\\Users\\himsve\\source\\repos\\PROJ\\data\\tests\\test_hgrid_big_endian.gsb")]
+        [InlineData("C:\\Users\\himsve\\source\\repos\\PROJ\\data\\tests\\test_hgrid_little_endian.gsb")]
+        //[InlineData("C:\\Users\\himsve\\source\\repos\\PROJ\\data\\tests\\BETA2007.gsb")]        
         public async Task GsbImportTest(params string[] args)
         {
             try
