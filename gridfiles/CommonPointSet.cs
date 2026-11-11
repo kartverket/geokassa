@@ -509,7 +509,7 @@ namespace gridfiles
                     PrintResiduals();
                 }
 
-                // TODO: Correct method:
+                // TODO: Correct method (Vestøl):
                 // SignalNoise = CovNn(k, c) * CovNn_D_Inv(k, c, sn) * (L - A * X);
 
                 return true;

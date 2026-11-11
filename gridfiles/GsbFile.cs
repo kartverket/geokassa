@@ -234,15 +234,17 @@ namespace gridfiles
 
                 _gridParam = value;
 
+                var factor = 3600f;
+
                 SubFileHeader.CREATED = DateTime.Now.ToString("ddMMyyyy");
                 SubFileHeader.UPDATED = DateTime.Now.ToString("ddMMyyyy");
-                SubFileHeader.SUB_NAME = "TEST"; // $"SUB_{value.LowerLeftLatitude}_{value.LowerLeftLongitude}";
-                SubFileHeader.S_LAT = value.LowerLeftLatitude;
-                SubFileHeader.N_LAT = value.UpperLeftLatitude;
-                SubFileHeader.W_LONG = value.LowerLeftLongitude;
-                SubFileHeader.E_LONG = value.UpperRightLongitude;
-                SubFileHeader.LAT_INC = value.DeltaLatitude;
-                SubFileHeader.LONG_INC = value.DeltaLongitude;
+                SubFileHeader.SUB_NAME = "TOBIAS";
+                SubFileHeader.S_LAT = value.LowerLeftLatitude * factor;
+                SubFileHeader.N_LAT = value.UpperLeftLatitude * factor;  
+                SubFileHeader.W_LONG = -value.LowerLeftLongitude * factor;
+                SubFileHeader.E_LONG = -value.UpperRightLongitude * factor;
+                SubFileHeader.LAT_INC = value.DeltaLatitude * factor;
+                SubFileHeader.LONG_INC = value.DeltaLongitude * factor;
                 SubFileHeader.GS_COUNT = value.NRows * value.NColumns;
             }
         }
@@ -317,10 +319,6 @@ namespace gridfiles
         {
             inputFileName = inputFileName.ToLower();
 
-            // TODO: Fjern!
-            var index = 0;
-            var col = 0;
-           
             if (!File.Exists(inputFileName))
                 return false;
 
@@ -385,8 +383,17 @@ namespace gridfiles
                     WriteObject(bw, Header);
                     WriteObject(bw, SubFileHeader);
 
-                    foreach (var v in DataField1)
+                    foreach (var v in DataField1.AsEnumerable().Reverse())
+                    {
+                        if (v == -88.8888f)
+                            bw.Write(-999.000f);
+                        else
                         bw.Write(v);
+
+                        bw.Write(0f);
+                        bw.Write(0f);
+                        bw.Write(0f);
+                    }
 
                     WriteObject(bw, EndBlock);
 
